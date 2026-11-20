@@ -77,6 +77,17 @@ const routes: Routes = [
         data: { ruta: 'agenda' },
         loadComponent: () => import('./paginas/medico/agenda/agenda.page').then(m => m.AgendaPage),
       },
+      // EPIDEMIOLOGO
+      {
+        path: 'validaciones',
+        data: { ruta: 'validaciones' },
+        loadComponent: () => import('./paginas/epidemiologo/validaciones/validaciones.page').then(m => m.ValidacionesPage),
+      },
+      {
+        path: 'vigilancia',
+        data: { ruta: 'vigilancia' },
+        loadComponent: () => import('./paginas/epidemiologo/vigilancia/vigilancia.page').then(m => m.VigilanciaPage),
+      },
       ...rutasEnPreparacion,
       { path: 'sin-permiso', loadComponent: error, data: { tipo: 403 } },
     ],

@@ -407,3 +407,42 @@ ion-modal.modal-ancho {
   background: rgba(var(--ion-color-danger-rgb), 0.12);
   color: var(--ion-color-danger);
 }
+
+/* ---------- Colores de clasificación para gráficos (validados con el validador de paleta: claro y oscuro) */
+:root {
+  --serie-sospechoso: #b7791a;
+  --serie-probable: #4263eb;
+  --serie-confirmado: #d9363e;
+  --serie-descartado: #12917f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --serie-sospechoso: #c08329;
+    --serie-probable: #5f78f0;
+    --serie-confirmado: #de4c52;
+    --serie-descartado: #14a08c;
+  }
+}
+
+.etiqueta.descartado {
+  background: rgba(18, 145, 127, 0.12);
+  color: var(--serie-descartado);
+}
+
+/* Bandeja de validaciones */
+.registro.validacion {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.registro.validacion .motivo {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: var(--ion-text-color);
+  overflow-wrap: anywhere;
+}
+
+.acciones-validacion {
+  align-self: center;
+}

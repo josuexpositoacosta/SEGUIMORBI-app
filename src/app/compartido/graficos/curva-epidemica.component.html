@@ -1,0 +1,65 @@
+<div class="cabecera-grafico">
+  <ul class="leyenda" aria-label="Leyenda">
+    <li *ngFor="let s of totales()">
+      <span class="muestra" [style.background]="s.color" aria-hidden="true"></span>
+      {{ s.nombre }} <strong>{{ s.total }}</strong>
+    </li>
+  </ul>
+  <ion-button fill="clear" size="small" (click)="verTabla.set(!verTabla())" [attr.aria-pressed]="verTabla()">
+    <ion-icon slot="start" [name]="verTabla() ? 'bar-chart-outline' : 'grid-outline'"></ion-icon>
+    {{ verTabla() ? 'Ver gráfico' : 'Ver tabla' }}
+  </ion-button>
+</div>
+
+<div class="lienzo" #lienzo [hidden]="verTabla()">
+  <svg [attr.width]="ancho()" [attr.height]="alto" role="img"
+    [attr.aria-label]="'Curva epidémica: ' + totalPeriodo() + ' casos en ' + columnas().length + ' semanas epidemiológicas'"
+    (mouseleave)="activa.set(null)">
+    <!-- Rejilla y eje Y -->
+    <g class="rejilla">
+      <g *ngFor="let v of eje().marcas">
+        <line [attr.x1]="m.izquierda" [attr.x2]="ancho() - m.derecha" [attr.y1]="yDe(v)" [attr.y2]="yDe(v)"
+          [class.base]="v === 0"></line>
+        <text [attr.x]="m.izquierda - 8" [attr.y]="yDe(v)" text-anchor="end" dominant-baseline="middle">{{ v }}</text>
+      </g>
+    </g>
+
+    <!-- Barras -->
+    <g *ngFor="let c of columnas(); let i = index" class="columna" [class.atenuada]="activa() !== null && activa() !== i">
+      <path *ngFor="let s of c.segmentos" [attr.d]="trazo(s, c)" [attr.fill]="s.serie.color"></path>
+      <text *ngIf="c.etiqueta" class="etiqueta-x" [attr.x]="c.centro" [attr.y]="alto - 8" text-anchor="middle">{{ c.etiqueta }}</text>
+      <!-- Zona de interacción más ancha que la barra -->
+      <rect class="zona" [attr.x]="c.centro - (columnas().length ? (ancho() - m.izquierda - m.derecha) / columnas().length / 2 : 0)"
+        [attr.y]="m.arriba" [attr.width]="columnas().length ? (ancho() - m.izquierda - m.derecha) / columnas().length : 0"
+        [attr.height]="alto - m.arriba - m.abajo" (mouseenter)="activa.set(i)" (click)="activa.set(i)"></rect>
+    </g>
+  </svg>
+
+  <div class="aviso" *ngIf="columnaActiva() as c" [style.left.px]="posicionAviso(c)" role="status">
+    <div class="aviso-titulo">{{ c.semana.etiqueta }}</div>
+    <div class="aviso-fechas">{{ c.semana.inicio | date: 'dd MMM' }} – {{ c.semana.fin | date: 'dd MMM yyyy' }}</div>
+    <div class="aviso-total">{{ c.semana.total }} caso{{ c.semana.total === 1 ? '' : 's' }}</div>
+    <div class="aviso-fila" *ngFor="let s of series">
+      <span class="muestra" [style.background]="s.color" aria-hidden="true"></span>
+      <span>{{ s.nombre }}</span>
+      <strong>{{ c.semana.porClasificacion[s.clave] ?? 0 }}</strong>
+    </div>
+  </div>
+</div>
+
+<div class="tabla-envoltorio" *ngIf="verTabla()">
+  <table class="tabla-datos">
+    <caption class="text-muted">Casos por semana epidemiológica y clasificación</caption>
+    <thead>
+      <tr><th scope="col">Semana</th><th scope="col">Fechas</th><th scope="col" *ngFor="let s of series">{{ s.nombre }}</th><th scope="col">Total</th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of columnas()">
+        <th scope="row">{{ c.semana.etiqueta }}</th>
+        <td>{{ c.semana.inicio | date: 'dd/MM' }} – {{ c.semana.fin | date: 'dd/MM' }}</td>
+        <td *ngFor="let s of series" class="num">{{ c.semana.porClasificacion[s.clave] ?? 0 }}</td>
+        <td class="num"><strong>{{ c.semana.total }}</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

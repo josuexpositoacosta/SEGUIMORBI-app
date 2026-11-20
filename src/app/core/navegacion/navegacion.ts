@@ -101,7 +101,6 @@ export const PANTALLAS: Pantalla[] = [
     icono: 'checkmark-done-circle',
     seccion: 'vigilancia',
     roles: ['EPIDEMIOLOGO'],
-    proximamente: ['Clasificaciones propuestas por los médicos', 'Validar con observaciones'],
   },
   {
     ruta: 'vigilancia',
@@ -110,12 +109,6 @@ export const PANTALLAS: Pantalla[] = [
     icono: 'stats-chart',
     seccion: 'vigilancia',
     roles: ['EPIDEMIOLOGO'],
-    proximamente: [
-      'Indicadores resumen',
-      'Curva epidémica por semana epidemiológica',
-      'Casos por área de salud',
-      'Descarga CSV sin datos personales',
-    ],
   },
 ];
 
