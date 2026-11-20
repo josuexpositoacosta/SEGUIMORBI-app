@@ -1,0 +1,246 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/casos" text="Casos"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Caso nº {{ caso()?.id }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-container">
+    <div class="cargando" *ngIf="cargando()"><ion-spinner name="crescent"></ion-spinner></div>
+
+    <app-estado-vacio *ngIf="!cargando() && error()" icono="alert-circle-outline"
+      titulo="No se pudo abrir el caso" [texto]="error()">
+      <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+    </app-estado-vacio>
+
+    <ng-container *ngIf="!cargando() && caso() as c">
+      <!-- Cabecera -->
+      <section class="ficha-cabecera">
+        <div class="registro-icono ficha-avatar" aria-hidden="true"><ion-icon name="medkit-outline"></ion-icon></div>
+        <div class="ficha-identidad">
+          <h1>
+            <a *ngIf="paciente() as p; else sinPaciente" class="enlace-paciente"
+              [routerLink]="rol() === 'MEDICO' ? ['/pacientes', p.id] : null">{{ p.nombres }} {{ p.apellidos }}</a>
+            <ng-template #sinPaciente>Paciente {{ c.pacienteId }}</ng-template>
+          </h1>
+          <div class="registro-etiquetas">
+            <span class="etiqueta" *ngIf="paciente() as p">{{ p.tipoDocumento }} {{ p.numeroDocumento }} · {{ textoEdad(p.fechaNacimiento) }}</span>
+            <span class="etiqueta" [ngClass]="c.estado === 'ABIERTO' ? 'exito' : ''">{{ c.estado === 'ABIERTO' ? 'Abierto' : 'Cerrado' }}</span>
+            <span class="etiqueta" *ngIf="c.proximoControl && c.estado === 'ABIERTO'">
+              <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>Próximo control {{ c.proximoControl | date: 'dd/MM/yyyy' }}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Alertas clínicas -->
+      <div class="alertas" *ngIf="c.alertas?.length" role="alert">
+        <div class="alerta" *ngFor="let a of c.alertas">
+          <ion-icon name="warning" aria-hidden="true"></ion-icon>
+          <span>{{ a.mensaje }}</span>
+        </div>
+      </div>
+
+      <div class="columnas">
+        <!-- Clasificación -->
+        <ion-card class="tarjeta-clasificacion">
+          <ion-card-header>
+            <ion-card-title>Clasificación</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="clasificacion-actual">
+              <span class="etiqueta grande" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombre(clasificaciones, c.clasificacion) }}</span>
+              <span class="validacion" [class.validada]="c.clasificacionValidada">
+                <ion-icon [name]="c.clasificacionValidada ? 'shield-checkmark' : 'time-outline'" aria-hidden="true"></ion-icon>
+                {{ c.clasificacionValidada ? 'Validada por epidemiología' : 'Pendiente de validar' }}
+              </span>
+            </div>
+
+            <div class="sugerencia-caso">
+              <div class="sugerencia-titulo">
+                <ion-icon name="sparkles-outline" aria-hidden="true"></ion-icon>
+                Sugerencia OPS:
+                <strong>{{ c.sugerencia.clasificacion ? nombre(clasificaciones, c.sugerencia.clasificacion) : 'no cumple la definición' }}</strong>
+                <span class="etiqueta" *ngIf="!c.sugerencia.coincideConActual">Distinta de la actual</span>
+              </div>
+              <ul class="criterios">
+                <li *ngFor="let cr of c.sugerencia.criterios" [class.no-cumple]="cr.startsWith('No cumple') || cr.includes('no confirma')">
+                  <ion-icon [name]="cr.startsWith('No cumple') || cr.includes('no confirma') ? 'close-circle' : 'checkmark-circle'" aria-hidden="true"></ion-icon>
+                  {{ cr }}
+                </li>
+              </ul>
+            </div>
+
+            <ion-button *ngIf="puedeClasificar()" fill="outline" (click)="abrir('clasificacion')">
+              <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>Cambiar clasificación
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Datos clínicos -->
+        <ion-card>
+          <ion-card-header class="cabecera-con-accion">
+            <ion-card-title>Datos clínicos</ion-card-title>
+            <ion-button *ngIf="puedeEditar()" fill="clear" size="small" (click)="editarDatos()">
+              <ion-icon slot="start" name="create-outline"></ion-icon>Editar
+            </ion-button>
+          </ion-card-header>
+          <ion-card-content>
+            <dl class="datos">
+              <div><dt>Inicio de síntomas</dt><dd>{{ c.fechaInicioSintomas | date: 'dd/MM/yyyy' }}</dd></div>
+              <div><dt>Notificación</dt><dd>{{ c.fechaNotificacion | date: 'dd/MM/yyyy' }} · {{ diasEvolucion() }} días</dd></div>
+            </dl>
+            <div class="marcas">
+              <span class="etiqueta" [ngClass]="c.fiebre ? 'primaria' : ''"><ion-icon [name]="c.fiebre ? 'checkmark' : 'close'" aria-hidden="true"></ion-icon>Fiebre</span>
+              <span class="etiqueta" [ngClass]="c.cefaleaIntensa ? 'primaria' : ''"><ion-icon [name]="c.cefaleaIntensa ? 'checkmark' : 'close'" aria-hidden="true"></ion-icon>Cefalea intensa</span>
+              <span class="etiqueta primaria" *ngIf="c.recaida">Recaída</span>
+              <span class="etiqueta primaria" *ngFor="let m of c.manifestaciones">{{ manifestacion(m) }}</span>
+            </div>
+            <dl class="datos">
+              <div *ngIf="c.embarazada"><dt>Embarazo</dt><dd>Sí{{ c.semanasGestacion ? ' · ' + c.semanasGestacion + ' semanas' : '' }}</dd></div>
+              <div><dt>Área de transmisión o viaje</dt><dd>{{ c.areaTransmisionOViaje ? 'Sí' + (c.detalleAreaTransmision ? ': ' + c.detalleAreaTransmision : '') : 'No' }}</dd></div>
+              <div><dt>Nexo con caso confirmado</dt><dd>{{ c.nexoCasoConfirmado ? 'Sí' : 'No' }}</dd></div>
+            </dl>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <!-- Laboratorio -->
+      <ion-card>
+        <ion-card-header class="cabecera-con-accion">
+          <ion-card-title>Laboratorio</ion-card-title>
+          <ion-button *ngIf="puedeEditar()" fill="clear" size="small" (click)="abrir('resultado')">
+            <ion-icon slot="start" name="add"></ion-icon>Añadir resultado
+          </ion-button>
+        </ion-card-header>
+        <ion-card-content>
+          <p class="text-muted" *ngIf="!c.resultados.length">Sin resultados de laboratorio.</p>
+          <div class="resultados">
+            <div class="resultado" *ngFor="let r of c.resultados">
+              <div class="resultado-principal">
+                <strong>{{ nombre(tiposPrueba, r.tipoPrueba) }}</strong> · {{ nombre(agentes, r.agente) }}
+                <span class="etiqueta" [ngClass]="claseResultado(r.resultado)">{{ nombre(resultados, r.resultado) }}</span>
+              </div>
+              <div class="text-muted resultado-detalle">
+                {{ nombre(tiposMuestra, r.tipoMuestra) }} · toma {{ r.fechaToma | date: 'dd/MM/yyyy' }}
+                <ng-container *ngIf="r.fechaResultado"> · resultado {{ r.fechaResultado | date: 'dd/MM/yyyy' }}</ng-container>
+              </div>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Atención clínica (parte 3) -->
+      <ion-card>
+        <ion-card-header><ion-card-title>Atención clínica</ion-card-title></ion-card-header>
+        <ion-card-content>
+          <app-estado-vacio icono="pulse-outline" titulo="Próximamente"
+            texto="Evaluaciones con alertas, dictámenes, planes de atención, seguimientos y cierre del caso."></app-estado-vacio>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Historial -->
+      <ion-card>
+        <ion-card-header><ion-card-title>Historial de clasificación</ion-card-title></ion-card-header>
+        <ion-card-content>
+          <ol class="historial">
+            <li *ngFor="let h of c.historial">
+              <div class="historial-cabecera">
+                <span class="etiqueta" [ngClass]="claseClasificacion(h.nueva)">{{ nombre(clasificaciones, h.nueva) }}</span>
+                <span class="text-muted" *ngIf="h.anterior">antes {{ nombre(clasificaciones, h.anterior) }}</span>
+              </div>
+              <div class="historial-motivo">{{ h.motivo }}</div>
+              <div class="text-muted historial-meta">{{ h.fecha | date: 'dd/MM/yyyy HH:mm' }} · {{ h.usuario }}</div>
+            </li>
+          </ol>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+  </div>
+
+  <ion-modal class="modal-formulario" [isOpen]="modo() !== null" (didDismiss)="cerrar()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ modo() === 'resultado' ? 'Añadir resultado' : 'Cambiar clasificación' }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrar()" aria-label="Cerrar"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <div class="modal-cuerpo">
+        <div class="formulario-error" *ngIf="errorFormulario()" role="alert" style="margin-bottom: 16px">
+          <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>{{ errorFormulario() }}
+        </div>
+
+        <form *ngIf="modo() === 'resultado'" [formGroup]="resultadoForm" (ngSubmit)="guardarResultado()" class="formulario" id="form-caso-detalle">
+          <div class="formulario-fila">
+            <ion-select formControlName="agente" label="Agente" labelPlacement="stacked" fill="outline" interface="popover">
+              <ion-select-option *ngFor="let a of agentes" [value]="a.valor">{{ a.nombre }}</ion-select-option>
+            </ion-select>
+            <ion-select formControlName="tipoPrueba" label="Prueba" labelPlacement="stacked" fill="outline" interface="popover">
+              <ion-select-option *ngFor="let t of tiposPrueba" [value]="t.valor">{{ t.nombre }}</ion-select-option>
+            </ion-select>
+          </div>
+          <div class="formulario-fila">
+            <ion-select formControlName="tipoMuestra" label="Muestra" labelPlacement="stacked" fill="outline" interface="popover">
+              <ion-select-option *ngFor="let t of tiposMuestra" [value]="t.valor">{{ t.nombre }}</ion-select-option>
+            </ion-select>
+            <ion-select formControlName="resultado" label="Resultado" labelPlacement="stacked" fill="outline" interface="popover"
+              placeholder="Selecciona" errorText="Obligatorio."
+              [class.ion-touched]="resultadoForm.controls.resultado.touched" [class.ion-invalid]="resultadoForm.controls.resultado.invalid">
+              <ion-select-option *ngFor="let r of resultados" [value]="r.valor">{{ r.nombre }}</ion-select-option>
+            </ion-select>
+          </div>
+          <div class="formulario-fila">
+            <ion-input formControlName="fechaToma" type="date" label="Toma de muestra" labelPlacement="stacked" fill="outline"
+              [max]="hoy" errorText="Obligatoria." [class.ion-touched]="resultadoForm.controls.fechaToma.touched"
+              [class.ion-invalid]="resultadoForm.controls.fechaToma.invalid"></ion-input>
+            <ion-input formControlName="fechaResultado" type="date" label="Fecha del resultado (opcional)" labelPlacement="stacked"
+              fill="outline" [max]="hoy"></ion-input>
+          </div>
+          <p class="formulario-nota texto-error" *ngIf="resultadoForm.hasError('futura')">Las fechas no pueden ser futuras.</p>
+          <p class="formulario-nota texto-error" *ngIf="resultadoForm.hasError('orden')">El resultado no puede ser anterior a la toma.</p>
+          <p class="formulario-nota">Al guardar se recalcula la sugerencia de la OPS. La clasificación no cambia sola.</p>
+        </form>
+
+        <form *ngIf="modo() === 'clasificacion'" [formGroup]="clasificacionForm" (ngSubmit)="guardarClasificacion()" class="formulario" id="form-caso-detalle">
+          <ion-select formControlName="clasificacion" label="Nueva clasificación" labelPlacement="stacked" fill="outline"
+            interface="popover" placeholder="Selecciona" errorText="Obligatoria."
+            [class.ion-touched]="clasificacionForm.controls.clasificacion.touched"
+            [class.ion-invalid]="clasificacionForm.controls.clasificacion.invalid">
+            <ng-container *ngFor="let cl of clasificaciones">
+              <ion-select-option *ngIf="cl.valor !== caso()?.clasificacion" [value]="cl.valor"
+                [disabled]="cl.valor === 'CONFIRMADO' && confirmadoBloqueado()">
+                {{ cl.nombre }}{{ cl.valor === 'CONFIRMADO' && confirmadoBloqueado() ? ' (requiere laboratorio confirmatorio)' : '' }}
+              </ion-select-option>
+            </ng-container>
+          </ion-select>
+          <ion-textarea formControlName="motivo" label="Motivo" labelPlacement="stacked" fill="outline" [autoGrow]="true" rows="3"
+            [counter]="true" [maxlength]="500" errorText="El motivo es obligatorio."
+            placeholder="Ej.: RT-PCR de Oropouche negativa y dengue confirmado"
+            [class.ion-touched]="clasificacionForm.controls.motivo.touched"
+            [class.ion-invalid]="clasificacionForm.controls.motivo.invalid"></ion-textarea>
+          <p class="formulario-nota">
+            Queda registrado en el historial con tu usuario.
+            <ng-container *ngIf="rol() === 'MEDICO'">Quedará pendiente de validación por epidemiología.</ng-container>
+          </p>
+        </form>
+      </div>
+      <ion-footer>
+        <ion-toolbar>
+          <ion-buttons slot="end">
+            <ion-button color="medium" (click)="cerrar()">Cancelar</ion-button>
+            <ion-button fill="solid" color="primary" type="submit" form="form-caso-detalle" [disabled]="guardando()">
+              <ion-spinner *ngIf="guardando()" name="crescent"></ion-spinner>
+              <span *ngIf="!guardando()">Guardar</span>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-footer>
+    </ng-template>
+  </ion-modal>
+</ion-content>

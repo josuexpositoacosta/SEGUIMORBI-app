@@ -35,6 +35,9 @@
           <ion-button *ngIf="p.activo" fill="clear" color="danger" (click)="desactivar()">
             <ion-icon slot="start" name="ban-outline"></ion-icon>Desactivar
           </ion-button>
+          <ion-button *ngIf="!p.activo" fill="solid" color="success" (click)="activar()">
+            <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>Activar
+          </ion-button>
         </div>
       </section>
 
@@ -53,11 +56,32 @@
       </ion-card>
 
       <ion-card>
-        <ion-card-header><ion-card-title>Casos</ion-card-title></ion-card-header>
+        <ion-card-header class="cabecera-tarjeta">
+          <ion-card-title>Casos</ion-card-title>
+          <ion-button *ngIf="p.activo && !tieneCasoAbierto()" size="small" (click)="abrirCaso()">
+            <ion-icon slot="start" name="add"></ion-icon>Abrir caso
+          </ion-button>
+        </ion-card-header>
         <ion-card-content>
-          <app-estado-vacio icono="medkit-outline" titulo="Próximamente"
-            texto="Aquí verás los casos de Oropouche del paciente y podrás abrirle uno nuevo.">
-          </app-estado-vacio>
+          <p class="text-muted" *ngIf="!casos().length">El paciente no tiene casos registrados.</p>
+          <p class="formulario-nota" *ngIf="tieneCasoAbierto()">
+            Tiene un caso abierto: una recaída se registra en ese mismo caso.
+          </p>
+          <div class="lista-registros">
+            <button type="button" *ngFor="let c of casos()" class="registro" (click)="verCaso(c)"
+              [attr.aria-label]="'Abrir caso ' + c.id">
+              <div class="registro-icono" aria-hidden="true"><ion-icon name="medkit-outline"></ion-icon></div>
+              <div class="registro-cuerpo">
+                <div class="registro-titulo">Caso nº {{ c.id }} · {{ c.fechaNotificacion | date: 'dd/MM/yyyy' }}</div>
+                <div class="registro-etiquetas">
+                  <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c.clasificacion) }}</span>
+                  <span class="etiqueta" [ngClass]="c.estado === 'ABIERTO' ? 'exito' : ''">{{ c.estado === 'ABIERTO' ? 'Abierto' : 'Cerrado' }}</span>
+                  <span class="etiqueta peligro" *ngIf="c.alertas?.length">{{ c.alertas.length }} alerta{{ c.alertas.length > 1 ? 's' : '' }}</span>
+                </div>
+              </div>
+              <ion-icon name="chevron-forward" class="registro-acciones" aria-hidden="true"></ion-icon>
+            </button>
+          </div>
         </ion-card-content>
       </ion-card>
     </ng-container>
