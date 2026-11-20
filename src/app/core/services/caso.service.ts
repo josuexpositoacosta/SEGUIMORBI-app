@@ -2,7 +2,10 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Caso, Clasificacion, DatosCaso, EstadoCaso, NuevoResultado, Sugerencia } from '../models/caso';
+import {
+  Caso, Clasificacion, ControlPendiente, DatosCaso, EstadoCaso, NuevaEvaluacion, NuevoDictamen, NuevoPlan, NuevoResultado,
+  NuevoSeguimiento, Sugerencia,
+} from '../models/caso';
 
 export interface FiltrosCasos {
   areaSaludId?: number;
@@ -53,5 +56,39 @@ export class CasoService {
 
   cambiarClasificacion(id: number, clasificacion: Clasificacion, motivo: string): Observable<Caso> {
     return this.http.patch<Caso>(`${this.url}/${id}/clasificacion`, { clasificacion, motivo });
+  }
+
+  // ---------- Atención clínica (registros inmutables; fecha y usuario los pone el backend)
+
+  registrarEvaluacion(id: number, datos: NuevaEvaluacion): Observable<Caso> {
+    return this.http.post<Caso>(`${this.url}/${id}/evaluaciones`, datos);
+  }
+
+  registrarDictamen(id: number, datos: NuevoDictamen): Observable<Caso> {
+    return this.http.post<Caso>(`${this.url}/${id}/dictamenes`, datos);
+  }
+
+  registrarPlan(id: number, datos: NuevoPlan): Observable<Caso> {
+    return this.http.post<Caso>(`${this.url}/${id}/planes`, datos);
+  }
+
+  /** RECAIDA marca el caso como recaída. */
+  registrarSeguimiento(id: number, datos: NuevoSeguimiento): Observable<Caso> {
+    return this.http.post<Caso>(`${this.url}/${id}/seguimientos`, datos);
+  }
+
+  /** Cierra con el código de un desenlace activo del catálogo. */
+  cerrar(id: number, desenlace: string, fechaCierre: string, observaciones: string | null): Observable<Caso> {
+    return this.http.patch<Caso>(`${this.url}/${id}/cierre`, { desenlace, fechaCierre, observaciones });
+  }
+
+  reabrir(id: number, motivo: string): Observable<Caso> {
+    return this.http.patch<Caso>(`${this.url}/${id}/reapertura`, { motivo });
+  }
+
+  /** Controles programados hasta la fecha indicada (incluye los vencidos). */
+  controlesPendientes(hasta?: string): Observable<ControlPendiente[]> {
+    const params = hasta ? new HttpParams().set('hasta', hasta) : undefined;
+    return this.http.get<ControlPendiente[]>(`${this.url}/controles-pendientes`, { params });
   }
 }

@@ -72,6 +72,11 @@ const routes: Routes = [
         data: { ruta: 'casos' },
         loadComponent: () => import('./paginas/casos/caso-detalle.page').then(m => m.CasoDetallePage),
       },
+      {
+        path: 'agenda',
+        data: { ruta: 'agenda' },
+        loadComponent: () => import('./paginas/medico/agenda/agenda.page').then(m => m.AgendaPage),
+      },
       ...rutasEnPreparacion,
       { path: 'sin-permiso', loadComponent: error, data: { tipo: 403 } },
     ],

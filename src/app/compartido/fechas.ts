@@ -29,3 +29,10 @@ export function textoEdad(fechaNacimiento: string | null | undefined): string {
   }
   return e === 1 ? '1 año' : `${e} años`;
 }
+
+/** Suma días a una fecha AAAA-MM-DD (hora local). */
+export function sumarDias(fechaIso: string, dias: number): string {
+  const [a, m, d] = fechaIso.split('-').map(Number);
+  const f = new Date(a, m - 1, d + dias);
+  return `${f.getFullYear()}-${String(f.getMonth() + 1).padStart(2, '0')}-${String(f.getDate()).padStart(2, '0')}`;
+}

@@ -91,7 +91,7 @@
           <ion-card-content>
             <dl class="datos">
               <div><dt>Inicio de síntomas</dt><dd>{{ c.fechaInicioSintomas | date: 'dd/MM/yyyy' }}</dd></div>
-              <div><dt>Notificación</dt><dd>{{ c.fechaNotificacion | date: 'dd/MM/yyyy' }} · {{ diasEvolucion() }} días</dd></div>
+              <div><dt>Notificación</dt><dd>{{ c.fechaNotificacion | date: 'dd/MM/yyyy' }} · {{ diasEvolucion() }} {{ diasEvolucion() === 1 ? 'día' : 'días' }}</dd></div>
             </dl>
             <div class="marcas">
               <span class="etiqueta" [ngClass]="c.fiebre ? 'primaria' : ''"><ion-icon [name]="c.fiebre ? 'checkmark' : 'close'" aria-hidden="true"></ion-icon>Fiebre</span>
@@ -133,12 +133,56 @@
         </ion-card-content>
       </ion-card>
 
-      <!-- Atención clínica (parte 3) -->
-      <ion-card>
-        <ion-card-header><ion-card-title>Atención clínica</ion-card-title></ion-card-header>
+      <!-- Cierre -->
+      <ion-card *ngIf="c.estado === 'CERRADO'" class="tarjeta-cierre">
+        <ion-card-header class="cabecera-con-accion">
+          <ion-card-title>Caso cerrado</ion-card-title>
+          <ion-button *ngIf="rol() === 'MEDICO'" fill="outline" size="small" (click)="registrar('reapertura')">
+            <ion-icon slot="start" name="lock-open-outline"></ion-icon>Reabrir
+          </ion-button>
+        </ion-card-header>
         <ion-card-content>
-          <app-estado-vacio icono="pulse-outline" titulo="Próximamente"
-            texto="Evaluaciones con alertas, dictámenes, planes de atención, seguimientos y cierre del caso."></app-estado-vacio>
+          <dl class="datos">
+            <div><dt>Desenlace</dt><dd>{{ c.desenlace?.nombre ?? '—' }}</dd></div>
+            <div><dt>Fecha de cierre</dt><dd>{{ c.fechaCierre | date: 'dd/MM/yyyy' }}</dd></div>
+            <div *ngIf="c.observacionesCierre"><dt>Observaciones</dt><dd>{{ c.observacionesCierre }}</dd></div>
+          </dl>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Atención clínica -->
+      <ion-card>
+        <ion-card-header class="cabecera-con-accion">
+          <ion-card-title>Atención clínica</ion-card-title>
+          <ion-button *ngIf="puedeEditar()" fill="clear" color="danger" size="small" (click)="registrar('cierre')">
+            <ion-icon slot="start" name="lock-closed-outline"></ion-icon>Cerrar caso
+          </ion-button>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="acciones-clinicas" *ngIf="puedeEditar()">
+            <ion-button fill="outline" size="small" (click)="registrar('evaluacion')"><ion-icon slot="start" name="pulse-outline"></ion-icon>Evaluación</ion-button>
+            <ion-button fill="outline" size="small" (click)="registrar('dictamen')"><ion-icon slot="start" name="document-text-outline"></ion-icon>Dictamen</ion-button>
+            <ion-button fill="outline" size="small" (click)="registrar('plan')"><ion-icon slot="start" name="clipboard-outline"></ion-icon>Plan</ion-button>
+            <ion-button fill="outline" size="small" (click)="registrar('seguimiento')"><ion-icon slot="start" name="trending-up-outline"></ion-icon>Seguimiento</ion-button>
+          </div>
+
+          <p class="text-muted" *ngIf="!lineaTiempo().length">Todavía no hay registros de atención clínica.</p>
+          <ol class="linea-tiempo">
+            <li *ngFor="let e of lineaTiempo()" [ngClass]="e.clase">
+              <div class="lt-icono" aria-hidden="true"><ion-icon [name]="e.icono"></ion-icon></div>
+              <div class="lt-cuerpo">
+                <div class="lt-cabecera">
+                  <strong>{{ e.titulo }}</strong>
+                  <span class="etiqueta" *ngIf="e.etiqueta">{{ e.etiqueta }}</span>
+                </div>
+                <p *ngFor="let l of e.lineas" class="lt-linea">{{ l }}</p>
+                <div class="text-muted lt-meta">{{ e.fecha | date: 'dd/MM/yyyy HH:mm' }} · {{ e.usuario }}</div>
+              </div>
+            </li>
+          </ol>
+          <p class="formulario-nota" *ngIf="lineaTiempo().length">
+            Los registros clínicos no se editan ni se borran: un error se corrige con un registro nuevo.
+          </p>
         </ion-card-content>
       </ion-card>
 

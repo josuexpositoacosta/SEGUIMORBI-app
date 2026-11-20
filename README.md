@@ -72,6 +72,11 @@ Las pantallas aún sin construir muestran «En preparación» con lo que harán.
   motivo. Ficha del caso con alertas, clasificación actual frente a la sugerida, datos clínicos editables,
   resultados de laboratorio, cambio de clasificación con motivo (Confirmado solo con laboratorio confirmatorio)
   e historial. Lista de casos con filtros por estado y clasificación (el epidemiólogo ve todas las áreas).
+- **Atención clínica:** línea de tiempo del caso con evaluaciones (signos vitales con los rangos del backend,
+  signos clínicos y de alarma de dengue), dictámenes, planes de atención y seguimientos, con atajos para el
+  próximo control. Los registros son inmutables. Las **alertas clínicas** las calcula el backend al guardar y se
+  muestran al instante. Cierre con un desenlace del catálogo y reapertura con motivo.
+- **Agenda de controles:** controles vencidos, de hoy y de los próximos 7 o 30 días, con acceso al caso.
 
 Todas las listas tienen buscador (sin tildes), filtros y «tirar para actualizar» en el móvil.
 

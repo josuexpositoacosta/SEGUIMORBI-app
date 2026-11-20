@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Agenda de controles</ion-title>
+  </ion-toolbar>
+  <ion-toolbar class="barra-filtros">
+    <ion-segment [value]="horizonte()" (ionChange)="cambiarHorizonte($any($event).detail.value)">
+      <ion-segment-button [value]="0"><ion-label>Hoy</ion-label></ion-segment-button>
+      <ion-segment-button [value]="7"><ion-label>7 días</ion-label></ion-segment-button>
+      <ion-segment-button [value]="30"><ion-label>30 días</ion-label></ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="cargar($any($event))">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-container">
+    <p class="resumen-lista">
+      Controles programados en los planes y seguimientos de los casos abiertos. Los vencidos aparecen siempre.
+    </p>
+
+    <div class="cargando" *ngIf="cargando()"><ion-spinner name="crescent"></ion-spinner></div>
+
+    <app-estado-vacio *ngIf="!cargando() && errorCarga()" icono="cloud-offline-outline"
+      titulo="No se pudo cargar la agenda" [texto]="errorCarga()">
+      <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+    </app-estado-vacio>
+
+    <app-estado-vacio *ngIf="!cargando() && !errorCarga() && !grupos().length" icono="calendar-outline"
+      titulo="Sin controles pendientes" texto="No hay controles programados en este periodo."></app-estado-vacio>
+
+    <section *ngFor="let g of grupos()" class="grupo-agenda">
+      <h2 class="titulo-grupo">
+        <span class="etiqueta" [ngClass]="g.clase">{{ g.titulo }}</span>
+        <span class="text-muted">{{ g.controles.length }}</span>
+      </h2>
+      <div class="lista-registros">
+        <button type="button" *ngFor="let c of g.controles" class="registro" (click)="abrir(c)"
+          [attr.aria-label]="'Abrir caso ' + c.casoId + ' de ' + nombrePaciente(c)">
+          <div class="registro-icono fecha-control" [class.vencido]="c.vencido" aria-hidden="true">
+            <span class="dia">{{ c.fecha | date: 'dd' }}</span>
+            <span class="mes">{{ c.fecha | date: 'MMM' }}</span>
+          </div>
+          <div class="registro-cuerpo">
+            <div class="registro-titulo">{{ nombrePaciente(c) }}</div>
+            <div class="registro-detalle">
+              Caso nº {{ c.casoId }}<ng-container *ngIf="telefono(c)"> · {{ telefono(c) }}</ng-container>
+            </div>
+            <div class="registro-etiquetas">
+              <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c) }}</span>
+              <span class="etiqueta peligro" *ngIf="c.vencido">Vencido hace {{ diasRetraso(c) }} día{{ diasRetraso(c) === 1 ? '' : 's' }}</span>
+            </div>
+          </div>
+          <ion-icon name="chevron-forward" class="registro-acciones" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+    </section>
+  </div>
+</ion-content>

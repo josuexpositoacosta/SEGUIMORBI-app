@@ -158,3 +158,75 @@ a.enlace-paciente[href]:hover {
 .historial-meta {
   font-size: 0.78rem;
 }
+
+.acciones-clinicas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.linea-tiempo {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.linea-tiempo li {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.linea-tiempo li:last-child {
+  border-bottom: none;
+}
+
+.lt-icono {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+  color: var(--ion-color-primary);
+  font-size: 18px;
+}
+
+.linea-tiempo li.dictamen .lt-icono { background: rgba(var(--ion-color-tertiary-rgb), 0.12); color: var(--ion-color-tertiary); }
+.linea-tiempo li.plan .lt-icono { background: rgba(var(--ion-color-secondary-rgb), 0.15); color: var(--ion-color-secondary-shade); }
+.linea-tiempo li.evento .lt-icono { background: var(--app-surface-muted); color: var(--app-text-muted); }
+
+.lt-cuerpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.lt-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: var(--ion-text-color);
+}
+
+.lt-linea {
+  margin: 4px 0 0;
+  color: var(--ion-text-color);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.lt-meta {
+  margin-top: 4px;
+  font-size: 0.78rem;
+}
+
+.tarjeta-cierre {
+  border-color: var(--app-border);
+  background: var(--app-surface-muted);
+}
