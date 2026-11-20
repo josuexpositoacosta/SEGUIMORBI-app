@@ -66,7 +66,7 @@ export class AuthService {
   logout(motivo: MotivoCierre = 'manual'): void {
     this.cerrarSesionLocal();
     const queryParams = motivo === 'manual' ? {} : { motivo };
-    this.router.navigate(['/folder/iniciar-sesion'], { queryParams });
+    this.router.navigate(['/login'], { queryParams });
   }
 
   /** Borra token y perfil sin navegar (para guards que devuelven su propia redirección). */

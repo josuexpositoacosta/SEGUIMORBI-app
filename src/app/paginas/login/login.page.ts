@@ -1,15 +1,19 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { mensajeDeError } from 'src/app/core/http/errores';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, IonicModule],
+  templateUrl: './login.page.html',
+  styleUrls: ['./login.page.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginPage implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -70,8 +74,8 @@ export class LoginComponent implements OnInit {
   /** Vuelve a la página que pidió el usuario antes del login, si es una ruta interna. */
   private destino(): string {
     const volver = this.route.snapshot.queryParamMap.get('volver');
-    return volver && volver.startsWith('/') && !volver.startsWith('//') && !volver.includes('iniciar-sesion')
+    return volver && volver.startsWith('/') && !volver.startsWith('//') && !volver.startsWith('/login')
       ? volver
-      : '/folder/dashboard';
+      : '/inicio';
   }
 }
