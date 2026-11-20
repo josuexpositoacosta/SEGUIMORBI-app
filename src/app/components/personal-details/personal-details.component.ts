@@ -1,84 +1,107 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { LoginService } from 'src/app/services/auth/login.service';
-import { User } from 'src/app/services/auth/user';
-import { UserService } from 'src/app/services/user/user.service';
-import { environment } from 'src/environments/environment';
+import { ToastController } from '@ionic/angular';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { mensajeDeError } from 'src/app/core/http/errores';
+import { NOMBRE_ROL } from 'src/app/core/models/usuario';
+import { AreaSaludService } from 'src/app/core/services/area-salud.service';
+import { UsuarioService } from 'src/app/core/services/usuario.service';
 
 @Component({
   selector: 'app-personal-details',
   templateUrl: './personal-details.component.html',
   styleUrls: ['./personal-details.component.css']
 })
-export class PersonalDetailsComponent  {
-  errorMessage = "";
-  user?:User;
-  userLoginOn:boolean=false;
-  editMode:boolean=false;
+export class PersonalDetailsComponent implements OnInit {
+  private readonly auth = inject(AuthService);
+  private readonly usuarios = inject(UsuarioService);
+  private readonly areas = inject(AreaSaludService);
+  private readonly toast = inject(ToastController);
+  private readonly formBuilder = inject(FormBuilder);
 
-  registerForm=this.formBuilder.group({
-    id:[''],
-    lastname:['',Validators.required],
-    firstname:['', Validators.required],
-    country:['',Validators.required]
-  })
+  readonly usuario = this.auth.usuario;
+  readonly rol = computed(() => {
+    const u = this.usuario();
+    return u ? NOMBRE_ROL[u.role] : '';
+  });
+  readonly iniciales = computed(() => {
+    const u = this.usuario();
+    return ((u?.firstname?.charAt(0) ?? '') + (u?.lastname?.charAt(0) ?? '')).toUpperCase() || '?';
+  });
+  readonly area = signal<string | null>(null);
 
-  constructor(private userService:UserService, private formBuilder:FormBuilder, private loginService:LoginService  ){
-    this.userService.getUser(environment.userId).subscribe({
-      next: (userData) => {
-        this.user=userData;
-        this.registerForm.controls.id.setValue(userData.id.toString());
-        this.registerForm.controls.firstname.setValue( userData.firstname);
-        this.registerForm.controls.lastname.setValue( userData.lastname);
-        this.registerForm.controls.country.setValue( userData.country);
-      },
-      error: (errorData) => {
-        this.errorMessage = errorData?.message ?? 'No se pudieron cargar tus datos.';
-      },
-    })
+  editMode = false;
+  guardando = false;
+  errorMessage = '';
 
-    this.loginService.userLoginOn.subscribe({
-      next:(userLoginOn) => {
-        this.userLoginOn=userLoginOn;
-      }
-    })
-    
+  form = this.formBuilder.nonNullable.group({
+    firstname: ['', Validators.required],
+    lastname: ['', Validators.required],
+    country: [''],
+  });
+
+  get firstname() {
+    return this.form.controls.firstname;
   }
 
-  get iniciales(): string {
-    const n = this.user?.firstname?.charAt(0) ?? '';
-    const a = this.user?.lastname?.charAt(0) ?? '';
-    return (n + a).toUpperCase() || '?';
+  get lastname() {
+    return this.form.controls.lastname;
   }
 
-  get firstname()
-  {
-    return this.registerForm.controls.firstname;
-  }
-
-  get lastname()
-  {
-    return this.registerForm.controls.lastname;
-  }
-
-  get country()
-  {
-    return this.registerForm.controls.country;
-  }
-
-  savePersonalDetailsData()
-  {
-    if (this.registerForm.valid)
-    {
-      this.userService.updateUser(this.registerForm.value as unknown as User).subscribe({
-        next:() => {
-          this.editMode=false;
-          this.user = { ...this.user, ...this.registerForm.value } as unknown as User;
-        },
-        error:(errorData)=> console.error(errorData)
-      })
+  ngOnInit(): void {
+    const areaId = this.usuario()?.areaSaludId;
+    if (areaId) {
+      this.areas.obtener(areaId).subscribe({
+        next: area => this.area.set(`${area.nombre} (${area.codigo})`),
+        error: () => this.area.set(`Área ${areaId}`),
+      });
     }
   }
 
+  editar(): void {
+    const u = this.usuario();
+    if (!u) {
+      return;
+    }
+    this.form.reset({ firstname: u.firstname ?? '', lastname: u.lastname ?? '', country: u.country ?? '' });
+    this.errorMessage = '';
+    this.editMode = true;
+  }
+
+  cancelar(): void {
+    this.editMode = false;
+    this.errorMessage = '';
+  }
+
+  guardar(): void {
+    const u = this.usuario();
+    if (!u || this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const datos = {
+      id: u.id,
+      firstname: this.firstname.value.trim(),
+      lastname: this.lastname.value.trim(),
+      country: this.form.controls.country.value.trim(),
+    };
+
+    this.guardando = true;
+    this.usuarios.actualizarDatosPersonales(datos).subscribe({
+      next: async () => {
+        this.auth.actualizarPerfilLocal(datos);
+        this.guardando = false;
+        this.editMode = false;
+        const aviso = await this.toast.create({
+          message: 'Datos guardados', duration: 2000, color: 'success', icon: 'checkmark-circle-outline',
+        });
+        await aviso.present();
+      },
+      error: (error: unknown) => {
+        this.errorMessage = mensajeDeError(error);
+        this.guardando = false;
+      },
+    });
+  }
 }

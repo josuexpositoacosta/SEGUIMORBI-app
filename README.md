@@ -4,7 +4,7 @@ Frontend del **Sistema de gestión epidemiológica y apoyo a la evaluación clí
 Web y app móvil (APK) construidas con Ionic, Angular y Capacitor.
 
 El backend (Spring Boot, arquitectura hexagonal, JWT) está en
-[josuexpositoacosta/oropouche](https://github.com/josuexpositoacosta/oropouche).
+[josuexpositoacosta/SEGUIMORBI](https://github.com/josuexpositoacosta/SEGUIMORBI).
 
 > Herramienta de apoyo a la decisión clínica. No sustituye el diagnóstico médico ni el criterio del
 > profesional sanitario.
@@ -28,12 +28,20 @@ npm run lint    # revisión de código
 ```
 
 La URL del backend se configura en `src/environments/environment.ts` (desarrollo) y
-`src/environments/environment.prod.ts` (producción). El backend solo admite CORS desde
-`http://localhost:4200`.
+`src/environments/environment.prod.ts` (producción). El backend admite por defecto CORS desde
+`http://localhost:4200` (variable `CORS_ALLOWED_ORIGINS` del backend).
+
+## Autenticación
+
+- Se entra con el **nombre de usuario o el email** y la contraseña que da el administrador.
+- El token JWT se guarda en `sessionStorage` (se borra al cerrar el navegador) y se añade a cada
+  petición al backend mediante un interceptor global (`src/app/core/auth/`).
+- Tras el login se carga el perfil con `GET /api/v1/user/me` (rol y área de salud).
+- Si el token caduca o el backend responde `401`, la sesión se cierra y se vuelve al login con un aviso.
 
 ## Estado
 
-En desarrollo. Hoy incluye inicio de sesión y datos personales. El plan, por fases, es:
+En desarrollo. Hoy incluye inicio de sesión (usuario o email), perfil y datos personales. El plan, por fases, es:
 
 1. Puesta a punto y limpieza de la plantilla
 2. Autenticación completa (token en todas las peticiones, perfil con `/user/me`, cierre de sesión)

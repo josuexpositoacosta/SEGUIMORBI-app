@@ -1,16 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { LoginService } from 'src/app/services/auth/login.service';
-import { LoginRequest } from 'src/app/services/auth/loginRequest';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { mensajeDeError } from 'src/app/core/http/errores';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly formBuilder = inject(FormBuilder);
+
   loginError = '';
+  aviso = '';
   isLoading = false;
 
   // Se acepta nombre de usuario o correo: no se valida formato de email.
@@ -18,12 +24,6 @@ export class LoginComponent {
     username: ['', Validators.required],
     password: ['', Validators.required],
   });
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private loginService: LoginService
-  ) { }
 
   get username() {
     return this.loginForm.controls.username;
@@ -33,6 +33,14 @@ export class LoginComponent {
     return this.loginForm.controls.password;
   }
 
+  ngOnInit(): void {
+    const avisos: Record<string, string> = {
+      expirada: 'Tu sesión ha caducado. Vuelve a iniciar sesión.',
+      'sin-conexion': 'No se pudo contactar con el servidor. Comprueba tu conexión e inicia sesión de nuevo.',
+    };
+    this.aviso = avisos[this.route.snapshot.queryParamMap.get('motivo') ?? ''] ?? '';
+  }
+
   login(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -40,23 +48,30 @@ export class LoginComponent {
     }
 
     this.loginError = '';
+    this.aviso = '';
     this.isLoading = true;
 
-    const credenciales: LoginRequest = {
+    this.auth.login({
       username: this.username.value.trim(),
       password: this.password.value,
-    };
-
-    this.loginService.login(credenciales).subscribe({
+    }).subscribe({
       next: () => {
         this.isLoading = false;
         this.loginForm.reset();
-        this.router.navigateByUrl('/folder/dashboard');
+        this.router.navigateByUrl(this.destino(), { replaceUrl: true });
       },
-      error: (error: Error) => {
-        this.loginError = error.message;
+      error: (error: unknown) => {
+        this.loginError = mensajeDeError(error);
         this.isLoading = false;
       },
     });
+  }
+
+  /** Vuelve a la página que pidió el usuario antes del login, si es una ruta interna. */
+  private destino(): string {
+    const volver = this.route.snapshot.queryParamMap.get('volver');
+    return volver && volver.startsWith('/') && !volver.startsWith('//') && !volver.includes('iniciar-sesion')
+      ? volver
+      : '/folder/dashboard';
   }
 }

@@ -23,6 +23,18 @@
   color: var(--ion-text-color);
 }
 
+.rol {
+  margin-top: 6px;
+  font-weight: 600;
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+.nota {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
 .data-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -46,6 +58,7 @@
 
 .data-grid dd {
   margin: 4px 0 0;
+  overflow-wrap: anywhere;
   font-size: 0.95rem;
   color: var(--ion-text-color);
 }
