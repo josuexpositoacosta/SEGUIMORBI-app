@@ -1,57 +1,35 @@
-//folder.module.ts
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { IonicModule } from '@ionic/angular';
 
 import { FolderPageRoutingModule } from './folder-routing.module';
-
 import { FolderPage } from './folder.page';
-import { HeaderComponent } from '../shared/header/header.component';
-import { FooterComponent } from '../shared/footer/footer.component';
-
-import { NavComponent } from '../shared/nav/nav.component';
-import { PersonalDetailsComponent } from '../components/personal-details/personal-details.component';
-
-
-import {ReactiveFormsModule} from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { ErrorInterceptorService, JwtInterceptorService } from '../services/service.index';
 import { DashboardComponent } from './dashboard/dashboard.component';
-
 import { LoginComponent } from '../auth/login/login.component';
+import { PersonalDetailsComponent } from '../components/personal-details/personal-details.component';
+import { ErrorInterceptorService, JwtInterceptorService } from '../services/service.index';
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,
-    FolderPageRoutingModule,
-
-     
     ReactiveFormsModule,
+    IonicModule,
     HttpClientModule,
+    FolderPageRoutingModule,
   ],
   declarations: [
     FolderPage,
-
-    LoginComponent, 
-    
-    HeaderComponent,
-    FooterComponent,
-
+    LoginComponent,
     DashboardComponent,
-    
-    NavComponent,
-    PersonalDetailsComponent    
+    PersonalDetailsComponent,
   ],
-  exports:[
- 
-     
-  ],
+  // Provisional: los interceptores pasan a ser globales en la fase de autenticación.
   providers: [
-    {provide:HTTP_INTERCEPTORS,useClass:JwtInterceptorService,multi:true},
-    {provide:HTTP_INTERCEPTORS,useClass:ErrorInterceptorService,multi:true}
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorService, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptorService, multi: true },
   ],
 })
 export class FolderPageModule {}
