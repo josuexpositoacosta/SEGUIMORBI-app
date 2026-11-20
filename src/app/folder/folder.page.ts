@@ -18,7 +18,8 @@ export class FolderPage implements OnInit {
   };
 
   ngOnInit(): void {
-    this.folder = this.activatedRoute.snapshot.paramMap.get('id') ?? '';
+    const snapshot = this.activatedRoute.snapshot;
+    this.folder = snapshot.paramMap.get('id') ?? snapshot.data['vista'] ?? '';
   }
 
   get titulo(): string {

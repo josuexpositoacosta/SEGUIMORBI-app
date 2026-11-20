@@ -1,71 +1,82 @@
-<div *ngIf="errorMessage" class="alert">
-  <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
-  <span>{{ errorMessage }}</span>
-</div>
-
-<ng-container *ngIf="!editMode">
-  <div class="profile">
-    <div class="avatar" aria-hidden="true">{{ iniciales }}</div>
-    <div>
-      <div class="profile-name">{{ user?.firstname }} {{ user?.lastname }}</div>
-      <div class="text-muted">{{ user?.username }}</div>
-    </div>
+<ng-container *ngIf="usuario() as u">
+  <div *ngIf="errorMessage" class="alert" role="alert">
+    <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+    <span>{{ errorMessage }}</span>
   </div>
 
-  <dl class="data-grid">
-    <div>
-      <dt>Nombre</dt>
-      <dd>{{ user?.firstname || '—' }}</dd>
+  <ng-container *ngIf="!editMode">
+    <div class="profile">
+      <div class="avatar" aria-hidden="true">{{ iniciales() }}</div>
+      <div>
+        <div class="profile-name">{{ u.firstname }} {{ u.lastname }}</div>
+        <ion-badge color="primary" class="rol">{{ rol() }}</ion-badge>
+      </div>
     </div>
-    <div>
-      <dt>Apellidos</dt>
-      <dd>{{ user?.lastname || '—' }}</dd>
-    </div>
-    <div>
-      <dt>País</dt>
-      <dd>{{ user?.country || '—' }}</dd>
-    </div>
-  </dl>
 
-  <ion-button *ngIf="userLoginOn" fill="outline" (click)="editMode = true">
-    <ion-icon slot="start" name="create-outline"></ion-icon>
-    Editar datos
-  </ion-button>
+    <dl class="data-grid">
+      <div>
+        <dt>Usuario</dt>
+        <dd>{{ u.username }}</dd>
+      </div>
+      <div>
+        <dt>Correo</dt>
+        <dd>{{ u.email || 'Sin correo asignado' }}</dd>
+      </div>
+      <div>
+        <dt>País</dt>
+        <dd>{{ u.country || '—' }}</dd>
+      </div>
+      <div *ngIf="u.areaSaludId">
+        <dt>Área de salud</dt>
+        <dd>{{ area() ?? 'Cargando…' }}</dd>
+      </div>
+    </dl>
+
+    <ion-button fill="outline" (click)="editar()">
+      <ion-icon slot="start" name="create-outline"></ion-icon>
+      Editar datos
+    </ion-button>
+  </ng-container>
+
+  <form *ngIf="editMode" [formGroup]="form" (ngSubmit)="guardar()" class="form">
+    <ion-input
+      formControlName="firstname"
+      label="Nombre"
+      labelPlacement="stacked"
+      fill="outline"
+      autocomplete="given-name"
+      errorText="El nombre es obligatorio."
+      [class.ion-touched]="firstname.touched"
+      [class.ion-invalid]="firstname.invalid">
+    </ion-input>
+
+    <ion-input
+      formControlName="lastname"
+      label="Apellidos"
+      labelPlacement="stacked"
+      fill="outline"
+      autocomplete="family-name"
+      errorText="Los apellidos son obligatorios."
+      [class.ion-touched]="lastname.touched"
+      [class.ion-invalid]="lastname.invalid">
+    </ion-input>
+
+    <ion-input
+      formControlName="country"
+      label="País"
+      labelPlacement="stacked"
+      fill="outline"
+      autocomplete="country-name">
+    </ion-input>
+
+    <p class="nota text-muted">El usuario, el correo, el rol y el área los gestiona el administrador.</p>
+
+    <div class="actions">
+      <ion-button type="submit" [disabled]="guardando">
+        <ion-spinner *ngIf="guardando" name="crescent"></ion-spinner>
+        <span *ngIf="!guardando">Guardar</span>
+      </ion-button>
+      <ion-button type="button" fill="clear" color="medium" (click)="cancelar()">Cancelar</ion-button>
+    </div>
+  </form>
 </ng-container>
-
-<form *ngIf="userLoginOn && editMode" [formGroup]="registerForm" (ngSubmit)="savePersonalDetailsData()" class="form">
-  <ion-input
-    formControlName="firstname"
-    label="Nombre"
-    labelPlacement="stacked"
-    fill="outline"
-    errorText="El nombre es obligatorio."
-    [class.ion-touched]="firstname.touched"
-    [class.ion-invalid]="firstname.invalid">
-  </ion-input>
-
-  <ion-input
-    formControlName="lastname"
-    label="Apellidos"
-    labelPlacement="stacked"
-    fill="outline"
-    errorText="Los apellidos son obligatorios."
-    [class.ion-touched]="lastname.touched"
-    [class.ion-invalid]="lastname.invalid">
-  </ion-input>
-
-  <ion-input
-    formControlName="country"
-    label="País"
-    labelPlacement="stacked"
-    fill="outline"
-    errorText="El país es obligatorio."
-    [class.ion-touched]="country.touched"
-    [class.ion-invalid]="country.invalid">
-  </ion-input>
-
-  <div class="actions">
-    <ion-button type="submit" [disabled]="registerForm.invalid">Guardar</ion-button>
-    <ion-button type="button" fill="clear" color="medium" (click)="editMode = false">Cancelar</ion-button>
-  </div>
-</form>
