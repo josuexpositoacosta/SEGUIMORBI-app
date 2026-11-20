@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators} from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/services/auth/login.service';
 import { LoginRequest } from 'src/app/services/auth/loginRequest';
-
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -12,52 +10,59 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  loginError:string="";
-  loginForm=this.formBuilder.group({
-    username:['',[Validators.required,Validators.email]],
-    password: ['',Validators.required],
-  })
+  loginError: string = "";
+  hidePassword: boolean = true;
+  isLoading: boolean = false;
+
+  loginForm = this.formBuilder.group({
+    username: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required],
+  });
+
   constructor(
-    private formBuilder:FormBuilder
-    , private router:Router
-    , private loginService: LoginService
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private loginService: LoginService
   ) { }
 
   ngOnInit(): void {
   }
 
-  get email(){
+  get email() {
     return this.loginForm.controls.username;
   }
 
-  get password()
-  {
+  get password() {
     return this.loginForm.controls.password;
   }
 
-  login(){
-    if(this.loginForm.valid){
-      this.loginError="";
+  togglePasswordVisibility(): void {
+    this.hidePassword = !this.hidePassword;
+  }
+
+  login() {
+    if (this.loginForm.valid) {
+      this.loginError = "";
+      this.isLoading = true;
+
       this.loginService.login(this.loginForm.value as LoginRequest).subscribe({
         next: (userData) => {
           console.log(userData);
         },
         error: (errorData) => {
           console.error(errorData);
-          this.loginError=errorData;
+          this.loginError = errorData;
+          this.isLoading = false;
         },
         complete: () => {
           console.info("Login completo");
-          this.router.navigateByUrl('/inicio');
+          this.isLoading = false;
+          this.router.navigateByUrl('/folder/dashboard');
           this.loginForm.reset();
         }
-      })
-
-    }
-    else{
+      });
+    } else {
       this.loginForm.markAllAsTouched();
-      alert("Error al ingresar los datos.");
     }
   }
-
 }
