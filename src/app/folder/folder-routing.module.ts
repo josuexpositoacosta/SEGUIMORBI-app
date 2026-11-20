@@ -5,19 +5,21 @@ import { Routes, RouterModule } from '@angular/router';
 import { FolderPage } from './folder.page';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from '../auth/login/login.component';
+import { LoginGuardService } from '../services/guards/login-guard.guard';
 
 const routes: Routes = [
   {
     path: '',
     component: FolderPage,
-    //canActivate: [LoginGuardService],
+    // canActivate: [LoginGuardService],
     children: [
       {
         path: 'dashboard',
-        component: DashboardComponent
+        component: DashboardComponent,
+       canActivate: [LoginGuardService]
       },
-
       {path:'iniciar-sesion',component:LoginComponent},
+
   
 
     ]
