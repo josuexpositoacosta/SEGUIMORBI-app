@@ -1,0 +1,203 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Usuarios</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="solid" color="primary" (click)="abrir('crear')" aria-label="Nuevo usuario">
+        <ion-icon slot="start" name="person-add-outline"></ion-icon>
+        <span class="boton-texto">Nuevo usuario</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar class="barra-filtros">
+    <ion-searchbar
+      placeholder="Buscar por nombre, usuario o correo"
+      [debounce]="150"
+      (ionInput)="busqueda.set($any($event).detail.value ?? '')">
+    </ion-searchbar>
+    <ion-segment [value]="filtroRol()" (ionChange)="filtroRol.set($any($event).detail.value)" [scrollable]="true">
+      <ion-segment-button value="TODOS"><ion-label>Todos</ion-label></ion-segment-button>
+      <ion-segment-button *ngFor="let r of roles" [value]="r"><ion-label>{{ nombreRol[r] }}</ion-label></ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="cargar($any($event))">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-container">
+    <div class="cargando" *ngIf="cargando()"><ion-spinner name="crescent"></ion-spinner></div>
+
+    <app-estado-vacio *ngIf="!cargando() && errorCarga()" icono="cloud-offline-outline"
+      titulo="No se pudieron cargar los usuarios" [texto]="errorCarga()">
+      <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+    </app-estado-vacio>
+
+    <ng-container *ngIf="!cargando() && !errorCarga()">
+      <p class="resumen-lista" *ngIf="usuarios().length">
+        {{ filtrados().length }} de {{ usuarios().length }} usuarios
+      </p>
+
+      <app-estado-vacio *ngIf="!filtrados().length" icono="search-outline"
+        titulo="Sin resultados" texto="Ningún usuario coincide con la búsqueda o el filtro.">
+      </app-estado-vacio>
+
+      <div class="lista-registros">
+        <button type="button" *ngFor="let u of filtrados()" class="registro" [class.inactivo]="!u.activo"
+          (click)="abrirAcciones(u)" [attr.aria-label]="'Acciones para ' + u.firstname + ' ' + u.lastname">
+          <div class="registro-avatar" aria-hidden="true">{{ iniciales(u) }}</div>
+          <div class="registro-cuerpo">
+            <div class="registro-titulo">{{ u.firstname }} {{ u.lastname }}</div>
+            <div class="registro-detalle">{{ u.username }}<ng-container *ngIf="u.email"> · {{ u.email }}</ng-container></div>
+            <div class="registro-etiquetas">
+              <span class="etiqueta" [ngClass]="claseRol(u.role)">{{ nombreRol[u.role] }}</span>
+              <span class="etiqueta" *ngIf="u.areaSaludId">
+                <ion-icon name="business-outline" aria-hidden="true"></ion-icon>{{ nombreArea(u.areaSaludId) }}
+              </span>
+              <span class="etiqueta" [ngClass]="u.activo ? 'exito' : 'peligro'">{{ u.activo ? 'Activo' : 'Inactivo' }}</span>
+              <span class="etiqueta" *ngIf="esYo(u)">Tú</span>
+            </div>
+          </div>
+          <ion-icon name="ellipsis-vertical" class="registro-acciones" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+    </ng-container>
+  </div>
+
+  <ion-modal class="modal-formulario" [isOpen]="modo() !== null" (didDismiss)="cerrar()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>
+            <ng-container [ngSwitch]="modo()">
+              <ng-container *ngSwitchCase="'crear'">Nuevo usuario</ng-container>
+              <ng-container *ngSwitchCase="'acceso'">Rol y área</ng-container>
+              <ng-container *ngSwitchCase="'email'">Correo electrónico</ng-container>
+              <ng-container *ngSwitchCase="'password'">Restablecer contraseña</ng-container>
+            </ng-container>
+          </ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrar()" aria-label="Cerrar"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <div class="modal-cuerpo">
+        <p class="formulario-nota" *ngIf="seleccionado() as s" style="margin: 0 0 16px">
+          {{ s.firstname }} {{ s.lastname }} · {{ s.username }}
+        </p>
+
+        <div class="formulario-error" *ngIf="errorFormulario()" role="alert" style="margin-bottom: 16px">
+          <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>{{ errorFormulario() }}
+        </div>
+
+        <!-- Nuevo usuario -->
+        <form *ngIf="modo() === 'crear'" [formGroup]="crearForm" (ngSubmit)="guardarNuevo()" class="formulario" id="form-activo">
+          <div class="formulario-fila">
+            <ion-input formControlName="firstname" label="Nombre" labelPlacement="stacked" fill="outline"
+              errorText="Obligatorio." [class.ion-touched]="crearForm.controls.firstname.touched"
+              [class.ion-invalid]="crearForm.controls.firstname.invalid"></ion-input>
+            <ion-input formControlName="lastname" label="Apellidos" labelPlacement="stacked" fill="outline"
+              errorText="Obligatorio." [class.ion-touched]="crearForm.controls.lastname.touched"
+              [class.ion-invalid]="crearForm.controls.lastname.invalid"></ion-input>
+          </div>
+          <ion-input formControlName="username" label="Nombre de usuario" labelPlacement="stacked" fill="outline"
+            autocomplete="off" helperText="Entre 3 y 50 caracteres: letras, números, punto, guion o guion bajo."
+            errorText="Entre 3 y 50 caracteres: letras, números, punto, guion o guion bajo."
+            [class.ion-touched]="crearForm.controls.username.touched"
+            [class.ion-invalid]="crearForm.controls.username.invalid"></ion-input>
+          <div class="formulario-fila">
+            <ion-input formControlName="email" type="email" label="Correo (opcional)" labelPlacement="stacked" fill="outline"
+              helperText="Permite iniciar sesión con él." errorText="Correo no válido."
+              [class.ion-touched]="crearForm.controls.email.touched"
+              [class.ion-invalid]="crearForm.controls.email.invalid"></ion-input>
+            <ion-input formControlName="country" label="País (opcional)" labelPlacement="stacked" fill="outline"></ion-input>
+          </div>
+          <div class="formulario-fila">
+            <ion-select formControlName="role" label="Rol" labelPlacement="stacked" fill="outline" interface="popover">
+              <ion-select-option *ngFor="let r of roles" [value]="r">{{ nombreRol[r] }}</ion-select-option>
+            </ion-select>
+            <ion-select formControlName="areaSaludId" label="Área de salud" labelPlacement="stacked" fill="outline"
+              interface="popover" placeholder="Selecciona un área">
+              <ion-select-option *ngIf="crearForm.controls.role.value !== 'MEDICO'" [value]="null">Sin área</ion-select-option>
+              <ion-select-option *ngFor="let a of areasActivas()" [value]="a.id">{{ a.nombre }} ({{ a.codigo }})</ion-select-option>
+            </ion-select>
+          </div>
+          <p class="formulario-nota" [class.texto-error]="crearForm.hasError('areaObligatoria') && crearForm.touched">
+            El médico necesita un área de salud activa: solo verá los pacientes y casos de esa área.
+          </p>
+          <div class="formulario-fila">
+            <ion-input formControlName="password" type="password" label="Contraseña" labelPlacement="stacked" fill="outline"
+              autocomplete="new-password" [errorText]="'Mínimo ' + minPassword + ' caracteres.'"
+              [class.ion-touched]="crearForm.controls.password.touched"
+              [class.ion-invalid]="crearForm.controls.password.invalid">
+              <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+            </ion-input>
+            <ion-input formControlName="confirmar" type="password" label="Repite la contraseña" labelPlacement="stacked"
+              fill="outline" autocomplete="new-password" errorText="Las contraseñas no coinciden."
+              [class.ion-touched]="crearForm.controls.confirmar.touched"
+              [class.ion-invalid]="crearForm.controls.confirmar.invalid || crearForm.hasError('distintas')"></ion-input>
+          </div>
+        </form>
+
+        <!-- Rol, área y estado -->
+        <form *ngIf="modo() === 'acceso'" [formGroup]="accesoForm" (ngSubmit)="guardarAcceso()" class="formulario" id="form-activo">
+          <ion-select formControlName="role" label="Rol" labelPlacement="stacked" fill="outline" interface="popover">
+            <ion-select-option *ngFor="let r of roles" [value]="r">{{ nombreRol[r] }}</ion-select-option>
+          </ion-select>
+          <ion-select formControlName="areaSaludId" label="Área de salud" labelPlacement="stacked" fill="outline"
+            interface="popover" placeholder="Selecciona un área">
+            <ion-select-option *ngIf="accesoForm.controls.role.value !== 'MEDICO'" [value]="null">Sin área</ion-select-option>
+            <ion-select-option *ngFor="let a of areasActivas()" [value]="a.id">{{ a.nombre }} ({{ a.codigo }})</ion-select-option>
+          </ion-select>
+          <p class="formulario-nota" [class.texto-error]="accesoForm.hasError('areaObligatoria')">
+            El médico necesita un área de salud activa.
+          </p>
+          <ion-toggle *ngIf="!esYo(seleccionado()!)" formControlName="activo" labelPlacement="start" justify="space-between">
+            Cuenta activa
+          </ion-toggle>
+        </form>
+
+        <!-- Correo -->
+        <form *ngIf="modo() === 'email'" [formGroup]="emailForm" (ngSubmit)="guardarEmail()" class="formulario" id="form-activo">
+          <ion-input formControlName="email" type="email" label="Correo electrónico" labelPlacement="stacked" fill="outline"
+            placeholder="nombre@correo.com" errorText="Correo no válido."
+            [class.ion-touched]="emailForm.controls.email.touched"
+            [class.ion-invalid]="emailForm.controls.email.invalid"></ion-input>
+          <p class="formulario-nota">Déjalo vacío para quitar el correo. Debe ser único: no puede usarlo otro usuario.</p>
+        </form>
+
+        <!-- Contraseña -->
+        <form *ngIf="modo() === 'password'" [formGroup]="passwordForm" (ngSubmit)="guardarPassword()" class="formulario" id="form-activo">
+          <ion-input formControlName="password" type="password" label="Nueva contraseña" labelPlacement="stacked"
+            fill="outline" autocomplete="new-password" [errorText]="'Mínimo ' + minPassword + ' caracteres.'"
+            [class.ion-touched]="passwordForm.controls.password.touched"
+            [class.ion-invalid]="passwordForm.controls.password.invalid">
+            <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+          </ion-input>
+          <ion-input formControlName="confirmar" type="password" label="Repite la contraseña" labelPlacement="stacked"
+            fill="outline" autocomplete="new-password" errorText="Las contraseñas no coinciden."
+            [class.ion-touched]="passwordForm.controls.confirmar.touched"
+            [class.ion-invalid]="passwordForm.controls.confirmar.invalid || passwordForm.hasError('distintas')"></ion-input>
+          <p class="formulario-nota">Comunícasela al usuario por un canal seguro.</p>
+        </form>
+      </div>
+
+      <ion-footer>
+        <ion-toolbar>
+          <ion-buttons slot="end">
+            <ion-button color="medium" (click)="cerrar()">Cancelar</ion-button>
+            <ion-button fill="solid" color="primary" type="submit" form="form-activo" [disabled]="guardando()">
+              <ion-spinner *ngIf="guardando()" name="crescent"></ion-spinner>
+              <span *ngIf="!guardando()">Guardar</span>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-footer>
+    </ng-template>
+  </ion-modal>
+</ion-content>

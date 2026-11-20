@@ -54,9 +54,18 @@ menú lateral, los accesos rápidos de Inicio y el control de acceso, así que u
 Si alguien abre a mano una pantalla de otro rol ve `/sin-permiso`; una ruta que no existe muestra la página 404.
 Las pantallas aún sin construir muestran «En preparación» con lo que harán.
 
+### Administración (ADMIN)
+
+- **Usuarios:** alta con rol, área de salud (obligatoria para el médico) y correo opcional; cambiar rol, área y
+  estado; asignar o quitar el correo; restablecer la contraseña; activar o desactivar cuentas (nunca la propia).
+- **Áreas de salud:** alta, edición, desactivación y reactivación.
+- **Desenlaces:** catálogo para el cierre de casos; alta, cambio de nombre (el código es fijo) y activación.
+
+Todas las listas tienen buscador (sin tildes), filtros y «tirar para actualizar» en el móvil.
+
 ## Estado
 
-En desarrollo. Hoy incluye inicio de sesión (usuario o email), perfil y datos personales. El plan, por fases, es:
+En desarrollo. Hoy incluye inicio de sesión (usuario o email), perfil, navegación por rol y las pantallas del administrador. El plan, por fases, es:
 
 1. Puesta a punto y limpieza de la plantilla
 2. Autenticación completa (token en todas las peticiones, perfil con `/user/me`, cierre de sesión)
