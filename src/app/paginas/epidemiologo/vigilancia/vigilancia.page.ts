@@ -116,7 +116,7 @@ export class VigilanciaPage implements OnInit {
       next: respuesta => {
         this.descargando.set(false);
         const disposicion = respuesta.headers.get('Content-Disposition') ?? '';
-        const nombre = /filename="?([^";]+)"?/.exec(disposicion)?.[1] ?? `casos-oropouche-${hoyIso()}.csv`;
+        const nombre = /filename="?([^";]+)"?/.exec(disposicion)?.[1] ?? `seguimorbi-casos-${hoyIso()}.csv`;
         const url = URL.createObjectURL(respuesta.body!);
         const enlace = document.createElement('a');
         enlace.href = url;

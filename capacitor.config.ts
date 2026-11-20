@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.oropouche.app',
-  appName: 'Oropouche',
+  appId: 'com.seguimorbi.app',
+  appName: 'SEGUIMORBI',
   webDir: 'www'
 };
 

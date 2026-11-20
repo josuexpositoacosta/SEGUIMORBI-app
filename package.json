@@ -1,8 +1,8 @@
 {
-  "name": "oropouche-app",
+  "name": "seguimorbi-app",
   "version": "0.0.1",
   "author": "Josué Expósito Acosta",
-  "homepage": "https://github.com/josuexpositoacosta/oropoucheApp",
+  "homepage": "https://github.com/josuexpositoacosta/SEGUIMORBI-app",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -61,5 +61,5 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.4.0"
   },
-  "description": "Frontend de Oropouche: gestión epidemiológica y apoyo clínico para la fiebre de Oropouche (Ionic + Angular)"
+  "description": "Frontend de SEGUIMORBI: gestión epidemiológica y apoyo clínico para la fiebre de Oropouche (Ionic + Angular)"
 }

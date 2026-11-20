@@ -1,6 +1,6 @@
-# Oropouche App
+# SEGUIMORBI App
 
-Frontend del **Sistema de gestión epidemiológica y apoyo a la evaluación clínica de la fiebre de Oropouche**.
+Frontend de **SEGUIMORBI**, sistema de gestión epidemiológica y apoyo a la evaluación clínica de la fiebre de Oropouche.
 Web y app móvil (APK) construidas con Ionic, Angular y Capacitor.
 
 El backend (Spring Boot, arquitectura hexagonal, JWT) está en
