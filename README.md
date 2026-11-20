@@ -78,11 +78,22 @@ Las pantallas aún sin construir muestran «En preparación» con lo que harán.
   muestran al instante. Cierre con un desenlace del catálogo y reapertura con motivo.
 - **Agenda de controles:** controles vencidos, de hoy y de los próximos 7 o 30 días, con acceso al caso.
 
+### Vigilancia epidemiológica (EPIDEMIOLOGO)
+
+- **Validaciones:** bandeja con las clasificaciones propuestas por los médicos en casos abiertos, primero las que
+  difieren de la sugerencia OPS; validar con observaciones o abrir el caso para cambiarla con motivo.
+- **Panel de vigilancia:** filtros de periodo (4, 12, 26 o 52 semanas), área y criterio de fecha; indicadores
+  (casos, % confirmados, pendientes de validar, hospitalizados, formas neuroinvasivas, gestantes, recaídas,
+  laboratorio); **curva epidémica** por semana epidemiológica apilada por clasificación, con detalle al pasar el
+  ratón y vista de tabla; casos por área y por desenlace; descarga del **CSV** sin datos personales.
+- Los colores de las clasificaciones en los gráficos están validados para daltonismo en modo claro y oscuro
+  (variables `--serie-*` en `src/global.scss`).
+
 Todas las listas tienen buscador (sin tildes), filtros y «tirar para actualizar» en el móvil.
 
 ## Estado
 
-En desarrollo. Hoy incluye inicio de sesión (usuario o email), perfil, navegación por rol y las pantallas del administrador. El plan, por fases, es:
+En desarrollo. Están todas las pantallas de los tres roles (fases 1 a 6). El plan, por fases, es:
 
 1. Puesta a punto y limpieza de la plantilla
 2. Autenticación completa (token en todas las peticiones, perfil con `/user/me`, cierre de sesión)

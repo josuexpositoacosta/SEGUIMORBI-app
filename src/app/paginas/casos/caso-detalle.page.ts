@@ -192,6 +192,30 @@ export class CasoDetallePage implements OnInit {
     return RESULTADOS.find(x => x.valor === r)?.clase ?? '';
   }
 
+  readonly puedeValidar = computed(() => this.abierto() && this.rol() === 'EPIDEMIOLOGO' && !this.caso()?.clasificacionValidada);
+
+  async validar(): Promise<void> {
+    const c = this.caso();
+    if (!c) {
+      return;
+    }
+    const ok = await this.avisos.confirmar({
+      titulo: 'Validar clasificación',
+      mensaje: `Confirmas la clasificación ${nombreDe(CLASIFICACIONES, c.clasificacion)} propuesta para este caso.`,
+      confirmar: 'Validar',
+    });
+    if (!ok) {
+      return;
+    }
+    this.api.validarClasificacion(c.id, null).subscribe({
+      next: actualizado => {
+        this.caso.set(actualizado);
+        this.avisos.exito('Clasificación validada');
+      },
+      error: e => this.avisos.error(e),
+    });
+  }
+
   /** CONFIRMADO solo se permite si la OPS lo sugiere (hay laboratorio confirmatorio). */
   confirmadoBloqueado(): boolean {
     return this.caso()?.sugerencia?.clasificacion !== 'CONFIRMADO';

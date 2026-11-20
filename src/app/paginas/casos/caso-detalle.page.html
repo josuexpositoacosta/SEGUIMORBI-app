@@ -74,6 +74,9 @@
               </ul>
             </div>
 
+            <ion-button *ngIf="puedeValidar()" (click)="validar()">
+              <ion-icon slot="start" name="shield-checkmark-outline"></ion-icon>Validar clasificación
+            </ion-button>
             <ion-button *ngIf="puedeClasificar()" fill="outline" (click)="abrir('clasificacion')">
               <ion-icon slot="start" name="swap-horizontal-outline"></ion-icon>Cambiar clasificación
             </ion-button>

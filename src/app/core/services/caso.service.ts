@@ -58,6 +58,11 @@ export class CasoService {
     return this.http.patch<Caso>(`${this.url}/${id}/clasificacion`, { clasificacion, motivo });
   }
 
+  /** El epidemiólogo valida la clasificación actual (observaciones opcionales). */
+  validarClasificacion(id: number, observaciones: string | null): Observable<Caso> {
+    return this.http.patch<Caso>(`${this.url}/${id}/clasificacion/validacion`, { motivo: observaciones });
+  }
+
   // ---------- Atención clínica (registros inmutables; fecha y usuario los pone el backend)
 
   registrarEvaluacion(id: number, datos: NuevaEvaluacion): Observable<Caso> {

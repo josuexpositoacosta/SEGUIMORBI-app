@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Validaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="cargar($any($event))">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-container">
+    <p class="resumen-lista">
+      Clasificaciones propuestas por los médicos en casos abiertos. Valídalas o, si no estás de acuerdo, ábrelas y cámbialas con un motivo.
+    </p>
+
+    <div class="cargando" *ngIf="cargando()"><ion-spinner name="crescent"></ion-spinner></div>
+
+    <app-estado-vacio *ngIf="!cargando() && errorCarga()" icono="cloud-offline-outline"
+      titulo="No se pudieron cargar las validaciones" [texto]="errorCarga()">
+      <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+    </app-estado-vacio>
+
+    <ng-container *ngIf="!cargando() && !errorCarga()">
+      <app-estado-vacio *ngIf="!casos().length" icono="checkmark-done-circle-outline" titulo="Todo validado"
+        texto="No hay clasificaciones pendientes de validar."></app-estado-vacio>
+
+      <div class="filtros-clasificacion" *ngIf="casos().length">
+        <ion-chip [outline]="soloDistintas()" [color]="soloDistintas() ? 'medium' : 'primary'" (click)="soloDistintas.set(false)">
+          <ion-label>Todas ({{ casos().length }})</ion-label>
+        </ion-chip>
+        <ion-chip [outline]="!soloDistintas()" [color]="soloDistintas() ? 'primary' : 'medium'" (click)="soloDistintas.set(true)">
+          <ion-label>Distintas de la OPS ({{ distintas() }})</ion-label>
+        </ion-chip>
+      </div>
+
+      <div class="lista-registros">
+        <div *ngFor="let c of pendientes()" class="registro validacion" role="button" tabindex="0"
+          (click)="abrir(c)" (keydown.enter)="abrir(c)" [attr.aria-label]="'Abrir caso ' + c.id">
+          <div class="registro-cuerpo">
+            <div class="registro-titulo">{{ nombrePaciente(c) }}</div>
+            <div class="registro-detalle">Caso nº {{ c.id }} · {{ nombreArea(c) }} · notificado {{ c.fechaNotificacion | date: 'dd/MM/yyyy' }}</div>
+            <div class="registro-etiquetas">
+              <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">Propuesta: {{ nombreClasificacion(c.clasificacion) }}</span>
+              <span class="etiqueta" [ngClass]="c.sugerencia.coincideConActual ? 'exito' : 'secundaria'">
+                <ion-icon [name]="c.sugerencia.coincideConActual ? 'checkmark' : 'alert-circle-outline'" aria-hidden="true"></ion-icon>
+                OPS: {{ nombreClasificacion(c.sugerencia.clasificacion) }}
+              </span>
+              <span class="etiqueta peligro" *ngIf="c.alertas?.length">{{ c.alertas.length }} alerta{{ c.alertas.length > 1 ? 's' : '' }}</span>
+            </div>
+            <p class="motivo" *ngIf="ultimoCambio(c) as h">
+              «{{ h.motivo }}» <span class="text-muted">— {{ h.usuario }}, {{ h.fecha | date: 'dd/MM HH:mm' }}</span>
+            </p>
+          </div>
+          <div class="acciones-validacion">
+            <ion-button size="small" (click)="validar(c, $event)">
+              <ion-icon slot="start" name="shield-checkmark-outline"></ion-icon>Validar
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</ion-content>

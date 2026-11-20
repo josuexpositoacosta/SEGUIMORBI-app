@@ -1,0 +1,167 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Panel de vigilancia</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="solid" color="primary" (click)="descargarCsv()" [disabled]="descargando()" aria-label="Descargar CSV">
+        <ion-icon slot="start" name="download-outline"></ion-icon>
+        <span class="boton-texto">Descargar CSV</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar class="barra-filtros">
+    <div class="filtros">
+      <ion-segment [value]="periodo()" (ionChange)="cambiarPeriodo($any($event).detail.value)" [scrollable]="true">
+        <ion-segment-button [value]="4"><ion-label>4 sem.</ion-label></ion-segment-button>
+        <ion-segment-button [value]="12"><ion-label>12 sem.</ion-label></ion-segment-button>
+        <ion-segment-button [value]="26"><ion-label>26 sem.</ion-label></ion-segment-button>
+        <ion-segment-button [value]="52"><ion-label>1 año</ion-label></ion-segment-button>
+      </ion-segment>
+      <ion-select [value]="areaSaludId()" (ionChange)="cambiarArea($any($event).detail.value)" interface="popover"
+        label="Área" labelPlacement="start" fill="outline">
+        <ion-select-option [value]="null">Todas las áreas</ion-select-option>
+        <ion-select-option *ngFor="let a of areasCatalogo()" [value]="a.id">{{ a.nombre }}</ion-select-option>
+      </ion-select>
+      <ion-select [value]="criterio()" (ionChange)="cambiarCriterio($any($event).detail.value)" interface="popover"
+        label="Fecha" labelPlacement="start" fill="outline">
+        <ion-select-option value="INICIO_SINTOMAS">Inicio de síntomas</ion-select-option>
+        <ion-select-option value="NOTIFICACION">Notificación</ion-select-option>
+      </ion-select>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="cargar($any($event))">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-container">
+    <div class="cargando" *ngIf="cargando()"><ion-spinner name="crescent"></ion-spinner></div>
+
+    <app-estado-vacio *ngIf="!cargando() && error()" icono="cloud-offline-outline"
+      titulo="No se pudieron cargar las estadísticas" [texto]="error()">
+      <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+    </app-estado-vacio>
+
+    <ng-container *ngIf="!cargando() && !error() && resumen() as r">
+      <p class="periodo text-muted">
+        Del {{ r.desde | date: 'dd/MM/yyyy' }} al {{ r.hasta | date: 'dd/MM/yyyy' }} ·
+        por fecha de {{ r.criterio === 'INICIO_SINTOMAS' ? 'inicio de síntomas' : 'notificación' }}
+      </p>
+
+      <!-- Indicadores -->
+      <section class="indicadores" aria-label="Indicadores">
+        <div class="indicador destacado">
+          <span class="valor">{{ r.totalCasos }}</span>
+          <span class="nombre">casos en el periodo</span>
+          <div class="barra-clasificacion" *ngIf="r.totalCasos" role="img"
+            [attr.aria-label]="'Distribución por clasificación'">
+            <span *ngFor="let s of series" [style.width.%]="porcentaje(r.porClasificacion[s.clave] ?? 0, r.totalCasos)"
+              [style.background]="s.color" [title]="s.nombre + ': ' + (r.porClasificacion[s.clave] ?? 0)"></span>
+          </div>
+          <ul class="mini-leyenda">
+            <li *ngFor="let s of series"><span class="muestra" [style.background]="s.color"></span>{{ s.nombre }} {{ r.porClasificacion[s.clave] ?? 0 }}</li>
+          </ul>
+        </div>
+        <div class="indicador">
+          <span class="valor">{{ r.porcentajeConfirmados | number: '1.0-1' }}&nbsp;%</span>
+          <span class="nombre">confirmados</span>
+        </div>
+        <a class="indicador enlace" routerLink="/validaciones">
+          <span class="valor">{{ r.pendientesDeValidar }}</span>
+          <span class="nombre">pendientes de validar <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></span>
+        </a>
+        <div class="indicador">
+          <span class="valor">{{ r.abiertos }}</span>
+          <span class="nombre">abiertos · {{ r.cerrados }} cerrados</span>
+        </div>
+        <div class="indicador">
+          <span class="valor">{{ r.hospitalizados }}</span>
+          <span class="nombre">hospitalizados</span>
+        </div>
+        <div class="indicador">
+          <span class="valor">{{ r.neuroinvasivos }}</span>
+          <span class="nombre">formas neuroinvasivas</span>
+        </div>
+        <div class="indicador">
+          <span class="valor">{{ r.gestantes }}</span>
+          <span class="nombre">gestantes</span>
+        </div>
+        <div class="indicador">
+          <span class="valor">{{ r.recaidas }}</span>
+          <span class="nombre">recaídas</span>
+        </div>
+        <div class="indicador">
+          <span class="valor">{{ r.conLaboratorio }}</span>
+          <span class="nombre">con laboratorio de Oropouche</span>
+        </div>
+      </section>
+
+      <!-- Curva epidémica -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Curva epidémica</ion-card-title>
+          <ion-card-subtitle>Casos por semana epidemiológica (domingo a sábado) y clasificación</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <app-curva-epidemica [semanas]="semanas()"></app-curva-epidemica>
+        </ion-card-content>
+      </ion-card>
+
+      <div class="dos-columnas">
+        <!-- Áreas -->
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Casos por área de salud</ion-card-title>
+            <ion-card-subtitle>Todas las áreas del periodo</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="text-muted" *ngIf="!porArea().length">No hay áreas de salud.</p>
+            <div class="tabla-envoltorio" *ngIf="porArea().length">
+              <table class="tabla-areas">
+                <thead>
+                  <tr><th scope="col">Área</th><th scope="col">Clasificación</th><th scope="col" class="num">Total</th><th scope="col" class="num">Abiertos</th></tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let a of areasOrdenadas()">
+                    <th scope="row"><span class="codigo">{{ a.codigo }}</span> {{ a.nombre }}</th>
+                    <td>
+                      <div class="barra-area" [style.width.%]="porcentaje(a.total, maxArea())" role="img"
+                        [attr.aria-label]="a.nombre + ': ' + a.total + ' casos'">
+                        <span *ngFor="let s of series" [style.flex-grow]="a.porClasificacion[s.clave] ?? 0"
+                          [style.background]="s.color" [title]="s.nombre + ': ' + (a.porClasificacion[s.clave] ?? 0)"></span>
+                      </div>
+                    </td>
+                    <td class="num"><strong>{{ a.total }}</strong></td>
+                    <td class="num">{{ a.abiertos }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Desenlaces -->
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Casos cerrados por desenlace</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="text-muted" *ngIf="!desenlacesResumen().length">No hay casos cerrados en el periodo.</p>
+            <ul class="lista-desenlaces">
+              <li *ngFor="let d of desenlacesResumen()"><span>{{ d.nombre }}</span><strong>{{ d.total }}</strong></li>
+            </ul>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <p class="formulario-nota">
+        El CSV no incluye nombres ni documentos de los pacientes. Semana epidemiológica de domingo a sábado; conviene
+        confirmarla con el calendario oficial del país.
+      </p>
+    </ng-container>
+  </div>
+</ion-content>

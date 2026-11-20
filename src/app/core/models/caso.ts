@@ -19,7 +19,7 @@ export const CLASIFICACIONES: { valor: Clasificacion; nombre: string; clase: str
   { valor: 'SOSPECHOSO', nombre: 'Sospechoso', clase: 'secundaria' },
   { valor: 'PROBABLE', nombre: 'Probable', clase: 'terciaria' },
   { valor: 'CONFIRMADO', nombre: 'Confirmado', clase: 'peligro' },
-  { valor: 'DESCARTADO', nombre: 'Descartado', clase: '' },
+  { valor: 'DESCARTADO', nombre: 'Descartado', clase: 'descartado' },
 ];
 
 /** Manifestaciones de la definición de caso sospechoso de la OPS. */
