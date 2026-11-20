@@ -1,37 +1,27 @@
-<!--dashboard.component.html-->
+<div class="page-container">
+  <section class="hero">
+    <div>
+      <p class="hero-eyebrow">Sistema de vigilancia epidemiológica</p>
+      <h1>Bienvenido a Oropouche</h1>
+      <p class="hero-text">
+        Gestión de casos de fiebre de Oropouche, atención clínica y seguimiento por áreas de salud.
+      </p>
+    </div>
+    <ion-icon name="pulse" class="hero-icon" aria-hidden="true"></ion-icon>
+  </section>
 
-<div class="card ">
-    <div class="card-header">
-        Datos Personales
-    </div>
-    <div class="card-body m-0">
-        <app-personal-details></app-personal-details>
-    </div>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Mis datos personales</ion-card-title>
+      <ion-card-subtitle>Información de tu cuenta</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <app-personal-details></app-personal-details>
+    </ion-card-content>
+  </ion-card>
 
-</div>
-<div class="card">
-    <div class="card-header">
-        Perfil Profesional
-    </div>
-    <div class="card-body m-0">
-
-    </div>
-</div>
-<div class="card">
-    <div class="card-header">
-        Datos Académicos
-    </div>
-    <div class="card-body m-0">
-
-    </div>
-
-</div>
-
-<div class="card">
-    <div class="card-header">
-        Experiencia Laboral
-    </div>
-    <div class="card-body m-0">
-
-    </div>
+  <p class="disclaimer">
+    <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+    Herramienta de apoyo a la decisión clínica. No sustituye el criterio del profesional sanitario.
+  </p>
 </div>

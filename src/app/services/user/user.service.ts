@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, retry, throwError } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { User } from '../auth/user';
 import { environment } from 'src/environments/environment';
 
@@ -8,8 +8,6 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class UserService {
-     usuario!: User; 
-     token!: string; 
 
   constructor(private http:HttpClient) { }
 
@@ -28,25 +26,11 @@ export class UserService {
 
   private handleError(error:HttpErrorResponse){
     if(error.status===0){
-      console.error('Se ha producio un error ', error.error);
+      console.error('Se ha producido un error ', error.error);
     }
     else{
       console.error('Backend retornó el código de estado ', error.status, error.error);
     }
     return throwError(()=> new Error('Algo falló. Por favor intente nuevamente.'));
   }
-
-  estaLogeado(){
-    return (this.token.length > 5) ? true: false ;
- }
-
- esAnonimo(): boolean {
-  return !this.usuario.id;
-}
-
-asignarUsuario(valor: User) {
-  this.usuario = valor;
-}
-
-
 }
