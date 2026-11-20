@@ -13,19 +13,22 @@
             </div>
           </div>
 
-          <ion-list lines="none" class="menu-list">
-            <ion-menu-toggle auto-hide="false" *ngFor="let item of menu">
-              <ion-item
-                routerDirection="root"
-                [routerLink]="[item.url]"
-                routerLinkActive="selected"
-                detail="false"
-                button>
-                <ion-icon aria-hidden="true" slot="start" [name]="item.icon + '-outline'"></ion-icon>
-                <ion-label>{{ item.title }}</ion-label>
-              </ion-item>
-            </ion-menu-toggle>
-          </ion-list>
+          <nav class="menu-list" aria-label="Menú principal">
+            <ion-list lines="none" *ngFor="let grupo of menu()">
+              <ion-list-header *ngIf="grupo.seccion !== 'general'">{{ grupo.titulo }}</ion-list-header>
+              <ion-menu-toggle auto-hide="false" *ngFor="let p of grupo.pantallas">
+                <ion-item
+                  routerDirection="root"
+                  [routerLink]="'/' + p.ruta"
+                  routerLinkActive="selected"
+                  detail="false"
+                  button>
+                  <ion-icon aria-hidden="true" slot="start" [name]="p.icono + '-outline'"></ion-icon>
+                  <ion-label>{{ p.titulo }}</ion-label>
+                </ion-item>
+              </ion-menu-toggle>
+            </ion-list>
+          </nav>
 
           <div class="user-card" *ngIf="usuario() as u">
             <div class="user-avatar" aria-hidden="true">{{ iniciales() }}</div>

@@ -1,0 +1,80 @@
+.tarjeta {
+  max-width: 640px;
+  margin: 24px auto 0;
+  padding: 32px;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow);
+}
+
+.icono {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+  color: var(--ion-color-primary);
+  font-size: 28px;
+}
+
+.seccion {
+  margin: 20px 0 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ion-color-primary);
+}
+
+h1 {
+  margin: 4px 0 6px;
+  font-size: 1.6rem;
+}
+
+h1 + p {
+  margin: 0 0 16px;
+}
+
+.estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-weight: 600;
+}
+
+h2 {
+  margin: 28px 0 12px;
+  font-size: 1rem;
+}
+
+ul {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.45;
+}
+
+li ion-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-size: 18px;
+  color: var(--ion-color-primary);
+}
+
+@media (max-width: 576px) {
+  .tarjeta {
+    margin-top: 0;
+    padding: 24px 20px;
+  }
+}

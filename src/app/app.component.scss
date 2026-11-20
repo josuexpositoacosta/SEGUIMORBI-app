@@ -38,9 +38,19 @@ ion-menu ion-content {
   color: var(--app-text-muted);
 }
 
-.menu-list {
+.menu-list ion-list {
   background: transparent;
-  padding: 0;
+  padding: 0 0 8px;
+}
+
+.menu-list ion-list-header {
+  min-height: 28px;
+  padding-inline-start: 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--app-text-muted);
 }
 
 .menu-list ion-item {

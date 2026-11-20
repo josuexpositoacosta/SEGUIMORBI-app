@@ -1,6 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { ToastController } from '@ionic/angular';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { mensajeDeError } from 'src/app/core/http/errores';
 import { NOMBRE_ROL } from 'src/app/core/models/usuario';
@@ -8,11 +9,13 @@ import { AreaSaludService } from 'src/app/core/services/area-salud.service';
 import { UsuarioService } from 'src/app/core/services/usuario.service';
 
 @Component({
-  selector: 'app-personal-details',
-  templateUrl: './personal-details.component.html',
-  styleUrls: ['./personal-details.component.css']
+  selector: 'app-datos-personales',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, IonicModule],
+  templateUrl: './datos-personales.component.html',
+  styleUrls: ['./datos-personales.component.css']
 })
-export class PersonalDetailsComponent implements OnInit {
+export class DatosPersonalesComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly usuarios = inject(UsuarioService);
   private readonly areas = inject(AreaSaludService);

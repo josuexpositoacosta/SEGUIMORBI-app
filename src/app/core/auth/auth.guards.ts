@@ -1,11 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 import { AuthService } from './auth.service';
+import { PANTALLAS, puedeVer } from '../navegacion/navegacion';
 
-const RUTA_LOGIN = '/folder/iniciar-sesion';
-const RUTA_INICIO = '/folder/dashboard';
+const RUTA_LOGIN = '/login';
+const RUTA_INICIO = '/inicio';
 
 /** Solo deja pasar con sesión vigente. Carga el perfil (/user/me) si aún no está. */
 export const autenticadoGuard: CanActivateFn = (_route, state) => {
@@ -36,4 +37,18 @@ export const autenticadoGuard: CanActivateFn = (_route, state) => {
 export const invitadoGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   return auth.sesionVigente() ? inject(Router).createUrlTree([RUTA_INICIO]) : true;
+};
+
+/**
+ * Comprueba que el rol del usuario puede entrar en la pantalla (route.data.ruta, ver PANTALLAS).
+ * Se usa como canActivateChild de la zona autenticada, cuando el perfil ya está cargado.
+ */
+export const rolGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+  const ruta = route.data['ruta'] as string | undefined;
+  const pantalla = ruta ? PANTALLAS.find(p => p.ruta === ruta) : undefined;
+  if (!pantalla) {
+    return true;
+  }
+  const rol = inject(AuthService).usuario()?.role;
+  return puedeVer(pantalla, rol) ? true : inject(Router).createUrlTree(['/sin-permiso']);
 };

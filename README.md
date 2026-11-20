@@ -39,6 +39,21 @@ La URL del backend se configura en `src/environments/environment.ts` (desarrollo
 - Tras el login se carga el perfil con `GET /api/v1/user/me` (rol y área de salud).
 - Si el token caduca o el backend responde `401`, la sesión se cierra y se vuelve al login con un aviso.
 
+## Pantallas y roles
+
+La tabla `src/app/core/navegacion/navegacion.ts` define cada pantalla (ruta, icono y roles). De ella salen el
+menú lateral, los accesos rápidos de Inicio y el control de acceso, así que una pantalla nueva solo se añade ahí.
+
+| Rol | Pantallas |
+|---|---|
+| Todos | `/inicio`, `/perfil` |
+| ADMIN | `/admin/usuarios`, `/admin/areas-salud`, `/admin/desenlaces` |
+| MEDICO | `/pacientes`, `/casos`, `/agenda` |
+| EPIDEMIOLOGO | `/casos`, `/validaciones`, `/vigilancia` |
+
+Si alguien abre a mano una pantalla de otro rol ve `/sin-permiso`; una ruta que no existe muestra la página 404.
+Las pantallas aún sin construir muestran «En preparación» con lo que harán.
+
 ## Estado
 
 En desarrollo. Hoy incluye inicio de sesión (usuario o email), perfil y datos personales. El plan, por fases, es:

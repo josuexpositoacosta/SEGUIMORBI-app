@@ -1,13 +1,19 @@
+import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { NOMBRE_ROL } from 'src/app/core/models/usuario';
+import { pantallasDe } from 'src/app/core/navegacion/navegacion';
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  selector: 'app-inicio',
+  standalone: true,
+  imports: [CommonModule, IonicModule, RouterLink],
+  templateUrl: './inicio.page.html',
+  styleUrls: ['./inicio.page.css'],
 })
-export class DashboardComponent {
+export class InicioPage {
   private readonly usuario = inject(AuthService).usuario;
 
   readonly nombre = computed(() => this.usuario()?.firstname ?? '');
@@ -15,6 +21,8 @@ export class DashboardComponent {
     const u = this.usuario();
     return u ? NOMBRE_ROL[u.role] : '';
   });
+  /** Accesos rápidos: las pantallas del rol, sin la propia de Inicio. */
+  readonly accesos = computed(() => pantallasDe(this.usuario()?.role).filter(p => p.ruta !== 'inicio'));
   readonly saludo = saludoSegunHora();
 }
 
