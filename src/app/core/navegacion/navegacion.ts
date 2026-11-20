@@ -49,11 +49,6 @@ export const PANTALLAS: Pantalla[] = [
     icono: 'people',
     seccion: 'administracion',
     roles: ['ADMIN'],
-    proximamente: [
-      'Crear usuarios con rol, área de salud y correo',
-      'Activar o desactivar cuentas',
-      'Restablecer contraseñas',
-    ],
   },
   {
     ruta: 'admin/areas-salud',
@@ -62,7 +57,6 @@ export const PANTALLAS: Pantalla[] = [
     icono: 'business',
     seccion: 'administracion',
     roles: ['ADMIN'],
-    proximamente: ['Registrar y editar áreas de salud', 'Buscar por código', 'Desactivar áreas'],
   },
   {
     ruta: 'admin/desenlaces',
@@ -71,7 +65,6 @@ export const PANTALLAS: Pantalla[] = [
     icono: 'list',
     seccion: 'administracion',
     roles: ['ADMIN'],
-    proximamente: ['Consultar el catálogo de desenlaces', 'Añadir, editar y desactivar desenlaces'],
   },
 
   // MEDICO: pacientes, casos y atención clínica de su área

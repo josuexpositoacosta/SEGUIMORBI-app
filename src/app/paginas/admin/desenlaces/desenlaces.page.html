@@ -1,0 +1,104 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Desenlaces</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="solid" color="primary" (click)="abrir()" aria-label="Nuevo desenlace">
+        <ion-icon slot="start" name="add"></ion-icon>
+        <span class="boton-texto">Nuevo desenlace</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar class="barra-filtros">
+    <ion-searchbar placeholder="Buscar por código o nombre" [debounce]="150"
+      (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
+    <ion-segment [value]="filtro()" (ionChange)="filtro.set($any($event).detail.value)">
+      <ion-segment-button value="activos"><ion-label>Activos</ion-label></ion-segment-button>
+      <ion-segment-button value="inactivos"><ion-label>Inactivos</ion-label></ion-segment-button>
+      <ion-segment-button value="todos"><ion-label>Todos</ion-label></ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="cargar($any($event))">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-container">
+    <p class="resumen-lista">
+      Opciones que el médico elige al cerrar un caso. El código no se puede cambiar porque lo guardan los casos cerrados.
+    </p>
+
+    <div class="cargando" *ngIf="cargando()"><ion-spinner name="crescent"></ion-spinner></div>
+
+    <app-estado-vacio *ngIf="!cargando() && errorCarga()" icono="cloud-offline-outline"
+      titulo="No se pudo cargar el catálogo" [texto]="errorCarga()">
+      <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+    </app-estado-vacio>
+
+    <ng-container *ngIf="!cargando() && !errorCarga()">
+      <app-estado-vacio *ngIf="!filtrados().length" icono="search-outline" titulo="Sin resultados"
+        texto="Ningún desenlace coincide con la búsqueda o el filtro."></app-estado-vacio>
+
+      <div class="lista-registros">
+        <button type="button" *ngFor="let d of filtrados()" class="registro" [class.inactivo]="!d.activo"
+          (click)="abrirAcciones(d)" [attr.aria-label]="'Acciones para ' + d.nombre">
+          <div class="registro-icono" aria-hidden="true"><ion-icon name="flag-outline"></ion-icon></div>
+          <div class="registro-cuerpo">
+            <div class="registro-titulo">{{ d.nombre }}</div>
+            <div class="registro-etiquetas">
+              <span class="etiqueta primaria">{{ d.codigo }}</span>
+              <span class="etiqueta" [ngClass]="d.activo ? 'exito' : 'peligro'">{{ d.activo ? 'Activo' : 'Inactivo' }}</span>
+            </div>
+          </div>
+          <ion-icon name="ellipsis-vertical" class="registro-acciones" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+    </ng-container>
+  </div>
+
+  <ion-modal class="modal-formulario" [isOpen]="abierto()" (didDismiss)="cerrar()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ editando() ? 'Cambiar nombre' : 'Nuevo desenlace' }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrar()" aria-label="Cerrar"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <div class="modal-cuerpo">
+        <div class="formulario-error" *ngIf="errorFormulario()" role="alert" style="margin-bottom: 16px">
+          <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>{{ errorFormulario() }}
+        </div>
+        <form [formGroup]="form" (ngSubmit)="guardar()" class="formulario" id="form-desenlace">
+          <ion-input formControlName="codigo" label="Código" labelPlacement="stacked" fill="outline"
+            placeholder="TRASLADO_HOSPITAL"
+            [helperText]="editando() ? 'El código no se puede cambiar.' : (codigoFinal() ? 'Se guardará como ' + codigoFinal() : 'Empieza por letra; letras, números y guion bajo.')"
+            errorText="Empieza por letra; de 2 a 40 caracteres: letras, números y guion bajo."
+            [class.ion-touched]="form.controls.codigo.touched"
+            [class.ion-invalid]="form.controls.codigo.invalid"></ion-input>
+          <ion-input formControlName="nombre" label="Nombre" labelPlacement="stacked" fill="outline"
+            placeholder="Traslado a hospital" [counter]="true" [maxlength]="100"
+            errorText="Obligatorio, máximo 100 caracteres."
+            [class.ion-touched]="form.controls.nombre.touched"
+            [class.ion-invalid]="form.controls.nombre.invalid"></ion-input>
+        </form>
+      </div>
+      <ion-footer>
+        <ion-toolbar>
+          <ion-buttons slot="end">
+            <ion-button color="medium" (click)="cerrar()">Cancelar</ion-button>
+            <ion-button fill="solid" color="primary" type="submit" form="form-desenlace" [disabled]="guardando()">
+              <ion-spinner *ngIf="guardando()" name="crescent"></ion-spinner>
+              <span *ngIf="!guardando()">Guardar</span>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-footer>
+    </ng-template>
+  </ion-modal>
+</ion-content>

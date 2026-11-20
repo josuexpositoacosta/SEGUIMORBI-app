@@ -34,6 +34,22 @@ const routes: Routes = [
         data: { ruta: 'perfil' },
         loadComponent: () => import('./paginas/perfil/perfil.page').then(m => m.PerfilPage),
       },
+      // ADMIN
+      {
+        path: 'admin/usuarios',
+        data: { ruta: 'admin/usuarios' },
+        loadComponent: () => import('./paginas/admin/usuarios/usuarios.page').then(m => m.UsuariosPage),
+      },
+      {
+        path: 'admin/areas-salud',
+        data: { ruta: 'admin/areas-salud' },
+        loadComponent: () => import('./paginas/admin/areas-salud/areas-salud.page').then(m => m.AreasSaludPage),
+      },
+      {
+        path: 'admin/desenlaces',
+        data: { ruta: 'admin/desenlaces' },
+        loadComponent: () => import('./paginas/admin/desenlaces/desenlaces.page').then(m => m.DesenlacesPage),
+      },
       ...rutasEnPreparacion,
       { path: 'sin-permiso', loadComponent: error, data: { tipo: 403 } },
     ],
