@@ -1,49 +1,71 @@
-<p *ngIf="errorMessage.length!=0" class="text-danger">{{errorMessage}}</p>
-<div *ngIf="(userLoginOn && !editMode) || !userLoginOn">
-    <p><b> Nombre: </b> {{user?.firstname}} </p>
-    <p><b> Apellido: </b> {{user?.lastname}}</p>
-    <p><b> Pais: </b> {{user?.country}}</p>
-    <button *ngIf="userLoginOn && !editMode" (click)="editMode=true"  class="btn btn-dark"><img
-        src="https://cdn.icon-icons.com/icons2/1572/PNG/96/3592815-compose-create-edit-edit-file-office-pencil-writing_107734.png"
-        width="8%" alt="editar" />Editar Datos Personales</button>
+<div *ngIf="errorMessage" class="alert">
+  <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+  <span>{{ errorMessage }}</span>
 </div>
 
-<form *ngIf="userLoginOn && editMode" [formGroup]="registerForm" >
-    <div class="form-group row">
-        <label for="inputFirstName" class="col-sm-1 col-form-label">Nombre</label>
-        <div class="col-sm-11">
-        <input type="text" formControlName="firstname" class="form-control" id="inputFirstName">
-        
-            <div *ngIf="firstname.invalid && (firstname.dirty || firstname.touched)" class="text-danger">
-                <div *ngIf="firstname.errors?.['required']">
-                    El Nombre es requerido.
-                </div>
+<ng-container *ngIf="!editMode">
+  <div class="profile">
+    <div class="avatar" aria-hidden="true">{{ iniciales }}</div>
+    <div>
+      <div class="profile-name">{{ user?.firstname }} {{ user?.lastname }}</div>
+      <div class="text-muted">{{ user?.username }}</div>
+    </div>
+  </div>
 
-            </div>
-        </div>
+  <dl class="data-grid">
+    <div>
+      <dt>Nombre</dt>
+      <dd>{{ user?.firstname || '—' }}</dd>
     </div>
-    <div class="form-group row">
-        <label for="inputLasttName" class="col-sm-1 col-form-label">Apellido</label>
-        <div class="col-sm-11">
-        <input type="text" formControlName="lastname" class="form-control" id="inputLasttName">
-        <div *ngIf="lastname.invalid && (lastname.dirty || lastname.touched)" class="text-danger">
-            <div *ngIf="lastname.errors?.['required']">
-                El Apellido es requerido.
-            </div>
-        </div>
+    <div>
+      <dt>Apellidos</dt>
+      <dd>{{ user?.lastname || '—' }}</dd>
     </div>
+    <div>
+      <dt>País</dt>
+      <dd>{{ user?.country || '—' }}</dd>
     </div>
-    <div class="form-group row border-bottom pb-3" >
-        <label for="inputCountry" class="col-sm-1 col-form-label">País</label>
-        <div class="col-sm-11">
-        <input type="text" formControlName="country" class="form-control" id="inputCountry" >
-        <div *ngIf="country.invalid && (country.dirty || country.touched)" class="text-danger">
-            <div *ngIf="country.errors?.['required']">
-                El País es requerido.
-            </div>
-        </div>
-    </div>
-    </div>
-    <button type="submit" (click)="savePersonalDetailsData()"  class="btn btn-dark mt-3">Guardar</button>
-    <a class="btn btn-danger mt-3" (click)="editMode=false">Cancelar</a>
+  </dl>
+
+  <ion-button *ngIf="userLoginOn" fill="outline" (click)="editMode = true">
+    <ion-icon slot="start" name="create-outline"></ion-icon>
+    Editar datos
+  </ion-button>
+</ng-container>
+
+<form *ngIf="userLoginOn && editMode" [formGroup]="registerForm" (ngSubmit)="savePersonalDetailsData()" class="form">
+  <ion-input
+    formControlName="firstname"
+    label="Nombre"
+    labelPlacement="stacked"
+    fill="outline"
+    errorText="El nombre es obligatorio."
+    [class.ion-touched]="firstname.touched"
+    [class.ion-invalid]="firstname.invalid">
+  </ion-input>
+
+  <ion-input
+    formControlName="lastname"
+    label="Apellidos"
+    labelPlacement="stacked"
+    fill="outline"
+    errorText="Los apellidos son obligatorios."
+    [class.ion-touched]="lastname.touched"
+    [class.ion-invalid]="lastname.invalid">
+  </ion-input>
+
+  <ion-input
+    formControlName="country"
+    label="País"
+    labelPlacement="stacked"
+    fill="outline"
+    errorText="El país es obligatorio."
+    [class.ion-touched]="country.touched"
+    [class.ion-invalid]="country.invalid">
+  </ion-input>
+
+  <div class="actions">
+    <ion-button type="submit" [disabled]="registerForm.invalid">Guardar</ion-button>
+    <ion-button type="button" fill="clear" color="medium" (click)="editMode = false">Cancelar</ion-button>
+  </div>
 </form>

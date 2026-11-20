@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/services/auth/login.service';
@@ -9,13 +9,13 @@ import { LoginRequest } from 'src/app/services/auth/loginRequest';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
-  loginError: string = "";
-  hidePassword: boolean = true;
-  isLoading: boolean = false;
+export class LoginComponent {
+  loginError = '';
+  isLoading = false;
 
-  loginForm = this.formBuilder.group({
-    username: ['', [Validators.required, Validators.email]],
+  // Se acepta nombre de usuario o correo: no se valida formato de email.
+  loginForm = this.formBuilder.nonNullable.group({
+    username: ['', Validators.required],
     password: ['', Validators.required],
   });
 
@@ -25,10 +25,7 @@ export class LoginComponent implements OnInit {
     private loginService: LoginService
   ) { }
 
-  ngOnInit(): void {
-  }
-
-  get email() {
+  get username() {
     return this.loginForm.controls.username;
   }
 
@@ -36,33 +33,30 @@ export class LoginComponent implements OnInit {
     return this.loginForm.controls.password;
   }
 
-  togglePasswordVisibility(): void {
-    this.hidePassword = !this.hidePassword;
-  }
-
-  login() {
-    if (this.loginForm.valid) {
-      this.loginError = "";
-      this.isLoading = true;
-
-      this.loginService.login(this.loginForm.value as LoginRequest).subscribe({
-        next: (userData) => {
-          console.log(userData);
-        },
-        error: (errorData) => {
-          console.error(errorData);
-          this.loginError = errorData;
-          this.isLoading = false;
-        },
-        complete: () => {
-          console.info("Login completo");
-          this.isLoading = false;
-          this.router.navigateByUrl('/folder/dashboard');
-          this.loginForm.reset();
-        }
-      });
-    } else {
+  login(): void {
+    if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
+      return;
     }
+
+    this.loginError = '';
+    this.isLoading = true;
+
+    const credenciales: LoginRequest = {
+      username: this.username.value.trim(),
+      password: this.password.value,
+    };
+
+    this.loginService.login(credenciales).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.loginForm.reset();
+        this.router.navigateByUrl('/folder/dashboard');
+      },
+      error: (error: Error) => {
+        this.loginError = error.message;
+        this.isLoading = false;
+      },
+    });
   }
 }

@@ -1,38 +1,29 @@
-//folder.page.ts
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
 
-
+// Página provisional que elige la vista según la URL. En la fase de navegación
+// se sustituye por rutas reales con router-outlet.
 @Component({
   selector: 'app-folder',
   templateUrl: './folder.page.html',
   styleUrls: ['./folder.page.scss'],
 })
-export class FolderPage  {
-  userLoginOn:boolean=false;
-  public folder!: string;
+export class FolderPage implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute
-  ) {}
+  folder = '';
+
+  private readonly titulos: Record<string, string> = {
+    dashboard: 'Inicio',
+    'iniciar-sesion': 'Iniciar sesión',
+  };
 
   ngOnInit(): void {
-    this.folder = this.activatedRoute.snapshot.paramMap.get('id') as string;
-   // this.router.navigate(['/folder/dashboard']);
-  
-  /* if (this.folder === 'dashboard') {
-  
-      this.router.navigate(['/folder/dashboard']);
-        //, { relativeTo: this.route });
-    }*/
+    this.folder = this.activatedRoute.snapshot.paramMap.get('id') ?? '';
   }
 
-  /*navigateToDashboard() {
-    this.router.navigate(['folder/dashboard']);
-  }*/
-
+  get titulo(): string {
+    return this.titulos[this.folder] ?? 'Oropouche';
+  }
 
   isDashboard(): boolean {
     return this.folder === 'dashboard';
@@ -41,11 +32,4 @@ export class FolderPage  {
   isiniciarsesion(): boolean {
     return this.folder === 'iniciar-sesion';
   }
-
 }
-
-
-  
-
- 
-

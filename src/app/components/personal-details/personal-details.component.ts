@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./personal-details.component.css']
 })
 export class PersonalDetailsComponent  {
-  errorMessage:String="";
+  errorMessage = "";
   user?:User;
   userLoginOn:boolean=false;
   editMode:boolean=false;
@@ -34,11 +34,8 @@ export class PersonalDetailsComponent  {
         this.registerForm.controls.country.setValue( userData.country);
       },
       error: (errorData) => {
-        this.errorMessage=errorData
+        this.errorMessage = errorData?.message ?? 'No se pudieron cargar tus datos.';
       },
-      complete: () => {
-        console.info("User Data ok");
-      }
     })
 
     this.loginService.userLoginOn.subscribe({
@@ -47,6 +44,12 @@ export class PersonalDetailsComponent  {
       }
     })
     
+  }
+
+  get iniciales(): string {
+    const n = this.user?.firstname?.charAt(0) ?? '';
+    const a = this.user?.lastname?.charAt(0) ?? '';
+    return (n + a).toUpperCase() || '?';
   }
 
   get firstname()
@@ -71,7 +74,7 @@ export class PersonalDetailsComponent  {
       this.userService.updateUser(this.registerForm.value as unknown as User).subscribe({
         next:() => {
           this.editMode=false;
-          this.user=this.registerForm.value as unknown as User;
+          this.user = { ...this.user, ...this.registerForm.value } as unknown as User;
         },
         error:(errorData)=> console.error(errorData)
       })
