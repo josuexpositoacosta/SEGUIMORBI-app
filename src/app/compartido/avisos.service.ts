@@ -23,6 +23,15 @@ export class AvisosService {
     await t.present();
   }
 
+  /** Algo que requiere atención sin ser un error (por ejemplo, alertas clínicas nuevas). */
+  async advertencia(mensaje: string): Promise<void> {
+    const t = await this.toast.create({
+      message: mensaje, duration: 5000, color: 'warning', icon: 'warning-outline', position: 'bottom',
+      buttons: [{ icon: 'close', role: 'cancel' }],
+    });
+    await t.present();
+  }
+
   async error(error: unknown): Promise<void> {
     const t = await this.toast.create({
       message: mensajeDeError(error), duration: 4000, color: 'danger', icon: 'alert-circle-outline', position: 'bottom',

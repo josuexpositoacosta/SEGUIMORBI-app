@@ -1,0 +1,145 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ titulo }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()" aria-label="Cerrar"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<div class="modal-cuerpo" [ngSwitch]="tipo">
+  <div class="formulario-error" *ngIf="error()" role="alert" style="margin-bottom: 16px">
+    <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>{{ error() }}
+  </div>
+
+  <!-- Evaluación clínica -->
+  <form *ngSwitchCase="'evaluacion'" [formGroup]="evaluacion" (ngSubmit)="guardar()" class="formulario" id="form-registro">
+    <h3 class="bloque">Signos vitales <span class="ayuda">(rellena los que hayas medido)</span></h3>
+    <div class="vitales">
+      <ion-input formControlName="temperatura" type="number" inputmode="decimal" step="0.1" label="Temperatura (°C)"
+        labelPlacement="stacked" fill="outline" placeholder="37.5" errorText="Entre 30 y 45 °C."
+        [class.ion-touched]="evaluacion.controls.temperatura.touched" [class.ion-invalid]="evaluacion.controls.temperatura.invalid"></ion-input>
+      <ion-input formControlName="frecuenciaCardiaca" type="number" inputmode="numeric" label="Frec. cardíaca (lpm)"
+        labelPlacement="stacked" fill="outline" errorText="Entre 20 y 250."
+        [class.ion-touched]="evaluacion.controls.frecuenciaCardiaca.touched" [class.ion-invalid]="evaluacion.controls.frecuenciaCardiaca.invalid"></ion-input>
+      <ion-input formControlName="frecuenciaRespiratoria" type="number" inputmode="numeric" label="Frec. respiratoria (rpm)"
+        labelPlacement="stacked" fill="outline" errorText="Entre 5 y 80."
+        [class.ion-touched]="evaluacion.controls.frecuenciaRespiratoria.touched" [class.ion-invalid]="evaluacion.controls.frecuenciaRespiratoria.invalid"></ion-input>
+      <ion-input formControlName="tensionSistolica" type="number" inputmode="numeric" label="TA sistólica (mmHg)"
+        labelPlacement="stacked" fill="outline" errorText="Entre 40 y 300."
+        [class.ion-touched]="evaluacion.controls.tensionSistolica.touched" [class.ion-invalid]="evaluacion.controls.tensionSistolica.invalid"></ion-input>
+      <ion-input formControlName="tensionDiastolica" type="number" inputmode="numeric" label="TA diastólica (mmHg)"
+        labelPlacement="stacked" fill="outline" errorText="Entre 20 y 200."
+        [class.ion-touched]="evaluacion.controls.tensionDiastolica.touched" [class.ion-invalid]="evaluacion.controls.tensionDiastolica.invalid"></ion-input>
+      <ion-input formControlName="saturacionO2" type="number" inputmode="numeric" label="SatO₂ (%)"
+        labelPlacement="stacked" fill="outline" errorText="Entre 50 y 100."
+        [class.ion-touched]="evaluacion.controls.saturacionO2.touched" [class.ion-invalid]="evaluacion.controls.saturacionO2.invalid"></ion-input>
+    </div>
+    <p class="formulario-nota texto-error" *ngIf="evaluacion.hasError('tension')">La tensión sistólica debe ser mayor que la diastólica.</p>
+
+    <h3 class="bloque">Signos clínicos</h3>
+    <div class="casillas">
+      <ion-checkbox *ngFor="let s of signosClinicos" labelPlacement="end" justify="start"
+        [checked]="marcado(evaluacion.controls.signosClinicos, s.valor)"
+        (ionChange)="alternar(evaluacion.controls.signosClinicos, s.valor, $any($event).detail.checked)">{{ s.nombre }}</ion-checkbox>
+    </div>
+
+    <h3 class="bloque">Signos de alarma de dengue <span class="ayuda">(OPS 2024)</span></h3>
+    <div class="casillas">
+      <ion-checkbox *ngFor="let s of signosAlarma" labelPlacement="end" justify="start"
+        [checked]="marcado(evaluacion.controls.signosAlarmaDengue, s.valor)"
+        (ionChange)="alternar(evaluacion.controls.signosAlarmaDengue, s.valor, $any($event).detail.checked)">{{ s.nombre }}</ion-checkbox>
+    </div>
+
+    <ion-textarea formControlName="observaciones" label="Observaciones" labelPlacement="stacked" fill="outline"
+      [autoGrow]="true" rows="2" [counter]="true" [maxlength]="maxTexto"></ion-textarea>
+    <p class="formulario-nota texto-error" *ngIf="evaluacion.hasError('vacia') && evaluacion.touched">
+      Indica al menos un signo vital, un signo o una observación.
+    </p>
+    <p class="formulario-nota">Al guardar, el sistema recalcula las alertas clínicas según las recomendaciones de la OPS.</p>
+  </form>
+
+  <!-- Dictamen -->
+  <form *ngSwitchCase="'dictamen'" [formGroup]="dictamen" (ngSubmit)="guardar()" class="formulario" id="form-registro">
+    <ion-input formControlName="diagnosticoPrincipal" label="Diagnóstico principal" labelPlacement="stacked" fill="outline"
+      placeholder="Fiebre de Oropouche" errorText="Obligatorio."
+      [class.ion-touched]="dictamen.controls.diagnosticoPrincipal.touched" [class.ion-invalid]="dictamen.controls.diagnosticoPrincipal.invalid"></ion-input>
+    <ion-textarea formControlName="diagnosticosDiferenciales" label="Diagnósticos diferenciales (opcional)" labelPlacement="stacked"
+      fill="outline" [autoGrow]="true" rows="2" placeholder="Dengue, meningitis, encefalitis…"></ion-textarea>
+    <ion-textarea formControlName="conclusion" label="Conclusión" labelPlacement="stacked" fill="outline" [autoGrow]="true" rows="3"
+      [counter]="true" [maxlength]="maxTexto" errorText="Obligatoria."
+      [class.ion-touched]="dictamen.controls.conclusion.touched" [class.ion-invalid]="dictamen.controls.conclusion.invalid"></ion-textarea>
+  </form>
+
+  <!-- Plan de atención -->
+  <form *ngSwitchCase="'plan'" [formGroup]="plan" (ngSubmit)="guardar()" class="formulario" id="form-registro">
+    <ion-select formControlName="modalidad" label="Modalidad" labelPlacement="stacked" fill="outline" interface="popover">
+      <ion-select-option *ngFor="let m of modalidades" [value]="m.valor">{{ m.nombre }}</ion-select-option>
+    </ion-select>
+    <ion-textarea formControlName="indicaciones" label="Indicaciones" labelPlacement="stacked" fill="outline" [autoGrow]="true"
+      rows="3" [counter]="true" [maxlength]="maxTexto" placeholder="Tratamiento sintomático, hidratación…"></ion-textarea>
+    <ng-container *ngTemplateOutlet="control; context: { $implicit: plan.controls.proximoControl }"></ng-container>
+  </form>
+
+  <!-- Seguimiento -->
+  <form *ngSwitchCase="'seguimiento'" [formGroup]="seguimiento" (ngSubmit)="guardar()" class="formulario" id="form-registro">
+    <div class="evoluciones" role="radiogroup" aria-label="Evolución">
+      <button type="button" *ngFor="let e of evoluciones" class="evolucion" [class.activa]="seguimiento.controls.evolucion.value === e.valor"
+        [attr.aria-checked]="seguimiento.controls.evolucion.value === e.valor" role="radio"
+        (click)="seguimiento.controls.evolucion.setValue(e.valor)">{{ e.nombre }}</button>
+    </div>
+    <p class="formulario-nota texto-error" *ngIf="seguimiento.controls.evolucion.invalid && seguimiento.controls.evolucion.touched">Elige la evolución.</p>
+    <p class="formulario-nota" *ngIf="seguimiento.controls.evolucion.value === 'RECAIDA'">El caso quedará marcado como recaída.</p>
+    <ion-textarea formControlName="observaciones" label="Observaciones" labelPlacement="stacked" fill="outline" [autoGrow]="true"
+      rows="3" [counter]="true" [maxlength]="maxTexto"></ion-textarea>
+    <ng-container *ngTemplateOutlet="control; context: { $implicit: seguimiento.controls.proximoControl }"></ng-container>
+  </form>
+
+  <!-- Cierre -->
+  <form *ngSwitchCase="'cierre'" [formGroup]="cierre" (ngSubmit)="guardar()" class="formulario" id="form-registro">
+    <ion-select formControlName="desenlace" label="Desenlace" labelPlacement="stacked" fill="outline" interface="popover"
+      placeholder="Selecciona" errorText="Obligatorio."
+      [class.ion-touched]="cierre.controls.desenlace.touched" [class.ion-invalid]="cierre.controls.desenlace.invalid">
+      <ion-select-option *ngFor="let d of desenlaces()" [value]="d.codigo">{{ d.nombre }}</ion-select-option>
+    </ion-select>
+    <ion-input formControlName="fechaCierre" type="date" label="Fecha de cierre" labelPlacement="stacked" fill="outline"
+      [min]="caso.fechaNotificacion" [max]="hoy"></ion-input>
+    <p class="formulario-nota texto-error" *ngIf="fechaCierreInvalida">No puede ser futura ni anterior a la notificación del caso.</p>
+    <ion-textarea formControlName="observaciones" label="Observaciones (opcional)" labelPlacement="stacked" fill="outline"
+      [autoGrow]="true" rows="2" [counter]="true" [maxlength]="maxTexto"></ion-textarea>
+    <p class="formulario-nota">Un caso cerrado no admite registros nuevos. Si hay una recaída, podrás reabrirlo con un motivo.</p>
+  </form>
+
+  <!-- Reapertura -->
+  <form *ngSwitchCase="'reapertura'" [formGroup]="reapertura" (ngSubmit)="guardar()" class="formulario" id="form-registro">
+    <ion-textarea formControlName="motivo" label="Motivo" labelPlacement="stacked" fill="outline" [autoGrow]="true" rows="3"
+      placeholder="Recaída de síntomas tras el alta" errorText="El motivo es obligatorio."
+      [class.ion-touched]="reapertura.controls.motivo.touched" [class.ion-invalid]="reapertura.controls.motivo.invalid"></ion-textarea>
+    <p class="formulario-nota">El cierre anterior queda guardado en los eventos del caso.</p>
+  </form>
+</div>
+
+<!-- Próximo control con atajos -->
+<ng-template #control let-c>
+  <div class="control" [formGroup]="$any(c.parent)">
+    <ion-input formControlName="proximoControl" type="date" label="Próximo control (opcional)" labelPlacement="stacked"
+      fill="outline" [min]="hoy" errorText="No puede ser una fecha pasada."
+      [class.ion-touched]="c.touched" [class.ion-invalid]="c.invalid"></ion-input>
+    <div class="atajos">
+      <ion-chip *ngFor="let a of atajosControl" outline (click)="programar(c, a.dias)">{{ a.texto }}</ion-chip>
+      <ion-chip *ngIf="c.value" outline color="medium" (click)="c.setValue('')">Sin control</ion-chip>
+    </div>
+  </div>
+</ng-template>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button color="medium" (click)="cerrar()">Cancelar</ion-button>
+      <ion-button fill="solid" [color]="tipo === 'cierre' ? 'danger' : 'primary'" type="submit" form="form-registro" [disabled]="guardando()">
+        <ion-spinner *ngIf="guardando()" name="crescent"></ion-spinner>
+        <span *ngIf="!guardando()">{{ tipo === 'cierre' ? 'Cerrar caso' : tipo === 'reapertura' ? 'Reabrir' : 'Guardar' }}</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

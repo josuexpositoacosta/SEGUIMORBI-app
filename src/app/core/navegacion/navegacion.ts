@@ -91,7 +91,6 @@ export const PANTALLAS: Pantalla[] = [
     icono: 'calendar',
     seccion: 'clinica',
     roles: ['MEDICO'],
-    proximamente: ['Controles pendientes por fecha', 'Acceso directo al caso de cada control'],
   },
 
   // EPIDEMIOLOGO: todas las áreas, validación y vigilancia
