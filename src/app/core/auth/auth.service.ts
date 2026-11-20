@@ -5,7 +5,7 @@ import { Observable, switchMap, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Credenciales, Usuario } from '../models/usuario';
 
-const CLAVE_TOKEN = 'oropouche.token';
+const CLAVE_TOKEN = 'seguimorbi.token';
 
 /** Motivo por el que se cierra la sesión; el login lo muestra al usuario. */
 export type MotivoCierre = 'manual' | 'expirada' | 'sin-conexion';
