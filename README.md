@@ -64,8 +64,14 @@ Las pantallas aún sin construir muestran «En preparación» con lo que harán.
 ### Atención clínica (MEDICO)
 
 - **Pacientes de su área:** lista con búsqueda por nombre o documento y edad calculada; alta y edición
-  (el área es siempre la del médico); ficha del paciente; desactivación. El backend impide ver o tocar
+  (el área es siempre la del médico); ficha del paciente; desactivación y reactivación (si su área sigue
+  activa). El backend impide ver o tocar
   pacientes de otra área.
+- **Casos:** se abren desde la ficha del paciente con la **clasificación sugerida por la OPS en directo**
+  (`POST /casos/sugerencia`) y los criterios que se cumplen; si no cumple la definición de sospechoso pide un
+  motivo. Ficha del caso con alertas, clasificación actual frente a la sugerida, datos clínicos editables,
+  resultados de laboratorio, cambio de clasificación con motivo (Confirmado solo con laboratorio confirmatorio)
+  e historial. Lista de casos con filtros por estado y clasificación (el epidemiólogo ve todas las áreas).
 
 Todas las listas tienen buscador (sin tildes), filtros y «tirar para actualizar» en el móvil.
 

@@ -29,4 +29,9 @@ export class PacienteService {
   desactivar(id: number): Observable<Paciente> {
     return this.http.patch<Paciente>(`${this.url}/${id}/desactivar`, {});
   }
+
+  /** Reactiva un paciente; el backend exige que su área siga activa. */
+  activar(id: number): Observable<Paciente> {
+    return this.http.patch<Paciente>(`${this.url}/${id}/activar`, {});
+  }
 }

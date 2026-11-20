@@ -61,6 +61,17 @@ const routes: Routes = [
         data: { ruta: 'pacientes' },
         loadComponent: () => import('./paginas/medico/pacientes/paciente-detalle.page').then(m => m.PacienteDetallePage),
       },
+      // MEDICO y EPIDEMIOLOGO
+      {
+        path: 'casos',
+        data: { ruta: 'casos' },
+        loadComponent: () => import('./paginas/casos/casos.page').then(m => m.CasosPage),
+      },
+      {
+        path: 'casos/:id',
+        data: { ruta: 'casos' },
+        loadComponent: () => import('./paginas/casos/caso-detalle.page').then(m => m.CasoDetallePage),
+      },
       ...rutasEnPreparacion,
       { path: 'sin-permiso', loadComponent: error, data: { tipo: 403 } },
     ],

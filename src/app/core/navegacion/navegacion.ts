@@ -83,12 +83,6 @@ export const PANTALLAS: Pantalla[] = [
     icono: 'medkit',
     seccion: 'clinica',
     roles: ['MEDICO', 'EPIDEMIOLOGO'],
-    proximamente: [
-      'Registrar casos con la clasificación sugerida según la OPS',
-      'Resultados de laboratorio e historial de clasificación',
-      'Evaluaciones clínicas con alertas, dictámenes, planes y seguimientos',
-      'Cierre y reapertura del caso',
-    ],
   },
   {
     ruta: 'agenda',

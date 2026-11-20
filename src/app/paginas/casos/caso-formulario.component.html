@@ -1,0 +1,125 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ esNuevo ? 'Abrir caso' : 'Editar datos del caso' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()" aria-label="Cerrar"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<div class="modal-cuerpo">
+  <p class="formulario-nota paciente">
+    <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+    {{ paciente.nombres }} {{ paciente.apellidos }} · {{ paciente.tipoDocumento }} {{ paciente.numeroDocumento }}
+  </p>
+
+  <div class="formulario-error" *ngIf="error()" role="alert" style="margin-bottom: 16px">
+    <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>{{ error() }}
+  </div>
+
+  <div class="disposicion">
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="formulario" id="form-caso">
+      <h3 class="bloque">Fechas</h3>
+      <div class="formulario-fila">
+        <ion-input formControlName="fechaInicioSintomas" type="date" label="Inicio de síntomas" labelPlacement="stacked"
+          fill="outline" [max]="hoy" errorText="Obligatoria."
+          [class.ion-touched]="form.controls.fechaInicioSintomas.touched"
+          [class.ion-invalid]="form.controls.fechaInicioSintomas.invalid"></ion-input>
+        <ion-input formControlName="fechaNotificacion" type="date" label="Notificación" labelPlacement="stacked"
+          fill="outline" [max]="hoy" errorText="Obligatoria."
+          [class.ion-touched]="form.controls.fechaNotificacion.touched"
+          [class.ion-invalid]="form.controls.fechaNotificacion.invalid"></ion-input>
+      </div>
+      <p class="formulario-nota texto-error" *ngIf="form.hasError('futura')">Las fechas no pueden ser futuras.</p>
+      <p class="formulario-nota texto-error" *ngIf="form.hasError('orden')">El inicio de síntomas no puede ser posterior a la notificación.</p>
+
+      <h3 class="bloque">Cuadro clínico</h3>
+      <div class="interruptores">
+        <ion-toggle formControlName="fiebre" justify="space-between">Fiebre (o historia de fiebre)</ion-toggle>
+        <ion-toggle formControlName="cefaleaIntensa" justify="space-between">Cefalea intensa</ion-toggle>
+        <ion-toggle formControlName="recaida" justify="space-between">
+          Recaída <span class="ayuda">(exime del límite de 5 días)</span>
+        </ion-toggle>
+      </div>
+
+      <h3 class="bloque">Otras manifestaciones <span class="ayuda">(la OPS exige dos o más)</span></h3>
+      <div class="casillas">
+        <ion-checkbox *ngFor="let m of manifestaciones" labelPlacement="end" justify="start"
+          [checked]="tieneManifestacion(m.valor)" (ionChange)="alternarManifestacion(m.valor, $any($event).detail.checked)">
+          {{ m.nombre }}
+        </ion-checkbox>
+      </div>
+
+      <ng-container *ngIf="puedeEstarEmbarazada">
+        <h3 class="bloque">Embarazo</h3>
+        <div class="interruptores">
+          <ion-toggle formControlName="embarazada" justify="space-between">Embarazada</ion-toggle>
+        </div>
+        <ion-input *ngIf="form.controls.embarazada.value" formControlName="semanasGestacion" type="number"
+          label="Semanas de gestación" labelPlacement="stacked" fill="outline" min="1" max="45"
+          errorText="Entre 1 y 45." [class.ion-touched]="form.controls.semanasGestacion.touched"
+          [class.ion-invalid]="form.controls.semanasGestacion.invalid"></ion-input>
+      </ng-container>
+
+      <h3 class="bloque">Datos epidemiológicos</h3>
+      <div class="interruptores">
+        <ion-toggle formControlName="areaTransmisionOViaje" justify="space-between">
+          Vive o viajó a un área de transmisión
+        </ion-toggle>
+      </div>
+      <ion-input *ngIf="form.controls.areaTransmisionOViaje.value" formControlName="detalleAreaTransmision"
+        label="Lugar y fechas (opcional)" labelPlacement="stacked" fill="outline"></ion-input>
+      <div class="interruptores">
+        <ion-toggle formControlName="nexoCasoConfirmado" justify="space-between">Nexo con un caso confirmado</ion-toggle>
+      </div>
+
+      <ion-textarea *ngIf="necesitaMotivo" formControlName="motivo" label="Motivo para registrarlo" labelPlacement="stacked"
+        fill="outline" [autoGrow]="true" rows="2"
+        helperText="No cumple la definición de caso sospechoso: explica por qué lo registras (quedará como Sospechoso)."></ion-textarea>
+    </form>
+
+    <aside class="sugerencia" aria-live="polite">
+      <div class="sugerencia-cabecera">
+        <ion-icon name="sparkles-outline" aria-hidden="true"></ion-icon>
+        <span>Clasificación sugerida (OPS)</span>
+        <ion-spinner *ngIf="calculando()" name="dots"></ion-spinner>
+      </div>
+
+      <ng-container *ngIf="sugerencia() as s; else sinDatos">
+        <div class="sugerencia-valor">
+          <span *ngIf="s.clasificacion" class="etiqueta grande" [ngClass]="claseClasificacion(s.clasificacion)">
+            {{ nombreClasificacion(s.clasificacion) }}
+          </span>
+          <span *ngIf="!s.clasificacion" class="etiqueta grande">No cumple la definición</span>
+        </div>
+        <ul class="criterios">
+          <li *ngFor="let c of s.criterios" [class.no-cumple]="c.startsWith('No cumple') || c.includes('no confirma')">
+            <ion-icon [name]="c.startsWith('No cumple') || c.includes('no confirma') ? 'close-circle' : 'checkmark-circle'"
+              aria-hidden="true"></ion-icon>
+            {{ c }}
+          </li>
+        </ul>
+        <p class="formulario-nota" *ngIf="!esNuevo">
+          Al guardar se recalcula la sugerencia, pero la clasificación del caso solo cambia si tú la cambias.
+        </p>
+      </ng-container>
+      <ng-template #sinDatos>
+        <p class="formulario-nota">Indica las fechas y el cuadro clínico para ver la sugerencia.</p>
+      </ng-template>
+
+      <p class="aviso-clinico">La sugerencia es orientativa: la clasificación la decide el profesional sanitario.</p>
+    </aside>
+  </div>
+</div>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button color="medium" (click)="cerrar()">Cancelar</ion-button>
+      <ion-button fill="solid" color="primary" type="submit" form="form-caso" [disabled]="guardando()">
+        <ion-spinner *ngIf="guardando()" name="crescent"></ion-spinner>
+        <span *ngIf="!guardando()">{{ esNuevo ? 'Registrar caso' : 'Guardar' }}</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>
