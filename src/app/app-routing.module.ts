@@ -50,6 +50,17 @@ const routes: Routes = [
         data: { ruta: 'admin/desenlaces' },
         loadComponent: () => import('./paginas/admin/desenlaces/desenlaces.page').then(m => m.DesenlacesPage),
       },
+      // MEDICO
+      {
+        path: 'pacientes',
+        data: { ruta: 'pacientes' },
+        loadComponent: () => import('./paginas/medico/pacientes/pacientes.page').then(m => m.PacientesPage),
+      },
+      {
+        path: 'pacientes/:id',
+        data: { ruta: 'pacientes' },
+        loadComponent: () => import('./paginas/medico/pacientes/paciente-detalle.page').then(m => m.PacienteDetallePage),
+      },
       ...rutasEnPreparacion,
       { path: 'sin-permiso', loadComponent: error, data: { tipo: 403 } },
     ],
