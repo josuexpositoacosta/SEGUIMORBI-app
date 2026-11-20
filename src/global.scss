@@ -291,3 +291,60 @@ ion-toolbar ion-buttons[slot="end"] ion-button[fill="solid"] {
   --padding-start: 12px;
   --padding-end: 12px;
 }
+
+/* ---------- Fichas (paciente, caso) ---------- */
+.ficha-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.ficha-avatar {
+  width: 64px;
+  height: 64px;
+  font-size: 1.3rem;
+}
+
+.ficha-identidad {
+  flex: 1;
+  min-width: 220px;
+}
+
+.ficha-identidad h1 {
+  margin: 0 0 6px;
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+}
+
+.ficha-acciones {
+  display: flex;
+  gap: 4px;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.datos div {
+  padding: 12px 14px;
+  border-radius: var(--app-radius-sm);
+  background: var(--app-surface-muted);
+}
+
+.datos dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--app-text-muted);
+}
+
+.datos dd {
+  margin: 4px 0 0;
+  color: var(--ion-text-color);
+  overflow-wrap: anywhere;
+}

@@ -61,6 +61,12 @@ Las pantallas aún sin construir muestran «En preparación» con lo que harán.
 - **Áreas de salud:** alta, edición, desactivación y reactivación.
 - **Desenlaces:** catálogo para el cierre de casos; alta, cambio de nombre (el código es fijo) y activación.
 
+### Atención clínica (MEDICO)
+
+- **Pacientes de su área:** lista con búsqueda por nombre o documento y edad calculada; alta y edición
+  (el área es siempre la del médico); ficha del paciente; desactivación. El backend impide ver o tocar
+  pacientes de otra área.
+
 Todas las listas tienen buscador (sin tildes), filtros y «tirar para actualizar» en el móvil.
 
 ## Estado

@@ -1,0 +1,97 @@
+import { CommonModule, DatePipe } from '@angular/common';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { IonicModule, ModalController } from '@ionic/angular';
+import { AvisosService } from 'src/app/compartido/avisos.service';
+import { EstadoVacioComponent } from 'src/app/compartido/estado-vacio.component';
+import { textoEdad } from 'src/app/compartido/fechas';
+import { mensajeDeError } from 'src/app/core/http/errores';
+import { Paciente, nombreDocumento, nombreSexo } from 'src/app/core/models/paciente';
+import { AreaSaludService } from 'src/app/core/services/area-salud.service';
+import { PacienteService } from 'src/app/core/services/paciente.service';
+import { abrirFormularioPaciente } from './paciente-formulario.component';
+
+@Component({
+  selector: 'app-paciente-detalle',
+  standalone: true,
+  imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
+  templateUrl: './paciente-detalle.page.html',
+})
+export class PacienteDetallePage implements OnInit {
+  private readonly api = inject(PacienteService);
+  private readonly areas = inject(AreaSaludService);
+  private readonly avisos = inject(AvisosService);
+  private readonly modales = inject(ModalController);
+  private readonly id = Number(inject(ActivatedRoute).snapshot.paramMap.get('id'));
+
+  readonly paciente = signal<Paciente | null>(null);
+  readonly area = signal('');
+  readonly cargando = signal(true);
+  readonly error = signal('');
+
+  readonly textoEdad = textoEdad;
+  readonly nombreSexo = nombreSexo;
+  readonly nombreDocumento = nombreDocumento;
+
+  ngOnInit(): void {
+    this.cargar();
+  }
+
+  cargar(): void {
+    this.cargando.set(true);
+    this.error.set('');
+    this.api.obtener(this.id).subscribe({
+      next: p => {
+        this.paciente.set(p);
+        this.cargando.set(false);
+        this.areas.obtener(p.areaSaludId).subscribe({
+          next: a => this.area.set(`${a.nombre} (${a.codigo})`),
+          error: () => this.area.set(`Área ${p.areaSaludId}`),
+        });
+      },
+      error: (e: unknown) => {
+        this.error.set(mensajeDeError(e));
+        this.cargando.set(false);
+      },
+    });
+  }
+
+  iniciales(p: Paciente): string {
+    return ((p.nombres?.charAt(0) ?? '') + (p.apellidos?.charAt(0) ?? '')).toUpperCase();
+  }
+
+  async editar(): Promise<void> {
+    const p = this.paciente();
+    if (!p) {
+      return;
+    }
+    const guardado = await abrirFormularioPaciente(this.modales, p);
+    if (guardado) {
+      this.paciente.set(guardado);
+      this.avisos.exito('Datos del paciente actualizados');
+    }
+  }
+
+  async desactivar(): Promise<void> {
+    const p = this.paciente();
+    if (!p) {
+      return;
+    }
+    const ok = await this.avisos.confirmar({
+      titulo: 'Desactivar paciente',
+      mensaje: `${p.nombres} ${p.apellidos} dejará de aparecer entre los pacientes activos. Sus datos y casos se conservan.`,
+      confirmar: 'Desactivar',
+      peligro: true,
+    });
+    if (!ok) {
+      return;
+    }
+    this.api.desactivar(p.id).subscribe({
+      next: actualizado => {
+        this.paciente.set(actualizado);
+        this.avisos.exito('Paciente desactivado');
+      },
+      error: e => this.avisos.error(e),
+    });
+  }
+}

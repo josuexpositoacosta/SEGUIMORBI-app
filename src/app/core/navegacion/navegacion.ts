@@ -75,7 +75,6 @@ export const PANTALLAS: Pantalla[] = [
     icono: 'people-circle',
     seccion: 'clinica',
     roles: ['MEDICO'],
-    proximamente: ['Registrar y buscar pacientes de tu área', 'Editar sus datos', 'Ver sus casos'],
   },
   {
     ruta: 'casos',
