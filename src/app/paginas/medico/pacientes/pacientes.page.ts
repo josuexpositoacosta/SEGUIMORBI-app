@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { AvisosService } from 'src/app/compartido/avisos.service';
@@ -15,6 +15,7 @@ type Filtro = 'activos' | 'inactivos' | 'todos';
 @Component({
   selector: 'app-pacientes',
   imports: [IonicModule, EstadoVacioComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './pacientes.page.html',
 })
 export class PacientesPage implements OnInit {

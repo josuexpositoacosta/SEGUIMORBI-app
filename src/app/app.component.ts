@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { AuthService } from './core/auth/auth.service';
 import { NOMBRE_ROL } from './core/models/usuario';
 import { menuDe } from './core/navegacion/navegacion';
@@ -7,6 +7,7 @@ import { menuDe } from './core/navegacion/navegacion';
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class AppComponent {

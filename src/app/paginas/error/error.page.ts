@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
@@ -33,6 +33,7 @@ const CONTENIDO = {
       </div>
     </ion-content>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .error {
       display: flex;

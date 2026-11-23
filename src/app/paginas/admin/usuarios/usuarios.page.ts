@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActionSheetButton, ActionSheetController, IonicModule } from '@ionic/angular';
 import { Observable, forkJoin } from 'rxjs';
@@ -35,6 +35,7 @@ function areaSiEsMedico(grupo: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-usuarios',
   imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './usuarios.page.html',
 })
 export class UsuariosPage implements OnInit {

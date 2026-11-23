@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonicModule, ModalController } from '@ionic/angular';
@@ -48,6 +48,7 @@ function fechasResultado(grupo: AbstractControl): ValidationErrors | null {
   selector: 'app-caso-detalle',
   imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
   templateUrl: './caso-detalle.page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./caso-detalle.page.css'],
 })
 export class CasoDetallePage implements OnInit {

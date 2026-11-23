@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { forkJoin } from 'rxjs';
@@ -23,6 +23,7 @@ interface Grupo {
 @Component({
   selector: 'app-agenda',
   imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './agenda.page.html',
 })
 export class AgendaPage implements OnInit {

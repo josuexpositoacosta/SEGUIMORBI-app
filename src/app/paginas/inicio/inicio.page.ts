@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from 'src/app/core/auth/auth.service';
@@ -9,6 +9,7 @@ import { pantallasDe } from 'src/app/core/navegacion/navegacion';
   selector: 'app-inicio',
   imports: [IonicModule, RouterLink],
   templateUrl: './inicio.page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./inicio.page.css'],
 })
 export class InicioPage {

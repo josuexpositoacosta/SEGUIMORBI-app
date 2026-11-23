@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { NOMBRE_SECCION, PANTALLAS, Pantalla } from 'src/app/core/navegacion/navegacion';
@@ -8,6 +8,7 @@ import { NOMBRE_SECCION, PANTALLAS, Pantalla } from 'src/app/core/navegacion/nav
   selector: 'app-en-preparacion',
   imports: [IonicModule, RouterLink],
   templateUrl: './en-preparacion.page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./en-preparacion.page.css'],
 })
 export class EnPreparacionPage {

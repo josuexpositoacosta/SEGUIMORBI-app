@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { forkJoin } from 'rxjs';
@@ -17,6 +17,7 @@ type FiltroEstado = EstadoCaso | 'TODOS';
 @Component({
   selector: 'app-casos',
   imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './casos.page.html',
 })
 export class CasosPage implements OnInit {

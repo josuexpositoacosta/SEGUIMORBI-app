@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { DatosPersonalesComponent } from './datos-personales/datos-personales.component';
 
 @Component({
   selector: 'app-perfil',
   imports: [IonicModule, DatosPersonalesComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <ion-header>
       <ion-toolbar>

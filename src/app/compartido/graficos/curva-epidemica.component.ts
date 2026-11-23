@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild, computed, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild, computed, signal, ChangeDetectionStrategy } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { Clasificacion } from 'src/app/core/models/caso';
 import { SemanaVigilancia } from 'src/app/core/models/vigilancia';
@@ -45,6 +45,7 @@ interface Columna {
   selector: 'app-curva-epidemica',
   imports: [CommonModule, IonicModule, DatePipe],
   templateUrl: './curva-epidemica.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./curva-epidemica.component.css'],
 })
 export class CurvaEpidemicaComponent implements AfterViewInit, OnDestroy {

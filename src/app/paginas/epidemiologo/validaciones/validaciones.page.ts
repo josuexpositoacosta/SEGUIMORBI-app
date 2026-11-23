@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, IonicModule } from '@ionic/angular';
 import { forkJoin } from 'rxjs';
@@ -17,6 +17,7 @@ import { PacienteService } from 'src/app/core/services/paciente.service';
 @Component({
   selector: 'app-validaciones',
   imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './validaciones.page.html',
 })
 export class ValidacionesPage implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { mensajeDeError } from 'src/app/core/http/errores';
   selector: 'app-login',
   imports: [ReactiveFormsModule, IonicModule],
   templateUrl: './login.page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./login.page.css']
 })
 export class LoginPage implements OnInit {
