@@ -3,6 +3,14 @@
 Cambios de cada versión del frontend de SEGUIMORBI. Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/);
 versiones: [SemVer](https://semver.org/lang/es/).
 
+## v1.0.1 — 2026-11-23
+
+### Nuevo
+
+- **Demo pública** en <https://josuexpositoacosta.github.io/SEGUIMORBI-app/>, publicada con GitHub Pages en cada
+  versión y conectada a la API de Render (`https://seguimorbi-api.onrender.com`). La API gratuita se duerme tras
+  15 minutos sin uso: la primera petición puede tardar alrededor de un minuto.
+
 ## v1.0.0 — 2026-11-23
 
 Primera versión completa del frontend, rehecho por fases sobre la plantilla inicial de Ionic.
