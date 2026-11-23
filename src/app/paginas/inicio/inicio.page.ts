@@ -8,7 +8,6 @@ import { pantallasDe } from 'src/app/core/navegacion/navegacion';
 
 @Component({
   selector: 'app-inicio',
-  standalone: true,
   imports: [CommonModule, IonicModule, RouterLink],
   templateUrl: './inicio.page.html',
   styleUrls: ['./inicio.page.css'],

@@ -20,7 +20,6 @@ function noFutura(control: AbstractControl): ValidationErrors | null {
  */
 @Component({
   selector: 'app-paciente-formulario',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule],
   templateUrl: './paciente-formulario.component.html',
 })

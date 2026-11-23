@@ -67,7 +67,6 @@ function noPasada(c: AbstractControl): ValidationErrors | null {
  */
 @Component({
   selector: 'app-registro-clinico',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule],
   templateUrl: './registro-clinico.component.html',
   styleUrls: ['./registro-clinico.component.css'],

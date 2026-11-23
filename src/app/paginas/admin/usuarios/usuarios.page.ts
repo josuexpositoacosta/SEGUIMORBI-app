@@ -34,7 +34,6 @@ function areaSiEsMedico(grupo: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-usuarios',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent],
   templateUrl: './usuarios.page.html',
 })

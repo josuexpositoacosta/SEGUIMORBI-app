@@ -7,6 +7,7 @@ import { menuDe } from './core/navegacion/navegacion';
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
+  standalone: false,
 })
 export class AppComponent {
   private readonly auth = inject(AuthService);

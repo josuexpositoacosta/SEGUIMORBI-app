@@ -7,7 +7,6 @@ import { NOMBRE_SECCION, PANTALLAS, Pantalla } from 'src/app/core/navegacion/nav
 /** Pantalla aún no construida: explica qué hará. La sustituye la fase correspondiente. */
 @Component({
   selector: 'app-en-preparacion',
-  standalone: true,
   imports: [CommonModule, IonicModule, RouterLink],
   templateUrl: './en-preparacion.page.html',
   styleUrls: ['./en-preparacion.page.css'],

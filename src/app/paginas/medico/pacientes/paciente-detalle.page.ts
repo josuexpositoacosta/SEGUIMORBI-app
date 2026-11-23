@@ -16,7 +16,6 @@ import { abrirFormularioPaciente } from './paciente-formulario.component';
 
 @Component({
   selector: 'app-paciente-detalle',
-  standalone: true,
   imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
   templateUrl: './paciente-detalle.page.html',
 })

@@ -18,7 +18,6 @@ const CONTENIDO = {
 /** Página de error de navegación: 404 (no existe) o 403 (sin permiso por rol). */
 @Component({
   selector: 'app-error',
-  standalone: true,
   imports: [IonicModule, RouterLink],
   template: `
     <ion-content>

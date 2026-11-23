@@ -4,7 +4,6 @@ import { DatosPersonalesComponent } from './datos-personales/datos-personales.co
 
 @Component({
   selector: 'app-perfil',
-  standalone: true,
   imports: [IonicModule, DatosPersonalesComponent],
   template: `
     <ion-header>

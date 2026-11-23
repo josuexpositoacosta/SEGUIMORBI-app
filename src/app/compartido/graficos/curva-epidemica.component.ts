@@ -43,7 +43,6 @@ interface Columna {
 /** Curva epidémica: barras apiladas por clasificación y semana epidemiológica. */
 @Component({
   selector: 'app-curva-epidemica',
-  standalone: true,
   imports: [CommonModule, IonicModule, DatePipe],
   templateUrl: './curva-epidemica.component.html',
   styleUrls: ['./curva-epidemica.component.css'],

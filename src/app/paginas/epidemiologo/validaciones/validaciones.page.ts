@@ -16,7 +16,6 @@ import { PacienteService } from 'src/app/core/services/paciente.service';
 /** Bandeja del epidemiólogo: clasificaciones propuestas por los médicos pendientes de validar. */
 @Component({
   selector: 'app-validaciones',
-  standalone: true,
   imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
   templateUrl: './validaciones.page.html',
 })

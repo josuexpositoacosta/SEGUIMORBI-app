@@ -22,7 +22,6 @@ interface Grupo {
 /** Controles programados en los planes y seguimientos de los casos abiertos del área. */
 @Component({
   selector: 'app-agenda',
-  standalone: true,
   imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
   templateUrl: './agenda.page.html',
 })

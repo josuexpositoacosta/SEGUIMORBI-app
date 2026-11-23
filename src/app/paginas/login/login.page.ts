@@ -8,7 +8,6 @@ import { mensajeDeError } from 'src/app/core/http/errores';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule],
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.css']

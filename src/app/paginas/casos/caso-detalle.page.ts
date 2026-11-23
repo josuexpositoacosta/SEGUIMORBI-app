@@ -46,7 +46,6 @@ function fechasResultado(grupo: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-caso-detalle',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
   templateUrl: './caso-detalle.page.html',
   styleUrls: ['./caso-detalle.page.css'],

@@ -13,7 +13,6 @@ type Filtro = 'activas' | 'inactivas' | 'todas';
 
 @Component({
   selector: 'app-areas-salud',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent, DatePipe],
   templateUrl: './areas-salud.page.html',
 })

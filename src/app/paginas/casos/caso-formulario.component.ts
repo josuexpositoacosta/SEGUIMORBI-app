@@ -33,7 +33,6 @@ function fechasValidas(grupo: AbstractControl): ValidationErrors | null {
  */
 @Component({
   selector: 'app-caso-formulario',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule],
   templateUrl: './caso-formulario.component.html',
   styleUrls: ['./caso-formulario.component.css'],

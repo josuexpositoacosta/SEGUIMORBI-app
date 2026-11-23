@@ -15,7 +15,6 @@ type Filtro = 'activos' | 'inactivos' | 'todos';
 
 @Component({
   selector: 'app-pacientes',
-  standalone: true,
   imports: [CommonModule, IonicModule, EstadoVacioComponent],
   templateUrl: './pacientes.page.html',
 })

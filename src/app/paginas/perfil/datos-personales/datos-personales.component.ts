@@ -10,7 +10,6 @@ import { UsuarioService } from 'src/app/core/services/usuario.service';
 
 @Component({
   selector: 'app-datos-personales',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule],
   templateUrl: './datos-personales.component.html',
   styleUrls: ['./datos-personales.component.css']

@@ -29,7 +29,6 @@ const SERIES: { clave: Clasificacion; nombre: string; color: string }[] = [
 /** Panel de vigilancia epidemiológica (solo EPIDEMIOLOGO). */
 @Component({
   selector: 'app-vigilancia',
-  standalone: true,
   imports: [CommonModule, IonicModule, EstadoVacioComponent, CurvaEpidemicaComponent, DatePipe, DecimalPipe, RouterLink],
   templateUrl: './vigilancia.page.html',
   styleUrls: ['./vigilancia.page.css'],

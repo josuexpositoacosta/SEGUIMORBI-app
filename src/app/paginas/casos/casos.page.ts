@@ -16,7 +16,6 @@ type FiltroEstado = EstadoCaso | 'TODOS';
 
 @Component({
   selector: 'app-casos',
-  standalone: true,
   imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
   templateUrl: './casos.page.html',
 })

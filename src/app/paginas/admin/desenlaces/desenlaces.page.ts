@@ -23,7 +23,6 @@ function codigoValido(control: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-desenlaces',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent],
   templateUrl: './desenlaces.page.html',
 })

@@ -4,7 +4,6 @@ import { IonicModule } from '@ionic/angular';
 /** Mensaje para listas vacías o búsquedas sin resultados. */
 @Component({
   selector: 'app-estado-vacio',
-  standalone: true,
   imports: [IonicModule],
   template: `
     <div class="vacio">
