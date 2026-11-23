@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { forkJoin } from 'rxjs';
@@ -22,8 +22,8 @@ interface Grupo {
 /** Controles programados en los planes y seguimientos de los casos abiertos del área. */
 @Component({
   selector: 'app-agenda',
-  standalone: true,
   imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './agenda.page.html',
 })
 export class AgendaPage implements OnInit {

@@ -9,14 +9,18 @@
 
 <ion-content>
   <div class="page-container">
-    <div class="cargando" *ngIf="cargando()"><ion-spinner name="crescent"></ion-spinner></div>
+    @if (cargando()) {
+      <div class="cargando"><ion-spinner name="crescent"></ion-spinner></div>
+    }
 
-    <app-estado-vacio *ngIf="!cargando() && error()" icono="alert-circle-outline"
-      titulo="No se pudo abrir la ficha" [texto]="error()">
-      <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
-    </app-estado-vacio>
+    @if (!cargando() && error()) {
+      <app-estado-vacio icono="alert-circle-outline"
+        titulo="No se pudo abrir la ficha" [texto]="error()">
+        <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+      </app-estado-vacio>
+    }
 
-    <ng-container *ngIf="!cargando() && paciente() as p">
+    @if (!cargando() && paciente(); as p) {
       <section class="ficha-cabecera">
         <div class="registro-avatar ficha-avatar" aria-hidden="true">{{ iniciales(p) }}</div>
         <div class="ficha-identidad">
@@ -32,15 +36,18 @@
           <ion-button fill="outline" (click)="editar()">
             <ion-icon slot="start" name="create-outline"></ion-icon>Editar
           </ion-button>
-          <ion-button *ngIf="p.activo" fill="clear" color="danger" (click)="desactivar()">
-            <ion-icon slot="start" name="ban-outline"></ion-icon>Desactivar
-          </ion-button>
-          <ion-button *ngIf="!p.activo" fill="solid" color="success" (click)="activar()">
-            <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>Activar
-          </ion-button>
+          @if (p.activo) {
+            <ion-button fill="clear" color="danger" (click)="desactivar()">
+              <ion-icon slot="start" name="ban-outline"></ion-icon>Desactivar
+            </ion-button>
+          }
+          @if (!p.activo) {
+            <ion-button fill="solid" color="success" (click)="activar()">
+              <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>Activar
+            </ion-button>
+          }
         </div>
       </section>
-
       <ion-card>
         <ion-card-header><ion-card-title>Datos personales</ion-card-title></ion-card-header>
         <ion-card-content>
@@ -54,36 +61,45 @@
           </dl>
         </ion-card-content>
       </ion-card>
-
       <ion-card>
         <ion-card-header class="cabecera-tarjeta">
           <ion-card-title>Casos</ion-card-title>
-          <ion-button *ngIf="p.activo && !tieneCasoAbierto()" size="small" (click)="abrirCaso()">
-            <ion-icon slot="start" name="add"></ion-icon>Abrir caso
-          </ion-button>
+          @if (p.activo && !tieneCasoAbierto()) {
+            <ion-button size="small" (click)="abrirCaso()">
+              <ion-icon slot="start" name="add"></ion-icon>Abrir caso
+            </ion-button>
+          }
         </ion-card-header>
         <ion-card-content>
-          <p class="text-muted" *ngIf="!casos().length">El paciente no tiene casos registrados.</p>
-          <p class="formulario-nota" *ngIf="tieneCasoAbierto()">
-            Tiene un caso abierto: una recaída se registra en ese mismo caso.
-          </p>
+          @if (!casos().length) {
+            <p class="text-muted">El paciente no tiene casos registrados.</p>
+          }
+          @if (tieneCasoAbierto()) {
+            <p class="formulario-nota">
+              Tiene un caso abierto: una recaída se registra en ese mismo caso.
+            </p>
+          }
           <div class="lista-registros">
-            <button type="button" *ngFor="let c of casos()" class="registro" (click)="verCaso(c)"
-              [attr.aria-label]="'Abrir caso ' + c.id">
-              <div class="registro-icono" aria-hidden="true"><ion-icon name="medkit-outline"></ion-icon></div>
-              <div class="registro-cuerpo">
-                <div class="registro-titulo">Caso nº {{ c.id }} · {{ c.fechaNotificacion | date: 'dd/MM/yyyy' }}</div>
-                <div class="registro-etiquetas">
-                  <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c.clasificacion) }}</span>
-                  <span class="etiqueta" [ngClass]="c.estado === 'ABIERTO' ? 'exito' : ''">{{ c.estado === 'ABIERTO' ? 'Abierto' : 'Cerrado' }}</span>
-                  <span class="etiqueta peligro" *ngIf="c.alertas?.length">{{ c.alertas.length }} alerta{{ c.alertas.length > 1 ? 's' : '' }}</span>
+            @for (c of casos(); track c) {
+              <button type="button" class="registro" (click)="verCaso(c)"
+                [attr.aria-label]="'Abrir caso ' + c.id">
+                <div class="registro-icono" aria-hidden="true"><ion-icon name="medkit-outline"></ion-icon></div>
+                <div class="registro-cuerpo">
+                  <div class="registro-titulo">Caso nº {{ c.id }} · {{ c.fechaNotificacion | date: 'dd/MM/yyyy' }}</div>
+                  <div class="registro-etiquetas">
+                    <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c.clasificacion) }}</span>
+                    <span class="etiqueta" [ngClass]="c.estado === 'ABIERTO' ? 'exito' : ''">{{ c.estado === 'ABIERTO' ? 'Abierto' : 'Cerrado' }}</span>
+                    @if (c.alertas.length) {
+                      <span class="etiqueta peligro">{{ c.alertas.length }} alerta{{ c.alertas.length > 1 ? 's' : '' }}</span>
+                    }
+                  </div>
                 </div>
-              </div>
-              <ion-icon name="chevron-forward" class="registro-acciones" aria-hidden="true"></ion-icon>
-            </button>
+                <ion-icon name="chevron-forward" class="registro-acciones" aria-hidden="true"></ion-icon>
+              </button>
+            }
           </div>
         </ion-card-content>
       </ion-card>
-    </ng-container>
+    }
   </div>
 </ion-content>

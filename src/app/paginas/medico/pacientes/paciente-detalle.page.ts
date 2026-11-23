@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { AvisosService } from 'src/app/compartido/avisos.service';
@@ -16,8 +16,8 @@ import { abrirFormularioPaciente } from './paciente-formulario.component';
 
 @Component({
   selector: 'app-paciente-detalle',
-  standalone: true,
   imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './paciente-detalle.page.html',
 })
 export class PacienteDetallePage implements OnInit {

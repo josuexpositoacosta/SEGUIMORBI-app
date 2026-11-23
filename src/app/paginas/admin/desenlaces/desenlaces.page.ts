@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActionSheetController, IonicModule } from '@ionic/angular';
 import { AvisosService } from 'src/app/compartido/avisos.service';
@@ -23,8 +23,8 @@ function codigoValido(control: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-desenlaces',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './desenlaces.page.html',
 })
 export class DesenlacesPage implements OnInit {

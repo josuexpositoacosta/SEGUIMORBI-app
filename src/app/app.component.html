@@ -14,34 +14,42 @@
           </div>
 
           <nav class="menu-list" aria-label="Menú principal">
-            <ion-list lines="none" *ngFor="let grupo of menu()">
-              <ion-list-header *ngIf="grupo.seccion !== 'general'">{{ grupo.titulo }}</ion-list-header>
-              <ion-menu-toggle auto-hide="false" *ngFor="let p of grupo.pantallas">
-                <ion-item
-                  routerDirection="root"
-                  [routerLink]="'/' + p.ruta"
-                  routerLinkActive="selected"
-                  detail="false"
-                  button>
-                  <ion-icon aria-hidden="true" slot="start" [name]="p.icono + '-outline'"></ion-icon>
-                  <ion-label>{{ p.titulo }}</ion-label>
-                </ion-item>
-              </ion-menu-toggle>
-            </ion-list>
+            @for (grupo of menu(); track grupo) {
+              <ion-list lines="none">
+                @if (grupo.seccion !== 'general') {
+                  <ion-list-header>{{ grupo.titulo }}</ion-list-header>
+                }
+                @for (p of grupo.pantallas; track p) {
+                  <ion-menu-toggle auto-hide="false">
+                    <ion-item
+                      routerDirection="root"
+                      [routerLink]="'/' + p.ruta"
+                      routerLinkActive="selected"
+                      detail="false"
+                      button>
+                      <ion-icon aria-hidden="true" slot="start" [name]="p.icono + '-outline'"></ion-icon>
+                      <ion-label>{{ p.titulo }}</ion-label>
+                    </ion-item>
+                  </ion-menu-toggle>
+                }
+              </ion-list>
+            }
           </nav>
 
-          <div class="user-card" *ngIf="usuario() as u">
-            <div class="user-avatar" aria-hidden="true">{{ iniciales() }}</div>
-            <div class="user-info">
-              <div class="user-name">{{ u.firstname }} {{ u.lastname }}</div>
-              <div class="user-role">{{ rol() }}</div>
+          @if (usuario(); as u) {
+            <div class="user-card">
+              <div class="user-avatar" aria-hidden="true">{{ iniciales() }}</div>
+              <div class="user-info">
+                <div class="user-name">{{ u.firstname }} {{ u.lastname }}</div>
+                <div class="user-role">{{ rol() }}</div>
+              </div>
+              <ion-menu-toggle auto-hide="false">
+                <ion-button fill="clear" color="medium" (click)="cerrarSesion()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                  <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+                </ion-button>
+              </ion-menu-toggle>
             </div>
-            <ion-menu-toggle auto-hide="false">
-              <ion-button fill="clear" color="medium" (click)="cerrarSesion()" aria-label="Cerrar sesión" title="Cerrar sesión">
-                <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
-              </ion-button>
-            </ion-menu-toggle>
-          </div>
+          }
         </div>
       </ion-content>
     </ion-menu>

@@ -1,10 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 
 /** Mensaje para listas vacías o búsquedas sin resultados. */
 @Component({
   selector: 'app-estado-vacio',
-  standalone: true,
   imports: [IonicModule],
   template: `
     <div class="vacio">
@@ -14,6 +13,7 @@ import { IonicModule } from '@ionic/angular';
       <ng-content></ng-content>
     </div>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .vacio { display: flex; flex-direction: column; align-items: center; padding: 48px 16px; text-align: center; }
     .vacio-icono {

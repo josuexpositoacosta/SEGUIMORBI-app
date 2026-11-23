@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, Input, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
@@ -33,9 +33,9 @@ function fechasValidas(grupo: AbstractControl): ValidationErrors | null {
  */
 @Component({
   selector: 'app-caso-formulario',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule],
   templateUrl: './caso-formulario.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./caso-formulario.component.css'],
 })
 export class CasoFormularioComponent implements OnInit {

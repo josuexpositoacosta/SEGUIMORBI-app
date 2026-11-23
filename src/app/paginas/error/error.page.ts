@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
@@ -18,7 +18,6 @@ const CONTENIDO = {
 /** Página de error de navegación: 404 (no existe) o 403 (sin permiso por rol). */
 @Component({
   selector: 'app-error',
-  standalone: true,
   imports: [IonicModule, RouterLink],
   template: `
     <ion-content>
@@ -34,6 +33,7 @@ const CONTENIDO = {
       </div>
     </ion-content>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .error {
       display: flex;

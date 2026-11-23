@@ -1,47 +1,57 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-
-import { RouterModule } from '@angular/router';
-
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
+import { AuthService } from './core/auth/auth.service';
+import { Usuario } from './core/models/usuario';
 
 describe('AppComponent', () => {
-
+  const usuario = signal<Usuario | null>(null);
+  let auth: { usuario: typeof usuario; autenticado: ReturnType<typeof computed<boolean>>; logout: jasmine.Spy };
 
   beforeEach(async () => {
-
+    usuario.set(null);
+    auth = { usuario, autenticado: computed(() => usuario() !== null), logout: jasmine.createSpy('logout') };
     await TestBed.configureTestingModule({
       declarations: [AppComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [RouterModule.forRoot([])],
+      providers: [provideRouter([]), { provide: AuthService, useValue: auth }],
     }).compileComponents();
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  // TODO(ROU-10799): Fix the flaky test.
-  xit('should have menu labels', () => {
+  function crear() {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    const app = fixture.nativeElement;
-    const menuItems = app.querySelectorAll('ion-label');
-    expect(menuItems.length).toEqual(12);
-    expect(menuItems[0].textContent).toContain('Inbox');
-    expect(menuItems[1].textContent).toContain('Outbox');
+    return { app: fixture.componentInstance, dom: fixture.nativeElement as HTMLElement };
+  }
+
+  const titulosMenu = (dom: HTMLElement) =>
+    Array.from(dom.querySelectorAll('nav ion-label')).map(e => e.textContent?.trim());
+
+  it('sin sesión no muestra la tarjeta del usuario', () => {
+    const { dom } = crear();
+    expect(dom.querySelector('.user-card')).toBeNull();
   });
 
-  it('should have urls', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const app = fixture.nativeElement;
-    const menuItems = app.querySelectorAll('ion-item');
-    expect(menuItems.length).toEqual(12);
-    expect(menuItems[0].getAttribute('ng-reflect-router-link')).toEqual('/folder/inbox');
-    expect(menuItems[1].getAttribute('ng-reflect-router-link')).toEqual('/folder/outbox');
+  it('muestra el menú y los datos del médico', () => {
+    usuario.set({ id: 1, username: 'medico', firstname: 'ana', lastname: 'pérez', role: 'MEDICO' });
+    const { app, dom } = crear();
+
+    expect(titulosMenu(dom)).toEqual(['Inicio', 'Mi perfil', 'Pacientes', 'Casos', 'Agenda de controles']);
+    expect(dom.querySelector('.user-role')?.textContent).toBe('Médico');
+    expect(app.iniciales()).toBe('AP');
   });
 
+  it('el epidemiólogo no ve Pacientes en el menú', () => {
+    usuario.set({ id: 2, username: 'epi', firstname: 'Luis', lastname: 'Gómez', role: 'EPIDEMIOLOGO' });
+    const { dom } = crear();
+    expect(titulosMenu(dom)).not.toContain('Pacientes');
+    expect(titulosMenu(dom)).toContain('Panel de vigilancia');
+  });
+
+  it('cerrar sesión llama a logout', () => {
+    const { app } = crear();
+    app.cerrarSesion();
+    expect(auth.logout).toHaveBeenCalled();
+  });
 });

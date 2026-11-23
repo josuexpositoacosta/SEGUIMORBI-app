@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { forkJoin } from 'rxjs';
@@ -29,9 +29,9 @@ const SERIES: { clave: Clasificacion; nombre: string; color: string }[] = [
 /** Panel de vigilancia epidemiológica (solo EPIDEMIOLOGO). */
 @Component({
   selector: 'app-vigilancia',
-  standalone: true,
   imports: [CommonModule, IonicModule, EstadoVacioComponent, CurvaEpidemicaComponent, DatePipe, DecimalPipe, RouterLink],
   templateUrl: './vigilancia.page.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./vigilancia.page.css'],
 })
 export class VigilanciaPage implements OnInit {

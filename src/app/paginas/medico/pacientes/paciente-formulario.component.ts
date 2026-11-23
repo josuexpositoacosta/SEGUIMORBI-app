@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { hoyIso } from 'src/app/compartido/fechas';
@@ -20,8 +19,8 @@ function noFutura(control: AbstractControl): ValidationErrors | null {
  */
 @Component({
   selector: 'app-paciente-formulario',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule],
+  imports: [ReactiveFormsModule, IonicModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './paciente-formulario.component.html',
 })
 export class PacienteFormularioComponent implements OnInit {

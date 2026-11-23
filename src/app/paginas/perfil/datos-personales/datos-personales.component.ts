@@ -1,5 +1,4 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/core/auth/auth.service';
@@ -10,9 +9,9 @@ import { UsuarioService } from 'src/app/core/services/usuario.service';
 
 @Component({
   selector: 'app-datos-personales',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule],
+  imports: [ReactiveFormsModule, IonicModule],
   templateUrl: './datos-personales.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./datos-personales.component.css']
 })
 export class DatosPersonalesComponent implements OnInit {

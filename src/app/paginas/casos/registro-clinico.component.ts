@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, Input, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Observable } from 'rxjs';
@@ -67,9 +67,9 @@ function noPasada(c: AbstractControl): ValidationErrors | null {
  */
 @Component({
   selector: 'app-registro-clinico',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule],
+  imports: [NgTemplateOutlet, ReactiveFormsModule, IonicModule],
   templateUrl: './registro-clinico.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./registro-clinico.component.css'],
 })
 export class RegistroClinicoComponent implements OnInit {

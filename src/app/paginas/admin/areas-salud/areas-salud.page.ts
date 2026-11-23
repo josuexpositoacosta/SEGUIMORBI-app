@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActionSheetController, IonicModule } from '@ionic/angular';
 import { AvisosService } from 'src/app/compartido/avisos.service';
@@ -13,8 +13,8 @@ type Filtro = 'activas' | 'inactivas' | 'todas';
 
 @Component({
   selector: 'app-areas-salud',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent, DatePipe],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './areas-salud.page.html',
 })
 export class AreasSaludPage implements OnInit {
