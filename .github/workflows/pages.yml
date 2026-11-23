@@ -1,0 +1,55 @@
+name: Publicar en GitHub Pages
+
+# Publica la app en https://josuexpositoacosta.github.io/SEGUIMORBI-app/ con cada versión en main.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  compilar:
+    name: Compilar
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Compilación de producción
+        run: npm run build -- --configuration production --base-href /SEGUIMORBI-app/
+
+      # GitHub Pages no conoce las rutas de Angular: al recargar /SEGUIMORBI-app/casos devolvería 404.
+      # Con una copia de index.html como 404.html, Angular recibe la ruta y la resuelve.
+      - name: Página de rutas desconocidas
+        run: cp www/index.html www/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: www
+
+  publicar:
+    name: Publicar
+    needs: compilar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - id: despliegue
+        uses: actions/deploy-pages@v4
