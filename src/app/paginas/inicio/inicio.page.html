@@ -22,19 +22,23 @@
 
     <h2 class="titulo-seccion">Accesos rápidos</h2>
     <div class="accesos">
-      <a *ngFor="let p of accesos()" class="acceso" [routerLink]="'/' + p.ruta">
-        <div class="acceso-icono" aria-hidden="true">
-          <ion-icon [name]="p.icono + '-outline'"></ion-icon>
-        </div>
-        <div class="acceso-texto">
-          <span class="acceso-titulo">
-            {{ p.titulo }}
-            <ion-badge *ngIf="p.proximamente" color="light" class="pronto">Pronto</ion-badge>
-          </span>
-          <span class="acceso-desc">{{ p.descripcion }}</span>
-        </div>
-        <ion-icon name="chevron-forward" class="acceso-flecha" aria-hidden="true"></ion-icon>
-      </a>
+      @for (p of accesos(); track p) {
+        <a class="acceso" [routerLink]="'/' + p.ruta">
+          <div class="acceso-icono" aria-hidden="true">
+            <ion-icon [name]="p.icono + '-outline'"></ion-icon>
+          </div>
+          <div class="acceso-texto">
+            <span class="acceso-titulo">
+              {{ p.titulo }}
+              @if (p.proximamente) {
+                <ion-badge color="light" class="pronto">Pronto</ion-badge>
+              }
+            </span>
+            <span class="acceso-desc">{{ p.descripcion }}</span>
+          </div>
+          <ion-icon name="chevron-forward" class="acceso-flecha" aria-hidden="true"></ion-icon>
+        </a>
+      }
     </div>
 
     <p class="disclaimer">

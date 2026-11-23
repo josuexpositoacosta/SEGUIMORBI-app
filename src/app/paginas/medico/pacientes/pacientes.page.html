@@ -13,7 +13,7 @@
   </ion-toolbar>
   <ion-toolbar class="barra-filtros">
     <ion-searchbar placeholder="Buscar por nombre o documento" [debounce]="150"
-      (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
+    (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
     <ion-segment [value]="filtro()" (ionChange)="filtro.set($any($event).detail.value)">
       <ion-segment-button value="activos"><ion-label>Activos</ion-label></ion-segment-button>
       <ion-segment-button value="inactivos"><ion-label>Inactivos</ion-label></ion-segment-button>
@@ -28,42 +28,56 @@
   </ion-refresher>
 
   <div class="page-container">
-    <div class="cargando" *ngIf="cargando()"><ion-spinner name="crescent"></ion-spinner></div>
+    @if (cargando()) {
+      <div class="cargando"><ion-spinner name="crescent"></ion-spinner></div>
+    }
 
-    <app-estado-vacio *ngIf="!cargando() && errorCarga()" icono="cloud-offline-outline"
-      titulo="No se pudieron cargar los pacientes" [texto]="errorCarga()">
-      <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
-    </app-estado-vacio>
-
-    <ng-container *ngIf="!cargando() && !errorCarga()">
-      <app-estado-vacio *ngIf="!pacientes().length" icono="people-circle-outline"
-        titulo="Todavía no hay pacientes en tu área" texto="Registra el primero para poder abrirle un caso.">
-        <ion-button (click)="nuevo()"><ion-icon slot="start" name="person-add-outline"></ion-icon>Nuevo paciente</ion-button>
+    @if (!cargando() && errorCarga()) {
+      <app-estado-vacio icono="cloud-offline-outline"
+        titulo="No se pudieron cargar los pacientes" [texto]="errorCarga()">
+        <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
       </app-estado-vacio>
+    }
 
-      <ng-container *ngIf="pacientes().length">
+    @if (!cargando() && !errorCarga()) {
+      @if (!pacientes().length) {
+        <app-estado-vacio icono="people-circle-outline"
+          titulo="Todavía no hay pacientes en tu área" texto="Registra el primero para poder abrirle un caso.">
+          <ion-button (click)="nuevo()"><ion-icon slot="start" name="person-add-outline"></ion-icon>Nuevo paciente</ion-button>
+        </app-estado-vacio>
+      }
+      @if (pacientes().length) {
         <p class="resumen-lista">{{ filtrados().length }} de {{ pacientes().length }} pacientes</p>
-        <app-estado-vacio *ngIf="!filtrados().length" icono="search-outline" titulo="Sin resultados"
+        @if (!filtrados().length) {
+          <app-estado-vacio icono="search-outline" titulo="Sin resultados"
           texto="Ningún paciente coincide con la búsqueda o el filtro."></app-estado-vacio>
-      </ng-container>
-
+        }
+      }
       <div class="lista-registros">
-        <button type="button" *ngFor="let p of filtrados()" class="registro" [class.inactivo]="!p.activo"
-          (click)="abrirFicha(p)" [attr.aria-label]="'Ver ficha de ' + p.nombres + ' ' + p.apellidos">
-          <div class="registro-avatar" aria-hidden="true">{{ iniciales(p) }}</div>
-          <div class="registro-cuerpo">
-            <div class="registro-titulo">{{ p.apellidos }}, {{ p.nombres }}</div>
-            <div class="registro-detalle">
-              {{ p.tipoDocumento }} {{ p.numeroDocumento }} · {{ textoEdad(p.fechaNacimiento) }} · {{ nombreSexo(p.sexo) }}
+        @for (p of filtrados(); track p) {
+          <button type="button" class="registro" [class.inactivo]="!p.activo"
+            (click)="abrirFicha(p)" [attr.aria-label]="'Ver ficha de ' + p.nombres + ' ' + p.apellidos">
+            <div class="registro-avatar" aria-hidden="true">{{ iniciales(p) }}</div>
+            <div class="registro-cuerpo">
+              <div class="registro-titulo">{{ p.apellidos }}, {{ p.nombres }}</div>
+              <div class="registro-detalle">
+                {{ p.tipoDocumento }} {{ p.numeroDocumento }} · {{ textoEdad(p.fechaNacimiento) }} · {{ nombreSexo(p.sexo) }}
+              </div>
+              @if (!p.activo || p.telefono) {
+                <div class="registro-etiquetas">
+                  @if (p.telefono) {
+                    <span class="etiqueta"><ion-icon name="call-outline" aria-hidden="true"></ion-icon>{{ p.telefono }}</span>
+                  }
+                  @if (!p.activo) {
+                    <span class="etiqueta peligro">Inactivo</span>
+                  }
+                </div>
+              }
             </div>
-            <div class="registro-etiquetas" *ngIf="!p.activo || p.telefono">
-              <span class="etiqueta" *ngIf="p.telefono"><ion-icon name="call-outline" aria-hidden="true"></ion-icon>{{ p.telefono }}</span>
-              <span class="etiqueta peligro" *ngIf="!p.activo">Inactivo</span>
-            </div>
-          </div>
-          <ion-icon name="chevron-forward" class="registro-acciones" aria-hidden="true"></ion-icon>
-        </button>
+            <ion-icon name="chevron-forward" class="registro-acciones" aria-hidden="true"></ion-icon>
+          </button>
+        }
       </div>
-    </ng-container>
+    }
   </div>
 </ion-content>

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonicModule, ModalController } from '@ionic/angular';
@@ -15,7 +14,7 @@ type Filtro = 'activos' | 'inactivos' | 'todos';
 
 @Component({
   selector: 'app-pacientes',
-  imports: [CommonModule, IonicModule, EstadoVacioComponent],
+  imports: [IonicModule, EstadoVacioComponent],
   templateUrl: './pacientes.page.html',
 })
 export class PacientesPage implements OnInit {

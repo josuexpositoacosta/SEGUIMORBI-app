@@ -7,7 +7,7 @@
   </ion-toolbar>
   <ion-toolbar class="barra-filtros">
     <ion-searchbar placeholder="Buscar por paciente, documento o nº de caso" [debounce]="150"
-      (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
+    (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
     <ion-segment [value]="estado()" (ionChange)="cambiarEstado($any($event).detail.value)">
       <ion-segment-button value="ABIERTO"><ion-label>Abiertos</ion-label></ion-segment-button>
       <ion-segment-button value="CERRADO"><ion-label>Cerrados</ion-label></ion-segment-button>
@@ -23,58 +23,80 @@
 
   <div class="page-container">
     <div class="filtros-clasificacion" role="group" aria-label="Filtrar por clasificación">
-      <ion-chip *ngFor="let c of clasificaciones" [outline]="clasificacion() !== c.valor"
-        [color]="clasificacion() === c.valor ? 'primary' : 'medium'" (click)="alternarClasificacion(c.valor)">
-        <ion-label>{{ c.nombre }}</ion-label>
-      </ion-chip>
+      @for (c of clasificaciones; track c) {
+        <ion-chip [outline]="clasificacion() !== c.valor"
+          [color]="clasificacion() === c.valor ? 'primary' : 'medium'" (click)="alternarClasificacion(c.valor)">
+          <ion-label>{{ c.nombre }}</ion-label>
+        </ion-chip>
+      }
     </div>
 
-    <div class="cargando" *ngIf="cargando()"><ion-spinner name="crescent"></ion-spinner></div>
+    @if (cargando()) {
+      <div class="cargando"><ion-spinner name="crescent"></ion-spinner></div>
+    }
 
-    <app-estado-vacio *ngIf="!cargando() && errorCarga()" icono="cloud-offline-outline"
-      titulo="No se pudieron cargar los casos" [texto]="errorCarga()">
-      <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
-    </app-estado-vacio>
-
-    <ng-container *ngIf="!cargando() && !errorCarga()">
-      <app-estado-vacio *ngIf="!casos().length" icono="medkit-outline" titulo="No hay casos"
-        [texto]="esMedico() ? 'Los casos se abren desde la ficha del paciente.' : 'No hay casos con este estado.'">
-        <ion-button *ngIf="esMedico()" routerLink="/pacientes" fill="outline">Ir a pacientes</ion-button>
+    @if (!cargando() && errorCarga()) {
+      <app-estado-vacio icono="cloud-offline-outline"
+        titulo="No se pudieron cargar los casos" [texto]="errorCarga()">
+        <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
       </app-estado-vacio>
+    }
 
-      <ng-container *ngIf="casos().length">
+    @if (!cargando() && !errorCarga()) {
+      @if (!casos().length) {
+        <app-estado-vacio icono="medkit-outline" titulo="No hay casos"
+          [texto]="esMedico() ? 'Los casos se abren desde la ficha del paciente.' : 'No hay casos con este estado.'">
+          @if (esMedico()) {
+            <ion-button routerLink="/pacientes" fill="outline">Ir a pacientes</ion-button>
+          }
+        </app-estado-vacio>
+      }
+      @if (casos().length) {
         <p class="resumen-lista">{{ filtrados().length }} de {{ casos().length }} casos</p>
-        <app-estado-vacio *ngIf="!filtrados().length" icono="search-outline" titulo="Sin resultados"
+        @if (!filtrados().length) {
+          <app-estado-vacio icono="search-outline" titulo="Sin resultados"
           texto="Ningún caso coincide con la búsqueda o el filtro."></app-estado-vacio>
-      </ng-container>
-
+        }
+      }
       <div class="lista-registros">
-        <button type="button" *ngFor="let c of filtrados()" class="registro" (click)="abrir(c)"
-          [attr.aria-label]="'Abrir caso ' + c.id + ' de ' + nombrePaciente(c)">
-          <div class="registro-icono" aria-hidden="true"><ion-icon name="medkit-outline"></ion-icon></div>
-          <div class="registro-cuerpo">
-            <div class="registro-titulo">{{ nombrePaciente(c) }}</div>
-            <div class="registro-detalle">
-              Caso nº {{ c.id }} · notificado {{ c.fechaNotificacion | date: 'dd/MM/yyyy' }}
+        @for (c of filtrados(); track c) {
+          <button type="button" class="registro" (click)="abrir(c)"
+            [attr.aria-label]="'Abrir caso ' + c.id + ' de ' + nombrePaciente(c)">
+            <div class="registro-icono" aria-hidden="true"><ion-icon name="medkit-outline"></ion-icon></div>
+            <div class="registro-cuerpo">
+              <div class="registro-titulo">{{ nombrePaciente(c) }}</div>
+              <div class="registro-detalle">
+                Caso nº {{ c.id }} · notificado {{ c.fechaNotificacion | date: 'dd/MM/yyyy' }}
+              </div>
+              <div class="registro-etiquetas">
+                <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c.clasificacion) }}</span>
+                @if (!c.clasificacionValidada && c.estado === 'ABIERTO') {
+                  <span class="etiqueta">Pendiente de validar</span>
+                }
+                @if (c.sugerencia && !c.sugerencia.coincideConActual) {
+                  <span class="etiqueta">
+                    OPS sugiere: {{ c.sugerencia.clasificacion ? nombreClasificacion(c.sugerencia.clasificacion) : 'ninguna' }}
+                  </span>
+                }
+                @if (c.alertas.length) {
+                  <span class="etiqueta peligro">
+                    <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>{{ c.alertas.length }} alerta{{ c.alertas.length > 1 ? 's' : '' }}
+                  </span>
+                }
+                @if (c.proximoControl && c.estado === 'ABIERTO') {
+                  <span class="etiqueta">
+                    <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>Control {{ c.proximoControl | date: 'dd/MM' }}
+                  </span>
+                }
+                @if (c.estado === 'CERRADO') {
+                  <span class="etiqueta">Cerrado</span>
+                }
+              </div>
             </div>
-            <div class="registro-etiquetas">
-              <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c.clasificacion) }}</span>
-              <span class="etiqueta" *ngIf="!c.clasificacionValidada && c.estado === 'ABIERTO'">Pendiente de validar</span>
-              <span class="etiqueta" *ngIf="c.sugerencia && !c.sugerencia.coincideConActual">
-                OPS sugiere: {{ c.sugerencia.clasificacion ? nombreClasificacion(c.sugerencia.clasificacion) : 'ninguna' }}
-              </span>
-              <span class="etiqueta peligro" *ngIf="c.alertas?.length">
-                <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>{{ c.alertas.length }} alerta{{ c.alertas.length > 1 ? 's' : '' }}
-              </span>
-              <span class="etiqueta" *ngIf="c.proximoControl && c.estado === 'ABIERTO'">
-                <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>Control {{ c.proximoControl | date: 'dd/MM' }}
-              </span>
-              <span class="etiqueta" *ngIf="c.estado === 'CERRADO'">Cerrado</span>
-            </div>
-          </div>
-          <ion-icon name="chevron-forward" class="registro-acciones" aria-hidden="true"></ion-icon>
-        </button>
+            <ion-icon name="chevron-forward" class="registro-acciones" aria-hidden="true"></ion-icon>
+          </button>
+        }
       </div>
-    </ng-container>
+    }
   </div>
 </ion-content>

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
@@ -10,7 +9,7 @@ import { UsuarioService } from 'src/app/core/services/usuario.service';
 
 @Component({
   selector: 'app-datos-personales',
-  imports: [CommonModule, ReactiveFormsModule, IonicModule],
+  imports: [ReactiveFormsModule, IonicModule],
   templateUrl: './datos-personales.component.html',
   styleUrls: ['./datos-personales.component.css']
 })

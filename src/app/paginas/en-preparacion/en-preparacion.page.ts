@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
@@ -7,7 +6,7 @@ import { NOMBRE_SECCION, PANTALLAS, Pantalla } from 'src/app/core/navegacion/nav
 /** Pantalla aún no construida: explica qué hará. La sustituye la fase correspondiente. */
 @Component({
   selector: 'app-en-preparacion',
-  imports: [CommonModule, IonicModule, RouterLink],
+  imports: [IonicModule, RouterLink],
   templateUrl: './en-preparacion.page.html',
   styleUrls: ['./en-preparacion.page.css'],
 })

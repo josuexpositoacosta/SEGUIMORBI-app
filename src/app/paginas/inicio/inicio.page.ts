@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
@@ -8,7 +7,7 @@ import { pantallasDe } from 'src/app/core/navegacion/navegacion';
 
 @Component({
   selector: 'app-inicio',
-  imports: [CommonModule, IonicModule, RouterLink],
+  imports: [IonicModule, RouterLink],
   templateUrl: './inicio.page.html',
   styleUrls: ['./inicio.page.css'],
 })

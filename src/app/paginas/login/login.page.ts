@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -8,7 +7,7 @@ import { mensajeDeError } from 'src/app/core/http/errores';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule, IonicModule],
+  imports: [ReactiveFormsModule, IonicModule],
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.css']
 })
