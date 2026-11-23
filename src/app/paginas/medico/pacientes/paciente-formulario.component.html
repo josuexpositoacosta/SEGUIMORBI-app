@@ -1,0 +1,81 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ paciente ? 'Editar paciente' : 'Nuevo paciente' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()" aria-label="Cerrar"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<div class="modal-cuerpo">
+  @if (error()) {
+    <div class="formulario-error" role="alert" style="margin-bottom: 16px">
+      <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>{{ error() }}
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="formulario" id="form-paciente">
+    <div class="formulario-fila">
+      <ion-input formControlName="nombres" label="Nombres" labelPlacement="stacked" fill="outline"
+        autocomplete="off" errorText="Obligatorio." [class.ion-touched]="form.controls.nombres.touched"
+      [class.ion-invalid]="form.controls.nombres.invalid"></ion-input>
+      <ion-input formControlName="apellidos" label="Apellidos" labelPlacement="stacked" fill="outline"
+        autocomplete="off" errorText="Obligatorio." [class.ion-touched]="form.controls.apellidos.touched"
+      [class.ion-invalid]="form.controls.apellidos.invalid"></ion-input>
+    </div>
+
+    <div class="formulario-fila">
+      <ion-select formControlName="tipoDocumento" label="Tipo de documento" labelPlacement="stacked" fill="outline"
+        interface="popover">
+        @for (t of tiposDocumento; track t) {
+          <ion-select-option [value]="t.valor">{{ t.nombre }}</ion-select-option>
+        }
+      </ion-select>
+      <ion-input formControlName="numeroDocumento" label="Número de documento" labelPlacement="stacked" fill="outline"
+        autocomplete="off" errorText="Obligatorio." [class.ion-touched]="form.controls.numeroDocumento.touched"
+      [class.ion-invalid]="form.controls.numeroDocumento.invalid"></ion-input>
+    </div>
+
+    <div class="formulario-fila">
+      <ion-input formControlName="fechaNacimiento" type="date" label="Fecha de nacimiento" labelPlacement="stacked"
+        fill="outline" [max]="hoy"
+        [errorText]="fechaFutura() ? 'No puede ser una fecha futura.' : 'Obligatoria.'"
+        [class.ion-touched]="form.controls.fechaNacimiento.touched"
+      [class.ion-invalid]="form.controls.fechaNacimiento.invalid"></ion-input>
+      <ion-select formControlName="sexo" label="Sexo" labelPlacement="stacked" fill="outline" interface="popover"
+        placeholder="Selecciona"
+        [class.ion-touched]="form.controls.sexo.touched" [class.ion-invalid]="form.controls.sexo.invalid"
+        errorText="Obligatorio.">
+        @for (s of sexos; track s) {
+          <ion-select-option [value]="s.valor">{{ s.nombre }}</ion-select-option>
+        }
+      </ion-select>
+    </div>
+
+    <ion-input formControlName="telefono" type="tel" label="Teléfono (opcional)" labelPlacement="stacked"
+    fill="outline"></ion-input>
+    <ion-input formControlName="direccion" label="Dirección (opcional)" labelPlacement="stacked"
+    fill="outline"></ion-input>
+
+    <p class="formulario-nota">
+      <ion-icon name="business-outline" aria-hidden="true"></ion-icon>
+      Área de salud: <strong>{{ area() || '—' }}</strong>. El documento no puede repetirse en otro paciente.
+    </p>
+  </form>
+</div>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button color="medium" (click)="cerrar()">Cancelar</ion-button>
+      <ion-button fill="solid" color="primary" type="submit" form="form-paciente" [disabled]="guardando()">
+        @if (guardando()) {
+          <ion-spinner name="crescent"></ion-spinner>
+        }
+        @if (!guardando()) {
+          <span>Guardar</span>
+        }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

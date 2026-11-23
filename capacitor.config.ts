@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'oropoucheApp',
+  appId: 'com.seguimorbi.app',
+  appName: 'SEGUIMORBI',
   webDir: 'www'
 };
 

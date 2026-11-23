@@ -1,29 +1,56 @@
-<!--app.component.html-->
 <ion-app>
-  <ion-split-pane contentId="main-content">
-    <ion-menu contentId="main-content" type="overlay">
+  <ion-split-pane contentId="main-content" when="lg" [disabled]="!autenticado()">
+    <ion-menu contentId="main-content" type="overlay" [disabled]="!autenticado()">
       <ion-content>
+        <div class="menu-layout">
+          <div class="brand">
+            <div class="brand-logo" aria-hidden="true">
+              <ion-icon name="pulse"></ion-icon>
+            </div>
+            <div>
+              <div class="brand-name">SEGUIMORBI</div>
+              <div class="brand-tagline">Vigilancia y atención clínica</div>
+            </div>
+          </div>
 
-        <ion-list id="inbox-list">
-          <ion-list-header>Inbox</ion-list-header>
-          <ion-note>hi&#64;ionicframework.com</ion-note>
-          <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
-            <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
-              <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
-              <ion-label>{{ p.title }}</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-        </ion-list>
+          <nav class="menu-list" aria-label="Menú principal">
+            @for (grupo of menu(); track grupo) {
+              <ion-list lines="none">
+                @if (grupo.seccion !== 'general') {
+                  <ion-list-header>{{ grupo.titulo }}</ion-list-header>
+                }
+                @for (p of grupo.pantallas; track p) {
+                  <ion-menu-toggle auto-hide="false">
+                    <ion-item
+                      routerDirection="root"
+                      [routerLink]="'/' + p.ruta"
+                      routerLinkActive="selected"
+                      detail="false"
+                      button>
+                      <ion-icon aria-hidden="true" slot="start" [name]="p.icono + '-outline'"></ion-icon>
+                      <ion-label>{{ p.titulo }}</ion-label>
+                    </ion-item>
+                  </ion-menu-toggle>
+                }
+              </ion-list>
+            }
+          </nav>
 
-        
-        <!--ion-list id="labels-list">
-          <ion-list-header>Labels</ion-list-header>
-          <ion-item *ngFor="let label of labels" lines="none">
-            <ion-icon aria-hidden="true" slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
-            <ion-label>{{ label }}</ion-label>
-          </ion-item>
-        </ion-list-->
-
+          @if (usuario(); as u) {
+            <div class="user-card">
+              <div class="user-avatar" aria-hidden="true">{{ iniciales() }}</div>
+              <div class="user-info">
+                <div class="user-name">{{ u.firstname }} {{ u.lastname }}</div>
+                <div class="user-role">{{ rol() }}</div>
+              </div>
+              <ion-menu-toggle auto-hide="false">
+                <ion-button fill="clear" color="medium" (click)="cerrarSesion()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                  <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+                </ion-button>
+              </ion-menu-toggle>
+            </div>
+          }
+        </div>
       </ion-content>
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>

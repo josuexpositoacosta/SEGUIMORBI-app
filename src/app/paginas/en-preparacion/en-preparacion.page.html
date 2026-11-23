@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{ pantalla?.titulo }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (pantalla; as p) {
+    <div class="page-container">
+      <div class="tarjeta">
+        <div class="icono" aria-hidden="true">
+          <ion-icon [name]="p.icono + '-outline'"></ion-icon>
+        </div>
+        <p class="seccion">{{ seccion }}</p>
+        <h1>{{ p.titulo }}</h1>
+        <p class="text-muted">{{ p.descripcion }}</p>
+        <ion-badge color="secondary" class="estado">
+          <ion-icon name="construct-outline" aria-hidden="true"></ion-icon>
+          En preparación
+        </ion-badge>
+        <h2>Lo que podrás hacer aquí</h2>
+        <ul>
+          @for (funcion of p.proximamente; track funcion) {
+            <li>
+              <ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+              {{ funcion }}
+            </li>
+          }
+        </ul>
+        <ion-button fill="outline" routerLink="/inicio">
+          <ion-icon slot="start" name="arrow-back"></ion-icon>
+          Volver al inicio
+        </ion-button>
+      </div>
+    </div>
+  }
+</ion-content>

@@ -1,0 +1,86 @@
+<ion-content>
+  <div class="login-page">
+    <aside class="login-aside" aria-hidden="true">
+      <div class="aside-content">
+        <div class="aside-logo">
+          <ion-icon name="pulse"></ion-icon>
+        </div>
+        <h2>SEGUIMORBI</h2>
+        <p>Sistema de gestión epidemiológica y apoyo a la evaluación clínica de la fiebre de Oropouche.</p>
+        <ul>
+          <li><ion-icon name="shield-checkmark-outline"></ion-icon> Casos clasificados según la OPS</li>
+          <li><ion-icon name="medkit-outline"></ion-icon> Atención clínica y seguimiento</li>
+          <li><ion-icon name="stats-chart-outline"></ion-icon> Vigilancia por áreas de salud</li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="login-main">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="mobile-logo" aria-hidden="true">
+            <ion-icon name="pulse"></ion-icon>
+          </div>
+          <h1>Iniciar sesión</h1>
+          <p class="text-muted">Accede con la cuenta que te ha facilitado el administrador.</p>
+        </div>
+
+        @if (aviso) {
+          <div class="alert alert-info" role="status">
+            <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+            <span>{{ aviso }}</span>
+          </div>
+        }
+
+        @if (loginError) {
+          <div class="alert" role="alert">
+            <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+            <span>{{ loginError }}</span>
+          </div>
+        }
+
+        <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form" novalidate>
+          <ion-input
+            formControlName="username"
+            label="Usuario o correo"
+            labelPlacement="stacked"
+            fill="outline"
+            autocomplete="username"
+            placeholder="tu.usuario o nombre@correo.com"
+            errorText="Escribe tu usuario o correo."
+            [class.ion-touched]="username.touched"
+            [class.ion-invalid]="username.invalid">
+            <ion-icon slot="start" name="person-outline" aria-hidden="true"></ion-icon>
+          </ion-input>
+
+          <ion-input
+            formControlName="password"
+            type="password"
+            label="Contraseña"
+            labelPlacement="stacked"
+            fill="outline"
+            autocomplete="current-password"
+            errorText="Escribe tu contraseña."
+            [class.ion-touched]="password.touched"
+            [class.ion-invalid]="password.invalid">
+            <ion-icon slot="start" name="lock-closed-outline" aria-hidden="true"></ion-icon>
+            <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+          </ion-input>
+
+          <ion-button type="submit" expand="block" size="large" [disabled]="isLoading">
+            @if (isLoading) {
+              <ion-spinner name="crescent"></ion-spinner>
+            }
+            @if (!isLoading) {
+              <span>Entrar</span>
+            }
+          </ion-button>
+        </form>
+
+        <p class="help text-muted">
+          ¿Has olvidado tu contraseña? Pide al administrador que la restablezca.
+        </p>
+      </div>
+    </main>
+  </div>
+</ion-content>

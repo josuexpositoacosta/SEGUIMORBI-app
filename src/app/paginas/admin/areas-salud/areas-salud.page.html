@@ -1,0 +1,136 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Áreas de salud</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="solid" color="primary" (click)="abrir()" aria-label="Nueva área">
+        <ion-icon slot="start" name="add"></ion-icon>
+        <span class="boton-texto">Nueva área</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar class="barra-filtros">
+    <ion-searchbar placeholder="Buscar por código, nombre, provincia o municipio" [debounce]="150"
+    (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
+    <ion-segment [value]="filtro()" (ionChange)="filtro.set($any($event).detail.value)">
+      <ion-segment-button value="activas"><ion-label>Activas</ion-label></ion-segment-button>
+      <ion-segment-button value="inactivas"><ion-label>Inactivas</ion-label></ion-segment-button>
+      <ion-segment-button value="todas"><ion-label>Todas</ion-label></ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="cargar($any($event))">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-container">
+    @if (cargando()) {
+      <div class="cargando"><ion-spinner name="crescent"></ion-spinner></div>
+    }
+
+    @if (!cargando() && errorCarga()) {
+      <app-estado-vacio icono="cloud-offline-outline"
+        titulo="No se pudieron cargar las áreas" [texto]="errorCarga()">
+        <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+      </app-estado-vacio>
+    }
+
+    @if (!cargando() && !errorCarga()) {
+      @if (!areas().length) {
+        <app-estado-vacio icono="business-outline" titulo="Todavía no hay áreas de salud"
+          texto="Crea la primera para poder asignar médicos y pacientes.">
+          <ion-button (click)="abrir()"><ion-icon slot="start" name="add"></ion-icon>Nueva área</ion-button>
+        </app-estado-vacio>
+      }
+      @if (areas().length) {
+        <p class="resumen-lista">{{ filtradas().length }} de {{ areas().length }} áreas</p>
+        @if (!filtradas().length) {
+          <app-estado-vacio icono="search-outline" titulo="Sin resultados"
+          texto="Ningún área coincide con la búsqueda o el filtro."></app-estado-vacio>
+        }
+      }
+      <div class="lista-registros">
+        @for (a of filtradas(); track a) {
+          <button type="button" class="registro" [class.inactivo]="!a.activo"
+            (click)="abrirAcciones(a)" [attr.aria-label]="'Acciones para ' + a.nombre">
+            <div class="registro-icono" aria-hidden="true"><ion-icon name="business-outline"></ion-icon></div>
+            <div class="registro-cuerpo">
+              <div class="registro-titulo">{{ a.nombre }}</div>
+              <div class="registro-detalle">{{ a.municipio }}, {{ a.provincia }}@if (a.telefono) {
+                · {{ a.telefono }}
+              }</div>
+              <div class="registro-etiquetas">
+                <span class="etiqueta primaria">{{ a.codigo }}</span>
+                <span class="etiqueta" [ngClass]="a.activo ? 'exito' : 'peligro'">{{ a.activo ? 'Activa' : 'Inactiva' }}</span>
+                @if (a.fechaRegistro) {
+                  <span class="etiqueta">Alta {{ a.fechaRegistro | date: 'dd/MM/yyyy' }}</span>
+                }
+              </div>
+            </div>
+            <ion-icon name="ellipsis-vertical" class="registro-acciones" aria-hidden="true"></ion-icon>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <ion-modal class="modal-formulario" [isOpen]="abierto()" (didDismiss)="cerrar()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ editando() ? 'Editar área' : 'Nueva área de salud' }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrar()" aria-label="Cerrar"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <div class="modal-cuerpo">
+        @if (errorFormulario()) {
+          <div class="formulario-error" role="alert" style="margin-bottom: 16px">
+            <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>{{ errorFormulario() }}
+          </div>
+        }
+        <form [formGroup]="form" (ngSubmit)="guardar()" class="formulario" id="form-area">
+          <div class="formulario-fila">
+            <ion-input formControlName="codigo" label="Código" labelPlacement="stacked" fill="outline"
+              placeholder="AS-01" errorText="Obligatorio." [class.ion-touched]="form.controls.codigo.touched"
+            [class.ion-invalid]="form.controls.codigo.invalid"></ion-input>
+            <ion-input formControlName="nombre" label="Nombre" labelPlacement="stacked" fill="outline"
+              placeholder="Policlínico Norte" errorText="Obligatorio." [class.ion-touched]="form.controls.nombre.touched"
+            [class.ion-invalid]="form.controls.nombre.invalid"></ion-input>
+          </div>
+          <div class="formulario-fila">
+            <ion-input formControlName="provincia" label="Provincia" labelPlacement="stacked" fill="outline"
+              errorText="Obligatorio." [class.ion-touched]="form.controls.provincia.touched"
+            [class.ion-invalid]="form.controls.provincia.invalid"></ion-input>
+            <ion-input formControlName="municipio" label="Municipio" labelPlacement="stacked" fill="outline"
+              errorText="Obligatorio." [class.ion-touched]="form.controls.municipio.touched"
+            [class.ion-invalid]="form.controls.municipio.invalid"></ion-input>
+          </div>
+          <ion-input formControlName="direccion" label="Dirección (opcional)" labelPlacement="stacked" fill="outline"></ion-input>
+          <ion-input formControlName="telefono" type="tel" label="Teléfono (opcional)" labelPlacement="stacked" fill="outline"></ion-input>
+          <p class="formulario-nota">El código y el nombre no pueden repetirse en otra área.</p>
+        </form>
+      </div>
+      <ion-footer>
+        <ion-toolbar>
+          <ion-buttons slot="end">
+            <ion-button color="medium" (click)="cerrar()">Cancelar</ion-button>
+            <ion-button fill="solid" color="primary" type="submit" form="form-area" [disabled]="guardando()">
+              @if (guardando()) {
+                <ion-spinner name="crescent"></ion-spinner>
+              }
+              @if (!guardando()) {
+                <span>Guardar</span>
+              }
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-footer>
+    </ng-template>
+  </ion-modal>
+</ion-content>

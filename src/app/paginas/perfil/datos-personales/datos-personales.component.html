@@ -1,0 +1,84 @@
+@if (usuario(); as u) {
+  @if (errorMessage) {
+    <div class="alert" role="alert">
+      <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+      <span>{{ errorMessage }}</span>
+    </div>
+  }
+  @if (!editMode) {
+    <div class="profile">
+      <div class="avatar" aria-hidden="true">{{ iniciales() }}</div>
+      <div>
+        <div class="profile-name">{{ u.firstname }} {{ u.lastname }}</div>
+        <ion-badge color="primary" class="rol">{{ rol() }}</ion-badge>
+      </div>
+    </div>
+    <dl class="data-grid">
+      <div>
+        <dt>Usuario</dt>
+        <dd>{{ u.username }}</dd>
+      </div>
+      <div>
+        <dt>Correo</dt>
+        <dd>{{ u.email || 'Sin correo asignado' }}</dd>
+      </div>
+      <div>
+        <dt>País</dt>
+        <dd>{{ u.country || '—' }}</dd>
+      </div>
+      @if (u.areaSaludId) {
+        <div>
+          <dt>Área de salud</dt>
+          <dd>{{ area() ?? 'Cargando…' }}</dd>
+        </div>
+      }
+    </dl>
+    <ion-button fill="outline" (click)="editar()">
+      <ion-icon slot="start" name="create-outline"></ion-icon>
+      Editar datos
+    </ion-button>
+  }
+  @if (editMode) {
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="form">
+      <ion-input
+        formControlName="firstname"
+        label="Nombre"
+        labelPlacement="stacked"
+        fill="outline"
+        autocomplete="given-name"
+        errorText="El nombre es obligatorio."
+        [class.ion-touched]="firstname.touched"
+        [class.ion-invalid]="firstname.invalid">
+      </ion-input>
+      <ion-input
+        formControlName="lastname"
+        label="Apellidos"
+        labelPlacement="stacked"
+        fill="outline"
+        autocomplete="family-name"
+        errorText="Los apellidos son obligatorios."
+        [class.ion-touched]="lastname.touched"
+        [class.ion-invalid]="lastname.invalid">
+      </ion-input>
+      <ion-input
+        formControlName="country"
+        label="País"
+        labelPlacement="stacked"
+        fill="outline"
+        autocomplete="country-name">
+      </ion-input>
+      <p class="nota text-muted">El usuario, el correo, el rol y el área los gestiona el administrador.</p>
+      <div class="actions">
+        <ion-button type="submit" [disabled]="guardando">
+          @if (guardando) {
+            <ion-spinner name="crescent"></ion-spinner>
+          }
+          @if (!guardando) {
+            <span>Guardar</span>
+          }
+        </ion-button>
+        <ion-button type="button" fill="clear" color="medium" (click)="cancelar()">Cancelar</ion-button>
+      </div>
+    </form>
+  }
+}

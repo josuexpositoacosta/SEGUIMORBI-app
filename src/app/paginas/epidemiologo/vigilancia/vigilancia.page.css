@@ -1,0 +1,208 @@
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.filtros ion-segment {
+  flex: 1 1 280px;
+}
+
+.filtros ion-select {
+  flex: 0 1 240px;
+  --background: var(--app-surface);
+  min-height: 44px;
+}
+
+.periodo {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+}
+
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.indicador {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow);
+  color: var(--ion-text-color);
+  text-decoration: none;
+}
+
+.indicador.destacado {
+  grid-column: span 2;
+}
+
+.indicador.enlace:hover {
+  border-color: rgba(var(--ion-color-primary-rgb), 0.5);
+}
+
+.indicador .valor {
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.indicador.destacado .valor {
+  font-size: 2.3rem;
+}
+
+.indicador .nombre {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.82rem;
+  color: var(--app-text-muted);
+}
+
+.barra-clasificacion {
+  display: flex;
+  gap: 2px;
+  height: 10px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.barra-clasificacion span {
+  min-width: 0;
+}
+
+.mini-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.78rem;
+  color: var(--app-text-muted);
+}
+
+.mini-leyenda li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.muestra {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+}
+
+.dos-columnas {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 0 16px;
+}
+
+.tabla-envoltorio {
+  overflow-x: auto;
+}
+
+.tabla-areas {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.tabla-areas th,
+.tabla-areas td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--app-border);
+  text-align: left;
+  color: var(--ion-text-color);
+}
+
+.tabla-areas thead th {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--app-text-muted);
+}
+
+.tabla-areas tbody th {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tabla-areas td:nth-child(2) {
+  width: 45%;
+}
+
+.tabla-areas .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.codigo {
+  margin-right: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--app-text-muted);
+}
+
+.barra-area {
+  display: flex;
+  gap: 2px;
+  height: 12px;
+  min-width: 2px;
+  border-radius: 0 4px 4px 0;
+  overflow: hidden;
+}
+
+.barra-area span {
+  flex-basis: 0;
+  min-width: 0;
+}
+
+.lista-desenlaces {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista-desenlaces li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: var(--app-radius-sm);
+  background: var(--app-surface-muted);
+  color: var(--ion-text-color);
+}
+
+@media (max-width: 860px) {
+  .dos-columnas {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .filtros ion-select {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .indicador.destacado {
+    grid-column: 1 / -1;
+  }
+}

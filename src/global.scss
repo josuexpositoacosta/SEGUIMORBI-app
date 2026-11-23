@@ -1,37 +1,448 @@
 /*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
+ * Estilos globales de SEGUIMORBI
+ * Docs: https://ionicframework.com/docs/layout/global-stylesheets
  */
 
-/* Core CSS required for Ionic components to work properly */
-@import "@ionic/angular/css/core.css";
+/* Tipografía Inter incluida en la app (funciona sin conexión) */
+@import "@fontsource-variable/inter/index.css";
 
-/* Basic CSS for apps built with Ionic */
+/* CSS base de Ionic */
+@import "@ionic/angular/css/core.css";
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Optional CSS utils that can be commented out */
+/* Utilidades de Ionic */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+/* Modo oscuro según el sistema (los colores propios están en theme/variables.scss) */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+/* ---------- Base ---------- */
+body {
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv11", "ss01";
+}
+
+h1, h2, h3, h4 {
+  letter-spacing: -0.01em;
+  font-weight: 650;
+}
+
+ion-toolbar {
+  --border-width: 0 0 1px 0;
+  --border-color: var(--app-border);
+}
+
+ion-card {
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow);
+  border: 1px solid var(--app-border);
+  margin-inline: 0;
+}
+
+ion-button {
+  --border-radius: var(--app-radius-sm);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
+}
+
+/* Contenedor centrado para las páginas */
+.page-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.text-muted {
+  color: var(--app-text-muted);
+}
+
+/* ---------- Páginas de gestión (listas, filtros, formularios) ---------- */
+
+/* Barra bajo la cabecera con buscador y filtros */
+.barra-filtros {
+  --background: var(--ion-background-color);
+  padding: 4px 8px 8px;
+}
+
+.barra-filtros ion-searchbar {
+  --background: var(--app-surface);
+  --border-radius: var(--app-radius-sm);
+  --box-shadow: none;
+  padding: 0 0 8px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.barra-filtros ion-segment {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Botón principal de la cabecera: con texto en escritorio, solo icono en móvil */
+@media (max-width: 576px) {
+  .boton-texto {
+    display: none;
+  }
+}
+
+/* Lista de registros como tarjetas */
+.lista-registros {
+  display: grid;
+  gap: 10px;
+}
+
+.registro {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  background: var(--app-surface);
+  box-shadow: var(--app-shadow);
+  color: var(--ion-text-color);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.registro:hover {
+  border-color: rgba(var(--ion-color-primary-rgb), 0.45);
+}
+
+.registro:focus-visible {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
+}
+
+.registro.inactivo {
+  opacity: 0.65;
+}
+
+.registro-icono,
+.registro-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+  color: var(--ion-color-primary);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.registro-avatar {
+  border-radius: 50%;
+  font-size: 0.95rem;
+}
+
+.registro-cuerpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.registro-titulo {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.registro-detalle {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  color: var(--app-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.registro-etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.registro-acciones {
+  flex-shrink: 0;
+  color: var(--app-text-muted);
+  font-size: 20px;
+}
+
+/* Etiquetas pequeñas */
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--app-surface-muted);
+  color: var(--app-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.etiqueta.primaria { background: rgba(var(--ion-color-primary-rgb), 0.12); color: var(--ion-color-primary); }
+.etiqueta.secundaria { background: rgba(var(--ion-color-secondary-rgb), 0.16); color: var(--ion-color-secondary-shade); }
+.etiqueta.terciaria { background: rgba(var(--ion-color-tertiary-rgb), 0.12); color: var(--ion-color-tertiary); }
+.etiqueta.exito { background: rgba(var(--ion-color-success-rgb), 0.12); color: var(--ion-color-success); }
+.etiqueta.peligro { background: rgba(var(--ion-color-danger-rgb), 0.12); color: var(--ion-color-danger); }
+
+.resumen-lista {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--app-text-muted);
+}
+
+.cargando {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+/* Formularios en ventanas modales */
+.formulario {
+  display: grid;
+  gap: 16px;
+  padding-bottom: 8px;
+}
+
+.formulario-fila {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.formulario-nota {
+  margin: -4px 0 0;
+  font-size: 0.82rem;
+  color: var(--app-text-muted);
+  line-height: 1.45;
+}
+
+.formulario-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--app-radius-sm);
+  background: rgba(var(--ion-color-danger-rgb), 0.1);
+  color: var(--ion-color-danger);
+  font-size: 0.9rem;
+}
+
+ion-modal.modal-formulario {
+  --width: min(560px, 100%);
+  --height: auto;
+  --max-height: 92vh;
+  --border-radius: var(--app-radius);
+}
+
+/* Altura automática (patrón de Ionic): el cuerpo es un div con scroll propio, no ion-content */
+ion-modal.modal-formulario .ion-page {
+  position: relative;
+  display: block;
+  contain: content;
+}
+
+ion-modal.modal-formulario .modal-cuerpo {
+  max-height: calc(92vh - 120px);
+  overflow-y: auto;
+  padding: 20px 16px 12px;
+  background: var(--ion-background-color);
+}
+
+ion-modal.modal-formulario ion-footer ion-toolbar {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --border-width: 1px 0 0 0;
+}
+
+/* Botón rojo en confirmaciones destructivas */
+.alert-boton-peligro {
+  color: var(--ion-color-danger) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .etiqueta.secundaria { color: var(--ion-color-secondary); }
+}
+
+.formulario-nota.texto-error {
+  color: var(--ion-color-danger);
+}
+
+/* Botón principal en la cabecera de las páginas */
+ion-toolbar ion-buttons[slot="end"] ion-button[fill="solid"] {
+  margin-inline-end: 8px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+}
+
+/* ---------- Fichas (paciente, caso) ---------- */
+.ficha-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.ficha-avatar {
+  width: 64px;
+  height: 64px;
+  font-size: 1.3rem;
+}
+
+.ficha-identidad {
+  flex: 1;
+  min-width: 220px;
+}
+
+.ficha-identidad h1 {
+  margin: 0 0 6px;
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+}
+
+.ficha-acciones {
+  display: flex;
+  gap: 4px;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.datos div {
+  padding: 12px 14px;
+  border-radius: var(--app-radius-sm);
+  background: var(--app-surface-muted);
+}
+
+.datos dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--app-text-muted);
+}
+
+.datos dd {
+  margin: 4px 0 0;
+  color: var(--ion-text-color);
+  overflow-wrap: anywhere;
+}
+
+ion-modal.modal-ancho {
+  --width: min(900px, 100%);
+}
+
+.etiqueta.grande {
+  padding: 6px 14px;
+  font-size: 0.95rem;
+}
+
+.filtros-clasificacion {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: -4px 0 12px;
+}
+
+.cabecera-tarjeta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Agenda de controles */
+.grupo-agenda {
+  margin-bottom: 20px;
+}
+
+.titulo-grupo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+}
+
+.fecha-control {
+  flex-direction: column;
+  gap: 0;
+  line-height: 1;
+}
+
+.fecha-control .dia {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.fecha-control .mes {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.fecha-control.vencido {
+  background: rgba(var(--ion-color-danger-rgb), 0.12);
+  color: var(--ion-color-danger);
+}
+
+/* ---------- Colores de clasificación para gráficos (validados con el validador de paleta: claro y oscuro) */
+:root {
+  --serie-sospechoso: #b7791a;
+  --serie-probable: #4263eb;
+  --serie-confirmado: #d9363e;
+  --serie-descartado: #12917f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --serie-sospechoso: #c08329;
+    --serie-probable: #5f78f0;
+    --serie-confirmado: #de4c52;
+    --serie-descartado: #14a08c;
+  }
+}
+
+.etiqueta.descartado {
+  background: rgba(18, 145, 127, 0.12);
+  color: var(--serie-descartado);
+}
+
+/* Bandeja de validaciones */
+.registro.validacion {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.registro.validacion .motivo {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: var(--ion-text-color);
+  overflow-wrap: anywhere;
+}
+
+.acciones-validacion {
+  align-self: center;
+}

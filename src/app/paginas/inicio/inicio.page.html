@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Inicio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="page-container">
+    <section class="hero">
+      <div>
+        <p class="hero-eyebrow">{{ rol() }}</p>
+        <h1>{{ saludo }}{{ nombre() ? ', ' + nombre() : '' }}</h1>
+        <p class="hero-text">
+          Gestión de casos de fiebre de Oropouche, atención clínica y seguimiento por áreas de salud.
+        </p>
+      </div>
+      <ion-icon name="pulse" class="hero-icon" aria-hidden="true"></ion-icon>
+    </section>
+
+    <h2 class="titulo-seccion">Accesos rápidos</h2>
+    <div class="accesos">
+      @for (p of accesos(); track p) {
+        <a class="acceso" [routerLink]="'/' + p.ruta">
+          <div class="acceso-icono" aria-hidden="true">
+            <ion-icon [name]="p.icono + '-outline'"></ion-icon>
+          </div>
+          <div class="acceso-texto">
+            <span class="acceso-titulo">
+              {{ p.titulo }}
+              @if (p.proximamente) {
+                <ion-badge color="light" class="pronto">Pronto</ion-badge>
+              }
+            </span>
+            <span class="acceso-desc">{{ p.descripcion }}</span>
+          </div>
+          <ion-icon name="chevron-forward" class="acceso-flecha" aria-hidden="true"></ion-icon>
+        </a>
+      }
+    </div>
+
+    <p class="disclaimer">
+      <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+      Herramienta de apoyo a la decisión clínica. No sustituye el criterio del profesional sanitario.
+    </p>
+  </div>
+</ion-content>
