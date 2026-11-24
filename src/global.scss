@@ -3,8 +3,9 @@
  * Docs: https://ionicframework.com/docs/layout/global-stylesheets
  */
 
-/* Tipografía Inter incluida en la app (funciona sin conexión) */
+/* Tipografías incluidas en la app (funcionan sin conexión): Inter para el texto, Manrope para los títulos */
 @import "@fontsource-variable/inter/index.css";
+@import "@fontsource-variable/manrope/index.css";
 
 /* CSS base de Ionic */
 @import "@ionic/angular/css/core.css";
@@ -30,8 +31,9 @@ body {
 }
 
 h1, h2, h3, h4 {
-  letter-spacing: -0.01em;
-  font-weight: 650;
+  font-family: var(--app-font-display);
+  letter-spacing: -0.02em;
+  font-weight: 700;
 }
 
 ion-toolbar {
@@ -408,27 +410,19 @@ ion-modal.modal-ancho {
   color: var(--ion-color-danger);
 }
 
-/* ---------- Colores de clasificación para gráficos (validados con el validador de paleta: claro y oscuro) */
+/* ---------- Colores de clasificación (etiquetas y gráficos): los mismos tokens --estado-* del tema */
 :root {
-  --serie-sospechoso: #b7791a;
-  --serie-probable: #4263eb;
-  --serie-confirmado: #d9363e;
-  --serie-descartado: #12917f;
+  --serie-sospechoso: var(--estado-sospechoso);
+  --serie-probable: var(--estado-probable);
+  --serie-confirmado: var(--estado-confirmado);
+  --serie-descartado: var(--estado-descartado);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --serie-sospechoso: #c08329;
-    --serie-probable: #5f78f0;
-    --serie-confirmado: #de4c52;
-    --serie-descartado: #14a08c;
-  }
-}
-
-.etiqueta.descartado {
-  background: rgba(18, 145, 127, 0.12);
-  color: var(--serie-descartado);
-}
+.etiqueta.sospechoso { background: var(--estado-sospechoso-suave); color: var(--estado-sospechoso); }
+.etiqueta.probable { background: var(--estado-probable-suave); color: var(--estado-probable); }
+.etiqueta.confirmado { background: var(--estado-confirmado-suave); color: var(--estado-confirmado); }
+.etiqueta.descartado { background: var(--estado-descartado-suave); color: var(--estado-descartado); }
+.etiqueta.abierto { background: var(--estado-abierto-suave); color: var(--estado-abierto); }
 
 /* Bandeja de validaciones */
 .registro.validacion {
