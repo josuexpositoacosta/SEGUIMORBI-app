@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header class="ion-hide-lg-up">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
@@ -8,38 +8,161 @@
 </ion-header>
 
 <ion-content>
-  <div class="page-container">
-    <section class="hero">
+  <div class="page-container ancho">
+    <header class="cabecera">
       <div>
-        <p class="hero-eyebrow">{{ rol() }}</p>
         <h1>{{ saludo }}{{ nombre() ? ', ' + nombre() : '' }}</h1>
-        <p class="hero-text">
-          Gestión de casos de fiebre de Oropouche, atención clínica y seguimiento por áreas de salud.
+        <p class="fecha">
+          <ion-icon name="calendar-clear-outline" aria-hidden="true"></ion-icon>
+          {{ hoy | date: 'EEEE, d \'de\' MMMM \'de\' y' }} · {{ rol() }}
         </p>
       </div>
-      <ion-icon name="pulse" class="hero-icon" aria-hidden="true"></ion-icon>
-    </section>
-
-    <h2 class="titulo-seccion">Accesos rápidos</h2>
-    <div class="accesos">
-      @for (p of accesos(); track p) {
-        <a class="acceso" [routerLink]="'/' + p.ruta">
-          <div class="acceso-icono" aria-hidden="true">
-            <ion-icon [name]="p.icono + '-outline'"></ion-icon>
-          </div>
-          <div class="acceso-texto">
-            <span class="acceso-titulo">
-              {{ p.titulo }}
-              @if (p.proximamente) {
-                <ion-badge color="light" class="pronto">Pronto</ion-badge>
-              }
-            </span>
-            <span class="acceso-desc">{{ p.descripcion }}</span>
-          </div>
-          <ion-icon name="chevron-forward" class="acceso-flecha" aria-hidden="true"></ion-icon>
-        </a>
+      @if (esMedico()) {
+        <div class="acciones">
+          <ion-button fill="outline" color="medium" (click)="nuevoPaciente()">
+            <ion-icon slot="start" name="person-add-outline" aria-hidden="true"></ion-icon>
+            Nuevo paciente
+          </ion-button>
+          <ion-button routerLink="/pacientes" title="Los casos se registran desde la ficha del paciente">
+            <ion-icon slot="start" name="add" aria-hidden="true"></ion-icon>
+            Registrar caso
+          </ion-button>
+        </div>
       }
-    </div>
+    </header>
+
+    @if (esMedico()) {
+      @if (cargando()) {
+        <div class="cargando"><ion-spinner name="crescent"></ion-spinner></div>
+      }
+
+      @if (errorCarga()) {
+        <div class="tarjeta aviso-error" role="alert">
+          <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
+          <span>No se pudo cargar el resumen: {{ errorCarga() }}</span>
+          <ion-button fill="clear" size="small" (click)="cargar()">Reintentar</ion-button>
+        </div>
+      }
+
+      @if (panel()) {
+        <section class="indicadores" aria-label="Resumen">
+          @for (i of indicadores(); track i.titulo) {
+            <a class="tarjeta indicador" [routerLink]="i.ruta">
+              <div class="indicador-cabecera">
+                <span>{{ i.titulo }}</span>
+                <ion-icon [name]="i.icono" aria-hidden="true"></ion-icon>
+              </div>
+              <div class="indicador-valor">{{ i.valor }}</div>
+              <div class="indicador-nota" [class.aviso]="i.aviso">{{ i.nota }}</div>
+            </a>
+          }
+        </section>
+
+        <div class="columnas">
+          <section class="columna-principal">
+            <div class="seccion-cabecera">
+              <h2>Próximos controles <span class="contador">{{ panel()!.controles.length }}</span></h2>
+              <a routerLink="/agenda" class="enlace">Ver agenda <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></a>
+            </div>
+
+            @if (!proximos().length) {
+              <div class="tarjeta vacio">
+                <ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
+                No tienes controles en los próximos 7 días.
+              </div>
+            }
+
+            @for (c of proximos(); track c.casoId + c.fecha) {
+              <a class="tarjeta control" [routerLink]="['/casos', c.casoId]">
+                <div class="control-fecha" [class.vencido]="c.vencido">
+                  @if (c.vencido) {
+                    <span class="dia">{{ c.fecha | date: 'dd/MM' }}</span>
+                    <span class="tipo">Vencido</span>
+                  } @else if (esHoy(c.fecha)) {
+                    <span class="dia">Hoy</span>
+                    <span class="tipo">Control</span>
+                  } @else {
+                    <span class="dia">{{ c.fecha | date: 'dd/MM' }}</span>
+                    <span class="tipo">{{ esManana(c.fecha) ? 'Mañana' : (c.fecha | date: 'EEE') }}</span>
+                  }
+                </div>
+                <div class="control-cuerpo">
+                  <div class="control-titulo">
+                    <strong>{{ nombrePaciente(c.pacienteId) }}</strong>
+                    <span class="codigo">Caso nº {{ c.casoId }}</span>
+                  </div>
+                  <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c.clasificacion) }}</span>
+                </div>
+                <span class="boton-ver">Atender <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></span>
+              </a>
+            }
+          </section>
+
+          <aside class="columna-lateral">
+            @if (pendientesValidar().length) {
+              <div class="tarjeta aviso-validacion">
+                <div class="aviso-icono"><ion-icon name="notifications-outline" aria-hidden="true"></ion-icon></div>
+                <div>
+                  <strong>
+                    {{ pendientesValidar().length }}
+                    {{ pendientesValidar().length === 1 ? 'caso espera' : 'casos esperan' }} validación del epidemiólogo
+                  </strong>
+                  <p>
+                    @for (c of pendientesValidar().slice(0, 3); track c.id; let ultimo = $last) {
+                      <a [routerLink]="['/casos', c.id]">nº {{ c.id }}</a>{{ ultimo ? '' : ', ' }}
+                    }
+                    @if (pendientesValidar().length > 3) { y {{ pendientesValidar().length - 3 }} más }
+                  </p>
+                </div>
+              </div>
+            }
+
+            <div class="tarjeta recientes">
+              <div class="seccion-cabecera">
+                <h2>Casos recientes</h2>
+                <a routerLink="/casos" class="enlace">Ver todos <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></a>
+              </div>
+              @if (!recientes().length) {
+                <p class="text-muted">No hay casos abiertos.</p>
+              }
+              @for (c of recientes(); track c.id) {
+                <a class="reciente" [routerLink]="['/casos', c.id]">
+                  <div class="reciente-fila">
+                    <span class="codigo">Caso nº {{ c.id }}</span>
+                    <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c.clasificacion) }}</span>
+                  </div>
+                  <div class="reciente-fila">
+                    <span class="paciente">{{ nombrePaciente(c.pacienteId) }}</span>
+                    <span class="text-muted">{{ diaEvolucion(c) }}</span>
+                  </div>
+                </a>
+              }
+            </div>
+          </aside>
+        </div>
+      }
+    } @else {
+      <h2 class="titulo-seccion">Accesos rápidos</h2>
+      <div class="accesos">
+        @for (p of accesos(); track p) {
+          <a class="acceso" [routerLink]="'/' + p.ruta">
+            <div class="acceso-icono" aria-hidden="true">
+              <ion-icon [name]="p.icono + '-outline'"></ion-icon>
+            </div>
+            <div class="acceso-texto">
+              <span class="acceso-titulo">
+                {{ p.titulo }}
+                @if (p.proximamente) {
+                  <ion-badge color="light" class="pronto">Pronto</ion-badge>
+                }
+              </span>
+              <span class="acceso-desc">{{ p.descripcion }}</span>
+            </div>
+            <ion-icon name="chevron-forward" class="acceso-flecha" aria-hidden="true"></ion-icon>
+          </a>
+        }
+      </div>
+    }
 
     <p class="disclaimer">
       <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>

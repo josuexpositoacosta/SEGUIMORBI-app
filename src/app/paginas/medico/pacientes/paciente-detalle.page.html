@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header class="ion-hide-lg-up">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/pacientes" text="Pacientes"></ion-back-button>
@@ -9,6 +9,11 @@
 
 <ion-content>
   <div class="page-container">
+    <nav class="migas ion-hide-lg-down" aria-label="Ruta">
+      <a routerLink="/pacientes"><ion-icon name="people-outline" aria-hidden="true"></ion-icon>Pacientes</a>
+      <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon>
+      <span>{{ paciente() ? paciente()!.nombres + ' ' + paciente()!.apellidos : 'Ficha' }}</span>
+    </nav>
     @if (cargando()) {
       <div class="cargando"><ion-spinner name="crescent"></ion-spinner></div>
     }
@@ -21,7 +26,7 @@
     }
 
     @if (!cargando() && paciente(); as p) {
-      <section class="ficha-cabecera">
+      <section class="tarjeta ficha-cabecera">
         <div class="registro-avatar ficha-avatar" aria-hidden="true">{{ iniciales(p) }}</div>
         <div class="ficha-identidad">
           <h1>{{ p.nombres }} {{ p.apellidos }}</h1>

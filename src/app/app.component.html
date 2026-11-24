@@ -1,22 +1,32 @@
 <ion-app>
-  <ion-split-pane contentId="main-content" when="lg" [disabled]="!autenticado()">
-    <ion-menu contentId="main-content" type="overlay" [disabled]="!autenticado()">
+  <ion-split-pane
+    contentId="main-content"
+    when="lg"
+    [disabled]="!autenticado()"
+    [class.rail-plegado]="plegado()"
+    (ionSplitPaneVisible)="escritorio.set($event.detail.visible)">
+    <!-- En escritorio es una barra fija que se pliega a solo iconos; en el móvil, un cajón con textos. -->
+    <ion-menu
+      contentId="main-content"
+      type="overlay"
+      [disabled]="!autenticado()"
+      [class.plegado]="escritorio() && plegado()">
       <ion-content>
         <div class="menu-layout">
-          <div class="brand">
+          <div class="brand" [attr.title]="compacto() ? 'SEGUIMORBI' : null">
             <div class="brand-logo" aria-hidden="true">
-              <ion-icon name="pulse"></ion-icon>
+              <ion-icon name="shield-checkmark"></ion-icon>
             </div>
-            <div>
+            <div class="brand-texto">
               <div class="brand-name">SEGUIMORBI</div>
-              <div class="brand-tagline">Vigilancia y atención clínica</div>
+              <div class="brand-tagline">Fiebre de Oropouche</div>
             </div>
           </div>
 
           <nav class="menu-list" aria-label="Menú principal">
             @for (grupo of menu(); track grupo) {
               <ion-list lines="none">
-                @if (grupo.seccion !== 'general') {
+                @if (grupo.seccion !== 'general' && !compacto()) {
                   <ion-list-header>{{ grupo.titulo }}</ion-list-header>
                 }
                 @for (p of grupo.pantallas; track p) {
@@ -25,6 +35,8 @@
                       routerDirection="root"
                       [routerLink]="'/' + p.ruta"
                       routerLinkActive="selected"
+                      [attr.title]="compacto() ? p.titulo : null"
+                      [attr.aria-label]="p.titulo"
                       detail="false"
                       button>
                       <ion-icon aria-hidden="true" slot="start" [name]="p.icono + '-outline'"></ion-icon>
@@ -36,15 +48,29 @@
             }
           </nav>
 
+          @if (escritorio()) {
+            <button
+              type="button"
+              class="rail-toggle"
+              (click)="alternarPlegado()"
+              [attr.aria-label]="plegado() ? 'Mostrar el menú con textos' : 'Plegar el menú'"
+              [attr.title]="plegado() ? 'Mostrar el menú con textos' : 'Plegar el menú'">
+              <ion-icon aria-hidden="true" [name]="plegado() ? 'chevron-forward' : 'chevron-back'"></ion-icon>
+              <span class="rail-toggle-texto">Plegar menú</span>
+            </button>
+          }
+
           @if (usuario(); as u) {
             <div class="user-card">
-              <div class="user-avatar" aria-hidden="true">{{ iniciales() }}</div>
+              <div class="user-avatar" aria-hidden="true" [attr.title]="compacto() ? u.firstname + ' ' + u.lastname + ' · ' + rol() : null">
+                {{ iniciales() }}
+              </div>
               <div class="user-info">
                 <div class="user-name">{{ u.firstname }} {{ u.lastname }}</div>
                 <div class="user-role">{{ rol() }}</div>
               </div>
               <ion-menu-toggle auto-hide="false">
-                <ion-button fill="clear" color="medium" (click)="cerrarSesion()" aria-label="Cerrar sesión" title="Cerrar sesión">
+                <ion-button class="salir" fill="clear" (click)="cerrarSesion()" aria-label="Cerrar sesión" title="Cerrar sesión">
                   <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
                 </ion-button>
               </ion-menu-toggle>

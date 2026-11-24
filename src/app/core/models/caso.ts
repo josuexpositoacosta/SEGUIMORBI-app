@@ -16,9 +16,9 @@ export type ModalidadAtencion = 'AMBULATORIO' | 'INGRESO_HOSPITALARIO' | 'INGRES
 export type EvolucionCaso = 'MEJORIA' | 'ESTABLE' | 'EMPEORAMIENTO' | 'RECAIDA';
 
 export const CLASIFICACIONES: { valor: Clasificacion; nombre: string; clase: string }[] = [
-  { valor: 'SOSPECHOSO', nombre: 'Sospechoso', clase: 'secundaria' },
-  { valor: 'PROBABLE', nombre: 'Probable', clase: 'terciaria' },
-  { valor: 'CONFIRMADO', nombre: 'Confirmado', clase: 'peligro' },
+  { valor: 'SOSPECHOSO', nombre: 'Sospechoso', clase: 'sospechoso' },
+  { valor: 'PROBABLE', nombre: 'Probable', clase: 'probable' },
+  { valor: 'CONFIRMADO', nombre: 'Confirmado', clase: 'confirmado' },
   { valor: 'DESCARTADO', nombre: 'Descartado', clase: 'descartado' },
 ];
 

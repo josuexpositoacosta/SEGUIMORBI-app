@@ -1,18 +1,9 @@
-<ion-header>
+<ion-header class="ion-hide-lg-up">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Casos</ion-title>
-  </ion-toolbar>
-  <ion-toolbar class="barra-filtros">
-    <ion-searchbar placeholder="Buscar por paciente, documento o nº de caso" [debounce]="150"
-    (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
-    <ion-segment [value]="estado()" (ionChange)="cambiarEstado($any($event).detail.value)">
-      <ion-segment-button value="ABIERTO"><ion-label>Abiertos</ion-label></ion-segment-button>
-      <ion-segment-button value="CERRADO"><ion-label>Cerrados</ion-label></ion-segment-button>
-      <ion-segment-button value="TODOS"><ion-label>Todos</ion-label></ion-segment-button>
-    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
@@ -21,14 +12,49 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <div class="page-container">
-    <div class="filtros-clasificacion" role="group" aria-label="Filtrar por clasificación">
-      @for (c of clasificaciones; track c) {
-        <ion-chip [outline]="clasificacion() !== c.valor"
-          [color]="clasificacion() === c.valor ? 'primary' : 'medium'" (click)="alternarClasificacion(c.valor)">
-          <ion-label>{{ c.nombre }}</ion-label>
-        </ion-chip>
+  <div class="page-container ancho">
+    <header class="cabecera">
+      <div>
+        <h1>Casos de fiebre de Oropouche</h1>
+        @if (!cargando() && !errorCarga()) {
+          <p class="text-muted">
+            {{ filtrados().length }} de {{ casos().length }} casos
+            {{ estado() === 'ABIERTO' ? 'abiertos' : estado() === 'CERRADO' ? 'cerrados' : '' }}
+            {{ esMedico() ? 'de tu área' : '' }}
+          </p>
+        }
+      </div>
+      @if (esMedico()) {
+        <ion-button routerLink="/pacientes" title="Los casos se registran desde la ficha del paciente">
+          <ion-icon slot="start" name="add" aria-hidden="true"></ion-icon>
+          Registrar caso
+        </ion-button>
       }
+    </header>
+
+    <div class="tarjeta filtros">
+      <div class="filtros-fila">
+        <ion-searchbar class="buscador" placeholder="Buscar por paciente, documento o nº de caso" [debounce]="150"
+          (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
+        <div class="segmento" role="group" aria-label="Estado del caso">
+          @for (e of [{ v: 'ABIERTO', n: 'Abiertos' }, { v: 'CERRADO', n: 'Cerrados' }, { v: 'TODOS', n: 'Todos' }]; track e.v) {
+            <button type="button" [class.activo]="estado() === e.v" [attr.aria-pressed]="estado() === e.v"
+              (click)="cambiarEstado($any(e.v))">{{ e.n }}</button>
+          }
+        </div>
+      </div>
+      <div class="chips" role="group" aria-label="Filtrar por clasificación OPS">
+        <span class="chips-titulo">Clasificación OPS:</span>
+        <button type="button" class="chip" [class.activo]="!clasificacion()" (click)="clasificacion.set(null)">
+          Todas ({{ casos().length }})
+        </button>
+        @for (c of clasificaciones; track c.valor) {
+          <button type="button" class="chip" [ngClass]="c.clase" [class.activo]="clasificacion() === c.valor"
+            [attr.aria-pressed]="clasificacion() === c.valor" (click)="alternarClasificacion(c.valor)">
+            <span class="punto"></span>{{ c.nombre }} ({{ cuentas().get(c.valor) ?? 0 }})
+          </button>
+        }
+      </div>
     </div>
 
     @if (cargando()) {
@@ -50,53 +76,75 @@
             <ion-button routerLink="/pacientes" fill="outline">Ir a pacientes</ion-button>
           }
         </app-estado-vacio>
-      }
-      @if (casos().length) {
-        <p class="resumen-lista">{{ filtrados().length }} de {{ casos().length }} casos</p>
-        @if (!filtrados().length) {
-          <app-estado-vacio icono="search-outline" titulo="Sin resultados"
+      } @else if (!filtrados().length) {
+        <app-estado-vacio icono="search-outline" titulo="Sin resultados"
           texto="Ningún caso coincide con la búsqueda o el filtro."></app-estado-vacio>
-        }
+      } @else {
+        <div class="tarjeta tabla-casos">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Nº</th>
+                <th scope="col">Paciente</th>
+                <th scope="col">Inicio de síntomas</th>
+                <th scope="col">Clasificación OPS</th>
+                <th scope="col">Validación</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Próximo control</th>
+                <th scope="col"><span class="oculto">Acción</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of filtrados(); track c.id) {
+                <tr (click)="abrir(c)" [class.cerrado]="c.estado === 'CERRADO'">
+                  <td class="numero">nº {{ c.id }}</td>
+                  <td class="paciente">
+                    <strong>{{ nombrePaciente(c) }}</strong>
+                    <span>{{ detallePaciente(c) }}</span>
+                  </td>
+                  <td data-titulo="Inicio de síntomas">
+                    {{ c.fechaInicioSintomas | date: 'dd/MM/yyyy' }}
+                    <span class="sub" [ngClass]="c.estado === 'ABIERTO' ? claseClasificacion(c.clasificacion) : ''">{{ evolucion(c) }}</span>
+                  </td>
+                  <td data-titulo="Clasificación">
+                    <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c.clasificacion) }}</span>
+                    @if (c.alertas.length) {
+                      <span class="alerta" [title]="c.alertas.length + ' alerta(s)'">
+                        <ion-icon name="warning" aria-hidden="true"></ion-icon>{{ c.alertas.length }}
+                      </span>
+                    }
+                  </td>
+                  <td data-titulo="Validación">
+                    @if (c.clasificacionValidada) {
+                      <span class="validacion ok"><ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>Validada</span>
+                    } @else {
+                      <span class="validacion pendiente"><ion-icon name="hourglass-outline" aria-hidden="true"></ion-icon>Pendiente</span>
+                    }
+                  </td>
+                  <td data-titulo="Estado">
+                    <span class="etiqueta" [ngClass]="c.estado === 'ABIERTO' ? 'abierto' : ''">
+                      {{ c.estado === 'ABIERTO' ? 'Abierto' : 'Cerrado' }}
+                    </span>
+                  </td>
+                  <td data-titulo="Próximo control">
+                    @if (c.proximoControl && c.estado === 'ABIERTO') {
+                      {{ c.proximoControl | date: 'dd/MM/yyyy' }}
+                    } @else {
+                      <span class="text-muted">—</span>
+                    }
+                  </td>
+                  <td class="accion">
+                    <a [routerLink]="['/casos', c.id]" (click)="$event.stopPropagation()"
+                      [attr.aria-label]="'Abrir caso ' + c.id + ' de ' + nombrePaciente(c)">
+                      <ion-icon name="eye-outline" aria-hidden="true"></ion-icon> Ver
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       }
-      <div class="lista-registros">
-        @for (c of filtrados(); track c) {
-          <button type="button" class="registro" (click)="abrir(c)"
-            [attr.aria-label]="'Abrir caso ' + c.id + ' de ' + nombrePaciente(c)">
-            <div class="registro-icono" aria-hidden="true"><ion-icon name="medkit-outline"></ion-icon></div>
-            <div class="registro-cuerpo">
-              <div class="registro-titulo">{{ nombrePaciente(c) }}</div>
-              <div class="registro-detalle">
-                Caso nº {{ c.id }} · notificado {{ c.fechaNotificacion | date: 'dd/MM/yyyy' }}
-              </div>
-              <div class="registro-etiquetas">
-                <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c.clasificacion) }}</span>
-                @if (!c.clasificacionValidada && c.estado === 'ABIERTO') {
-                  <span class="etiqueta">Pendiente de validar</span>
-                }
-                @if (c.sugerencia && !c.sugerencia.coincideConActual) {
-                  <span class="etiqueta">
-                    OPS sugiere: {{ c.sugerencia.clasificacion ? nombreClasificacion(c.sugerencia.clasificacion) : 'ninguna' }}
-                  </span>
-                }
-                @if (c.alertas.length) {
-                  <span class="etiqueta peligro">
-                    <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>{{ c.alertas.length }} alerta{{ c.alertas.length > 1 ? 's' : '' }}
-                  </span>
-                }
-                @if (c.proximoControl && c.estado === 'ABIERTO') {
-                  <span class="etiqueta">
-                    <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>Control {{ c.proximoControl | date: 'dd/MM' }}
-                  </span>
-                }
-                @if (c.estado === 'CERRADO') {
-                  <span class="etiqueta">Cerrado</span>
-                }
-              </div>
-            </div>
-            <ion-icon name="chevron-forward" class="registro-acciones" aria-hidden="true"></ion-icon>
-          </button>
-        }
-      </div>
     }
   </div>
 </ion-content>

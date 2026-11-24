@@ -6,7 +6,7 @@ import { IonicModule, ModalController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { AvisosService } from 'src/app/compartido/avisos.service';
 import { EstadoVacioComponent } from 'src/app/compartido/estado-vacio.component';
-import { hoyIso, textoEdad } from 'src/app/compartido/fechas';
+import { diasDesde, hoyIso, textoEdad } from 'src/app/compartido/fechas';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { mensajeDeError } from 'src/app/core/http/errores';
 import {
@@ -44,6 +44,8 @@ function fechasResultado(grupo: AbstractControl): ValidationErrors | null {
   return toma && res && res < toma ? { orden: true } : null;
 }
 
+type Pestana = 'resumen' | 'tiempo' | 'laboratorio' | 'historial';
+
 @Component({
   selector: 'app-caso-detalle',
   imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
@@ -70,6 +72,25 @@ export class CasoDetallePage implements OnInit {
   /** El médico edita datos y añade resultados; médico y epidemiólogo cambian la clasificación. */
   readonly puedeEditar = computed(() => this.abierto() && this.rol() === 'MEDICO');
   readonly puedeClasificar = computed(() => this.abierto() && (this.rol() === 'MEDICO' || this.rol() === 'EPIDEMIOLOGO'));
+  /** Pestañas de la ficha; el resumen cabe en una pantalla. */
+  readonly pestanas: { id: Pestana; nombre: string; icono: string }[] = [
+    { id: 'resumen', nombre: 'Resumen', icono: 'grid-outline' },
+    { id: 'tiempo', nombre: 'Línea de tiempo', icono: 'git-commit-outline' },
+    { id: 'laboratorio', nombre: 'Laboratorio', icono: 'flask-outline' },
+    { id: 'historial', nombre: 'Historial', icono: 'swap-horizontal-outline' },
+  ];
+  readonly pestana = signal<Pestana>('resumen');
+
+  /** «Día 11 de evolución», contado desde el inicio de síntomas hasta hoy. */
+  readonly diaActual = computed(() => {
+    const c = this.caso();
+    if (!c) {
+      return '';
+    }
+    const d = diasDesde(c.fechaInicioSintomas);
+    return d <= 0 ? 'Inicio hoy' : `Día ${d} de evolución`;
+  });
+
   readonly diasEvolucion = computed(() => {
     const c = this.caso();
     if (!c) {

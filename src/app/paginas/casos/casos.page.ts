@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { forkJoin } from 'rxjs';
 import { EstadoVacioComponent } from 'src/app/compartido/estado-vacio.component';
+import { diasDesde, textoEdad } from 'src/app/compartido/fechas';
 import { normalizar } from 'src/app/compartido/texto';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { mensajeDeError } from 'src/app/core/http/errores';
@@ -19,6 +20,7 @@ type FiltroEstado = EstadoCaso | 'TODOS';
   imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './casos.page.html',
+  styleUrls: ['./casos.page.css'],
 })
 export class CasosPage implements OnInit {
   private readonly api = inject(CasoService);
@@ -52,6 +54,15 @@ export class CasosPage implements OnInit {
         return normalizar(`${p?.nombres ?? ''} ${p?.apellidos ?? ''} ${p?.numeroDocumento ?? ''} ${caso.id}`).includes(q);
       })
       .sort((a, b) => b.fechaNotificacion.localeCompare(a.fechaNotificacion));
+  });
+
+  /** Cuántos casos hay de cada clasificación (con el filtro de estado aplicado). */
+  readonly cuentas = computed(() => {
+    const cuenta = new Map<Clasificacion, number>();
+    for (const c of this.casos()) {
+      cuenta.set(c.clasificacion, (cuenta.get(c.clasificacion) ?? 0) + 1);
+    }
+    return cuenta;
   });
 
   ngOnInit(): void {
@@ -97,6 +108,23 @@ export class CasosPage implements OnInit {
   nombrePaciente(caso: Caso): string {
     const p = this.pacientes().get(caso.pacienteId);
     return p ? `${p.apellidos}, ${p.nombres}` : `Paciente ${caso.pacienteId}`;
+  }
+
+  detallePaciente(caso: Caso): string {
+    const p = this.pacientes().get(caso.pacienteId);
+    if (!p) {
+      return '';
+    }
+    return [textoEdad(p.fechaNacimiento), p.numeroDocumento].filter(Boolean).join(' · ');
+  }
+
+  /** Días desde el inicio de síntomas, solo en casos abiertos. */
+  evolucion(caso: Caso): string {
+    if (caso.estado === 'CERRADO') {
+      return 'Cerrado';
+    }
+    const d = diasDesde(caso.fechaInicioSintomas);
+    return d <= 0 ? 'Inicio hoy' : `Día ${d} de evolución`;
   }
 
   nombreClasificacion(c: Clasificacion | null | undefined): string {

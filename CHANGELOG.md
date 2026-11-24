@@ -3,6 +3,30 @@
 Cambios de cada versión del frontend de SEGUIMORBI. Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/);
 versiones: [SemVer](https://semver.org/lang/es/).
 
+## v1.1.0 — 2026-11-23
+
+Rediseño completo de la interfaz, a partir de un diseño hecho en Stitch.
+
+### Nuevo
+
+- **Menú lateral oscuro que se pliega** a una franja de iconos (con el nombre al pasar el ratón); un botón lo
+  abre con textos y el navegador recuerda la elección. En el móvil sigue siendo un cajón.
+- **Inicio de sesión** con panel de marca y aviso solo si el servidor tarda en despertar.
+- **Inicio del médico** con indicadores (casos abiertos, controles de hoy, pendientes de validar, pacientes),
+  próximos controles de 7 días, aviso de validaciones y casos recientes.
+- **Lista de casos en tabla** con día de evolución, validación, alertas y próximo control; chips con el número de
+  casos de cada clasificación. En el móvil, cada caso es una tarjeta.
+- **Ficha del caso con pestañas**: Resumen, Línea de tiempo (con eje vertical), Laboratorio e Historial.
+- **Panel de vigilancia con pestañas**: Resumen, Curva epidémica, Clínica y Áreas; filtros en la cabecera.
+- El resto de pantallas (pacientes, agenda, validaciones, perfil y administración) siguen el mismo estilo:
+  cabecera dentro de la página, filtros en una tarjeta y migas en las fichas.
+
+### Cambios
+
+- Colores de clasificación unificados en etiquetas y gráficos: sospechoso azul, probable ámbar, confirmado rojo
+  y descartado gris (antes sospechoso era ámbar y probable azul).
+- Títulos con la tipografía Manrope, incluida en la app.
+
 ## v1.0.1 — 2026-11-23
 
 ### Nuevo

@@ -1,17 +1,42 @@
 <ion-content>
   <div class="login-page">
     <aside class="login-aside" aria-hidden="true">
-      <div class="aside-content">
-        <div class="aside-logo">
-          <ion-icon name="pulse"></ion-icon>
+      <div class="aside-top">
+        <div class="marca">
+          <div class="marca-logo"><ion-icon name="shield-checkmark"></ion-icon></div>
+          <div>
+            <div class="marca-nombre">SEGUIMORBI</div>
+            <div class="marca-sub">Fiebre de Oropouche</div>
+          </div>
         </div>
-        <h2>SEGUIMORBI</h2>
-        <p>Sistema de gestión epidemiológica y apoyo a la evaluación clínica de la fiebre de Oropouche.</p>
-        <ul>
-          <li><ion-icon name="shield-checkmark-outline"></ion-icon> Casos clasificados según la OPS</li>
-          <li><ion-icon name="medkit-outline"></ion-icon> Atención clínica y seguimiento</li>
-          <li><ion-icon name="stats-chart-outline"></ion-icon> Vigilancia por áreas de salud</li>
+        <span class="insignia"><span class="punto"></span>Vigilancia epidemiológica</span>
+      </div>
+
+      <div class="aside-centro">
+        <h2>Del primer síntoma al cierre del caso, en un solo lugar.</h2>
+        <p>Registro de casos con clasificación OPS, atención clínica, laboratorio y validación epidemiológica conectados.</p>
+        <ul class="tarjetas">
+          <li>
+            <ion-icon name="checkmark-done-outline"></ion-icon>
+            <strong>Clasificación OPS</strong>
+            <span>Sugerida al registrar el caso</span>
+          </li>
+          <li>
+            <ion-icon name="pulse-outline"></ion-icon>
+            <strong>Línea de tiempo</strong>
+            <span>Evaluación, plan y seguimiento</span>
+          </li>
+          <li>
+            <ion-icon name="map-outline"></ion-icon>
+            <strong>Áreas de salud</strong>
+            <span>Curva epidémica y validaciones</span>
+          </li>
         </ul>
+      </div>
+
+      <div class="aside-pie">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        Datos protegidos · Acceso por rol
       </div>
     </aside>
 
@@ -19,10 +44,10 @@
       <div class="login-card">
         <div class="login-header">
           <div class="mobile-logo" aria-hidden="true">
-            <ion-icon name="pulse"></ion-icon>
+            <ion-icon name="shield-checkmark"></ion-icon>
           </div>
-          <h1>Iniciar sesión</h1>
-          <p class="text-muted">Accede con la cuenta que te ha facilitado el administrador.</p>
+          <h1>Bienvenido de nuevo</h1>
+          <p class="text-muted">Entra con la cuenta que te ha facilitado el administrador.</p>
         </div>
 
         @if (aviso) {
@@ -67,19 +92,26 @@
             <ion-input-password-toggle slot="end"></ion-input-password-toggle>
           </ion-input>
 
+          <p class="help">¿Olvidaste la contraseña? Pídela a tu administrador.</p>
+
           <ion-button type="submit" expand="block" size="large" [disabled]="isLoading">
             @if (isLoading) {
               <ion-spinner name="crescent"></ion-spinner>
-            }
-            @if (!isLoading) {
+            } @else {
               <span>Entrar</span>
+              <ion-icon slot="end" name="log-in-outline" aria-hidden="true"></ion-icon>
             }
           </ion-button>
         </form>
 
-        <p class="help text-muted">
-          ¿Has olvidado tu contraseña? Pide al administrador que la restablezca.
-        </p>
+        @if (lento) {
+          <div class="nota" role="status">
+            <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+            <span>El servidor se está activando; la primera conexión puede tardar alrededor de un minuto.</span>
+          </div>
+        }
+
+        <p class="pie">SEGUIMORBI v{{ version }}</p>
       </div>
     </main>
   </div>

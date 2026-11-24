@@ -1,4 +1,4 @@
-import { edad, hoyIso, sumarDias, textoEdad } from './fechas';
+import { diasDesde, edad, hoyIso, sumarDias, textoEdad } from './fechas';
 
 describe('fechas', () => {
   beforeEach(() => jasmine.clock().install().mockDate(new Date(2026, 10, 23, 12, 0)));
@@ -26,5 +26,11 @@ describe('fechas', () => {
     expect(sumarDias('2026-11-23', 7)).toBe('2026-11-30');
     expect(sumarDias('2026-12-30', 3)).toBe('2027-01-02');
     expect(sumarDias('2026-03-01', -1)).toBe('2026-02-28');
+  });
+  it('diasDesde cuenta días naturales hasta hoy', () => {
+    expect(diasDesde('2026-11-23')).toBe(0);
+    expect(diasDesde('2026-11-12')).toBe(11);
+    expect(diasDesde('2026-10-25T08:00:00')).toBe(29);
+    expect(diasDesde('2026-11-25')).toBe(-2);
   });
 });
