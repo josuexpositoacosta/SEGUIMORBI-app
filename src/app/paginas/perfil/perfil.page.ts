@@ -7,7 +7,7 @@ import { DatosPersonalesComponent } from './datos-personales/datos-personales.co
   imports: [IonicModule, DatosPersonalesComponent],
   changeDetection: ChangeDetectionStrategy.Eager,
   template: `
-    <ion-header>
+    <ion-header class="ion-hide-lg-up">
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
@@ -18,6 +18,9 @@ import { DatosPersonalesComponent } from './datos-personales/datos-personales.co
 
     <ion-content>
       <div class="page-container">
+        <header class="cabecera">
+          <h1>Mi perfil</h1>
+        </header>
         <ion-card>
           <ion-card-header>
             <ion-card-title>Mis datos personales</ion-card-title>

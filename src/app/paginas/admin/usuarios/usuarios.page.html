@@ -1,28 +1,9 @@
-<ion-header>
+<ion-header class="ion-hide-lg-up">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Usuarios</ion-title>
-    <ion-buttons slot="end">
-      <ion-button fill="solid" color="primary" (click)="abrir('crear')" aria-label="Nuevo usuario">
-        <ion-icon slot="start" name="person-add-outline"></ion-icon>
-        <span class="boton-texto">Nuevo usuario</span>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-  <ion-toolbar class="barra-filtros">
-    <ion-searchbar
-      placeholder="Buscar por nombre, usuario o correo"
-      [debounce]="150"
-      (ionInput)="busqueda.set($any($event).detail.value ?? '')">
-    </ion-searchbar>
-    <ion-segment [value]="filtroRol()" (ionChange)="filtroRol.set($any($event).detail.value)" [scrollable]="true">
-      <ion-segment-button value="TODOS"><ion-label>Todos</ion-label></ion-segment-button>
-      @for (r of roles; track r) {
-        <ion-segment-button [value]="r"><ion-label>{{ nombreRol[r] }}</ion-label></ion-segment-button>
-      }
-    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
@@ -32,6 +13,23 @@
   </ion-refresher>
 
   <div class="page-container">
+    <header class="cabecera">
+      <h1>Usuarios</h1>
+      <ion-button (click)="abrir('crear')"><ion-icon slot="start" name="person-add-outline"></ion-icon>Nuevo usuario</ion-button>
+    </header>
+    <div class="tarjeta filtros">
+      <div class="filtros-fila">
+        <ion-searchbar placeholder="Buscar por nombre, usuario o correo" [debounce]="150"
+          (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
+        <div class="segmento" role="group">
+          <button type="button" [class.activo]="filtroRol() === 'TODOS'" [attr.aria-pressed]="filtroRol() === 'TODOS'" (click)="filtroRol.set('TODOS')">Todos</button>
+          @for (r of roles; track r) {
+            <button type="button" [class.activo]="filtroRol() === r" [attr.aria-pressed]="filtroRol() === r" (click)="filtroRol.set(r)">{{ nombreRol[r] }}</button>
+          }
+        </div>
+      </div>
+    </div>
+
     @if (cargando()) {
       <div class="cargando"><ion-spinner name="crescent"></ion-spinner></div>
     }

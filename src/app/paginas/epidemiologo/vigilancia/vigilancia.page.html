@@ -1,37 +1,9 @@
-<ion-header>
+<ion-header class="ion-hide-lg-up">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Panel de vigilancia</ion-title>
-    <ion-buttons slot="end">
-      <ion-button fill="solid" color="primary" (click)="descargarCsv()" [disabled]="descargando()" aria-label="Descargar CSV">
-        <ion-icon slot="start" name="download-outline"></ion-icon>
-        <span class="boton-texto">Descargar CSV</span>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-  <ion-toolbar class="barra-filtros">
-    <div class="filtros">
-      <ion-segment [value]="periodo()" (ionChange)="cambiarPeriodo($any($event).detail.value)" [scrollable]="true">
-        <ion-segment-button [value]="4"><ion-label>4 sem.</ion-label></ion-segment-button>
-        <ion-segment-button [value]="12"><ion-label>12 sem.</ion-label></ion-segment-button>
-        <ion-segment-button [value]="26"><ion-label>26 sem.</ion-label></ion-segment-button>
-        <ion-segment-button [value]="52"><ion-label>1 año</ion-label></ion-segment-button>
-      </ion-segment>
-      <ion-select [value]="areaSaludId()" (ionChange)="cambiarArea($any($event).detail.value)" interface="popover"
-        label="Área" labelPlacement="start" fill="outline">
-        <ion-select-option [value]="null">Todas las áreas</ion-select-option>
-        @for (a of areasCatalogo(); track a) {
-          <ion-select-option [value]="a.id">{{ a.nombre }}</ion-select-option>
-        }
-      </ion-select>
-      <ion-select [value]="criterio()" (ionChange)="cambiarCriterio($any($event).detail.value)" interface="popover"
-        label="Fecha" labelPlacement="start" fill="outline">
-        <ion-select-option value="INICIO_SINTOMAS">Inicio de síntomas</ion-select-option>
-        <ion-select-option value="NOTIFICACION">Notificación</ion-select-option>
-      </ion-select>
-    </div>
+    <ion-title>Vigilancia</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -40,7 +12,51 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <div class="page-container">
+  <div class="page-container ancho">
+    <header class="cabecera">
+      <div>
+        <h1>Panel de vigilancia</h1>
+        @if (resumen(); as r) {
+          <p class="text-muted">
+            Del {{ r.desde | date: 'dd/MM/yyyy' }} al {{ r.hasta | date: 'dd/MM/yyyy' }} ·
+            por fecha de {{ r.criterio === 'INICIO_SINTOMAS' ? 'inicio de síntomas' : 'notificación' }}
+          </p>
+        }
+      </div>
+      <div class="controles">
+        <div class="segmento" role="group" aria-label="Periodo">
+          @for (p of periodos; track p.valor) {
+            <button type="button" [class.activo]="periodo() === p.valor" [attr.aria-pressed]="periodo() === p.valor"
+              (click)="cambiarPeriodo(p.valor)">{{ p.nombre }}</button>
+          }
+        </div>
+        <ion-select [value]="areaSaludId()" (ionChange)="cambiarArea($any($event).detail.value)" interface="popover"
+          aria-label="Área de salud" fill="outline" class="selector">
+          <ion-select-option [value]="null">Todas las áreas</ion-select-option>
+          @for (a of areasCatalogo(); track a) {
+            <ion-select-option [value]="a.id">{{ a.nombre }}</ion-select-option>
+          }
+        </ion-select>
+        <ion-select [value]="criterio()" (ionChange)="cambiarCriterio($any($event).detail.value)" interface="popover"
+          aria-label="Fecha de referencia" fill="outline" class="selector">
+          <ion-select-option value="INICIO_SINTOMAS">Por inicio de síntomas</ion-select-option>
+          <ion-select-option value="NOTIFICACION">Por notificación</ion-select-option>
+        </ion-select>
+        <ion-button fill="outline" color="medium" (click)="descargarCsv()" [disabled]="descargando()">
+          <ion-icon slot="start" name="download-outline" aria-hidden="true"></ion-icon>CSV
+        </ion-button>
+      </div>
+    </header>
+
+    <div class="pestanas" role="tablist" aria-label="Secciones del panel">
+      @for (t of pestanas; track t.id) {
+        <button type="button" role="tab" [class.activa]="pestana() === t.id" [attr.aria-selected]="pestana() === t.id"
+          (click)="pestana.set(t.id)">
+          <ion-icon [name]="t.icono" aria-hidden="true"></ion-icon>{{ t.nombre }}
+        </button>
+      }
+    </div>
+
     @if (cargando()) {
       <div class="cargando"><ion-spinner name="crescent"></ion-spinner></div>
     }
@@ -53,81 +69,110 @@
     }
 
     @if (!cargando() && !error() && resumen(); as r) {
-      <p class="periodo text-muted">
-        Del {{ r.desde | date: 'dd/MM/yyyy' }} al {{ r.hasta | date: 'dd/MM/yyyy' }} ·
-        por fecha de {{ r.criterio === 'INICIO_SINTOMAS' ? 'inicio de síntomas' : 'notificación' }}
-      </p>
-      <!-- Indicadores -->
-      <section class="indicadores" aria-label="Indicadores">
-        <div class="indicador destacado">
-          <span class="valor">{{ r.totalCasos }}</span>
-          <span class="nombre">casos en el periodo</span>
-          @if (r.totalCasos) {
-            <div class="barra-clasificacion" role="img"
-              [attr.aria-label]="'Distribución por clasificación'">
-              @for (s of series; track s) {
-                <span [style.width.%]="porcentaje(r.porClasificacion[s.clave] ?? 0, r.totalCasos)"
-                [style.background]="s.color" [title]="s.nombre + ': ' + (r.porClasificacion[s.clave] ?? 0)"></span>
-              }
+      @switch (pestana()) {
+        @case ('resumen') {
+          <section class="kpis" aria-label="Indicadores">
+            <div class="tarjeta kpi">
+              <div class="kpi-cabecera"><span>Casos notificados</span><ion-icon name="document-text-outline" aria-hidden="true"></ion-icon></div>
+              <div class="kpi-valor">{{ r.totalCasos }}</div>
+              <div class="kpi-nota">{{ r.abiertos }} abiertos · {{ r.cerrados }} cerrados</div>
             </div>
-          }
-          <ul class="mini-leyenda">
-            @for (s of series; track s) {
-              <li><span class="muestra" [style.background]="s.color"></span>{{ s.nombre }} {{ r.porClasificacion[s.clave] ?? 0 }}</li>
+            @for (s of seriesPrincipales; track s.clave) {
+              <div class="tarjeta kpi" [ngClass]="s.clase">
+                <div class="kpi-cabecera"><span>{{ s.plural }}</span><span class="punto"></span></div>
+                <div class="kpi-valor">{{ r.porClasificacion[s.clave] ?? 0 }}</div>
+                <div class="kpi-nota">{{ porcentaje(r.porClasificacion[s.clave] ?? 0, r.totalCasos) | number: '1.0-0' }} % del total</div>
+              </div>
             }
-          </ul>
-        </div>
-        <div class="indicador">
-          <span class="valor">{{ r.porcentajeConfirmados | number: '1.0-1' }}&nbsp;%</span>
-          <span class="nombre">confirmados</span>
-        </div>
-        <a class="indicador enlace" routerLink="/validaciones">
-          <span class="valor">{{ r.pendientesDeValidar }}</span>
-          <span class="nombre">pendientes de validar <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></span>
-        </a>
-        <div class="indicador">
-          <span class="valor">{{ r.abiertos }}</span>
-          <span class="nombre">abiertos · {{ r.cerrados }} cerrados</span>
-        </div>
-        <div class="indicador">
-          <span class="valor">{{ r.hospitalizados }}</span>
-          <span class="nombre">hospitalizados</span>
-        </div>
-        <div class="indicador">
-          <span class="valor">{{ r.neuroinvasivos }}</span>
-          <span class="nombre">formas neuroinvasivas</span>
-        </div>
-        <div class="indicador">
-          <span class="valor">{{ r.gestantes }}</span>
-          <span class="nombre">gestantes</span>
-        </div>
-        <div class="indicador">
-          <span class="valor">{{ r.recaidas }}</span>
-          <span class="nombre">recaídas</span>
-        </div>
-        <div class="indicador">
-          <span class="valor">{{ r.conLaboratorio }}</span>
-          <span class="nombre">con laboratorio de Oropouche</span>
-        </div>
-      </section>
-      <!-- Curva epidémica -->
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>Curva epidémica</ion-card-title>
-          <ion-card-subtitle>Casos por semana epidemiológica (domingo a sábado) y clasificación</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <app-curva-epidemica [semanas]="semanas()"></app-curva-epidemica>
-        </ion-card-content>
-      </ion-card>
-      <div class="dos-columnas">
-        <!-- Áreas -->
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Casos por área de salud</ion-card-title>
-            <ion-card-subtitle>Todas las áreas del periodo</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
+            <a class="tarjeta kpi kpi-enlace" routerLink="/validaciones">
+              <div class="kpi-cabecera"><span>Pendientes de validar</span><ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon></div>
+              <div class="kpi-valor">{{ r.pendientesDeValidar }}</div>
+              <div class="kpi-nota">Ir a validaciones →</div>
+            </a>
+          </section>
+
+          <div class="fila-principal">
+            <section class="tarjeta bloque">
+              <div class="bloque-cabecera">
+                <div>
+                  <h2>Curva epidémica</h2>
+                  <p>Casos por semana epidemiológica y clasificación</p>
+                </div>
+                <button type="button" class="enlace" (click)="pestana.set('curva')">Ampliar →</button>
+              </div>
+              <app-curva-epidemica [semanas]="semanas()"></app-curva-epidemica>
+            </section>
+            <section class="tarjeta bloque">
+              <div class="bloque-cabecera">
+                <div>
+                  <h2>Casos por área de salud</h2>
+                  <p>{{ porArea().length }} {{ porArea().length === 1 ? 'área' : 'áreas' }}</p>
+                </div>
+                <button type="button" class="enlace" (click)="pestana.set('areas')">Detalle →</button>
+              </div>
+              @if (!porArea().length) {
+                <p class="text-muted">No hay áreas de salud.</p>
+              }
+              <div class="areas">
+                @for (a of areasOrdenadas(); track a.areaSaludId) {
+                  <div class="area">
+                    <div class="area-fila">
+                      <strong>{{ a.nombre }}</strong>
+                      <span><strong>{{ a.total }}</strong> casos <span class="text-muted">({{ porcentaje(a.total, r.totalCasos) | number: '1.0-0' }} %)</span></span>
+                    </div>
+                    <div class="barra-area ancha" role="img" [attr.aria-label]="a.nombre + ': ' + a.total + ' casos'">
+                      @for (s of series; track s) {
+                        <span [style.flex-grow]="a.porClasificacion[s.clave] ?? 0" [style.background]="s.color"
+                          [title]="s.nombre + ': ' + (a.porClasificacion[s.clave] ?? 0)"></span>
+                      }
+                      <span class="resto" [style.flex-grow]="maxArea() - a.total"></span>
+                    </div>
+                    <div class="text-muted area-nota">{{ a.abiertos }} abiertos</div>
+                  </div>
+                }
+              </div>
+            </section>
+          </div>
+        }
+
+        @case ('curva') {
+          <section class="tarjeta bloque">
+            <div class="bloque-cabecera">
+              <div>
+                <h2>Curva epidémica</h2>
+                <p>Casos por semana epidemiológica (domingo a sábado) y clasificación</p>
+              </div>
+            </div>
+            <app-curva-epidemica [semanas]="semanas()"></app-curva-epidemica>
+          </section>
+        }
+
+        @case ('clinica') {
+          <section class="kpis" aria-label="Indicadores clínicos">
+            @for (k of indicadoresClinicos(); track k.nombre) {
+              <div class="tarjeta kpi">
+                <div class="kpi-cabecera"><span>{{ k.nombre }}</span><ion-icon [name]="k.icono" aria-hidden="true"></ion-icon></div>
+                <div class="kpi-valor">{{ k.valor }}</div>
+                <div class="kpi-nota">{{ k.nota }}</div>
+              </div>
+            }
+          </section>
+          <section class="tarjeta bloque">
+            <div class="bloque-cabecera"><h2>Casos cerrados por desenlace</h2></div>
+            @if (!desenlacesResumen().length) {
+              <p class="text-muted">No hay casos cerrados en el periodo.</p>
+            }
+            <ul class="lista-desenlaces">
+              @for (d of desenlacesResumen(); track d) {
+                <li><span>{{ d.nombre }}</span><strong>{{ d.total }}</strong></li>
+              }
+            </ul>
+          </section>
+        }
+
+        @case ('areas') {
+          <section class="tarjeta bloque">
+            <div class="bloque-cabecera"><h2>Casos por área de salud</h2></div>
             @if (!porArea().length) {
               <p class="text-muted">No hay áreas de salud.</p>
             }
@@ -158,25 +203,9 @@
                 </table>
               </div>
             }
-          </ion-card-content>
-        </ion-card>
-        <!-- Desenlaces -->
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Casos cerrados por desenlace</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            @if (!desenlacesResumen().length) {
-              <p class="text-muted">No hay casos cerrados en el periodo.</p>
-            }
-            <ul class="lista-desenlaces">
-              @for (d of desenlacesResumen(); track d) {
-                <li><span>{{ d.nombre }}</span><strong>{{ d.total }}</strong></li>
-              }
-            </ul>
-          </ion-card-content>
-        </ion-card>
-      </div>
+          </section>
+        }
+      }
       <p class="formulario-nota">
         El CSV no incluye nombres ni documentos de los pacientes. Semana epidemiológica de domingo a sábado; conviene
         confirmarla con el calendario oficial del país.
