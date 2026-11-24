@@ -1,18 +1,4 @@
-/* ---------- Cabecera ---------- */
-.cabecera {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: 28px;
-}
-
-.cabecera h1 {
-  margin: 0 0 6px;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-}
-
+/* ---------- Cabecera (la base .cabecera está en global.scss) ---------- */
 .fecha {
   display: flex;
   align-items: center;

@@ -1,0 +1,210 @@
+/* ---------- Filtros ---------- */
+.filtros {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding: 16px;
+}
+
+.filtros-fila {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.buscador {
+  flex: 1;
+  min-width: 240px;
+  max-width: 560px;
+  padding: 0;
+  --background: var(--app-surface-muted);
+  --border-radius: var(--app-radius-sm);
+  --box-shadow: none;
+}
+
+.chips {
+  padding-top: 12px;
+  border-top: 1px solid var(--app-border);
+}
+
+/* ---------- Tabla ---------- */
+.tabla-casos {
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+thead th {
+  padding: 12px 16px;
+  background: var(--app-surface-muted);
+  color: var(--app-text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-align: start;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+tbody tr {
+  border-top: 1px solid var(--app-border);
+  cursor: pointer;
+}
+
+tbody tr:hover {
+  background: rgba(var(--ion-color-primary-rgb), 0.04);
+}
+
+tbody tr.cerrado {
+  opacity: 0.75;
+}
+
+td {
+  padding: 14px 16px;
+  vertical-align: middle;
+}
+
+.numero {
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.paciente strong {
+  display: block;
+  font-weight: 600;
+}
+
+.paciente span,
+.sub {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--app-text-muted);
+}
+
+.sub.sospechoso { color: var(--estado-sospechoso); font-weight: 600; }
+.sub.probable { color: var(--estado-probable); font-weight: 600; }
+.sub.confirmado { color: var(--estado-confirmado); font-weight: 600; }
+
+.alerta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-inline-start: 6px;
+  color: var(--estado-confirmado);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.validacion {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.validacion ion-icon {
+  font-size: 16px;
+}
+
+.validacion.ok { color: var(--estado-abierto); }
+.validacion.pendiente { color: var(--estado-probable); }
+
+.accion {
+  text-align: end;
+}
+
+.accion a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--app-surface-muted);
+  color: var(--ion-color-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+tr:hover .accion a {
+  background: var(--ion-color-primary);
+  color: #fff;
+}
+
+/* ---------- Móvil: cada fila es una tarjeta ---------- */
+@media (max-width: 900px) {
+  .tabla-casos {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody {
+    display: grid;
+    gap: 12px;
+  }
+
+  tbody tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius);
+    background: var(--app-surface);
+  }
+
+  td {
+    padding: 0;
+  }
+
+  td.paciente {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  td.numero {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: end;
+  }
+
+  td[data-titulo] {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  td[data-titulo]::before {
+    content: attr(data-titulo);
+    font-size: 0.75rem;
+    color: var(--app-text-muted);
+  }
+
+  td.numero::before {
+    content: none;
+  }
+
+  td[data-titulo] .sub {
+    display: inline;
+    margin-inline-start: 6px;
+  }
+
+  .accion {
+    display: none;
+  }
+}
