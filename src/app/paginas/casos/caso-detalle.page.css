@@ -1,10 +1,310 @@
-.enlace-paciente {
+/* ---------- Migas y cabecera ---------- */
+.migas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 0.8rem;
+  color: var(--app-text-muted);
+}
+
+.migas a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   color: inherit;
   text-decoration: none;
 }
 
-a.enlace-paciente[href]:hover {
+.migas a:hover {
   color: var(--ion-color-primary);
+}
+
+.migas span {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--app-surface-muted);
+  color: var(--ion-text-color);
+  font-weight: 600;
+}
+
+.ficha-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding: 22px 24px;
+}
+
+.ficha-titulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.ficha-titulo h1 {
+  margin: 0 6px 0 0;
+  font-size: 1.6rem;
+}
+
+.ficha-datos {
+  display: flex;
+  align-items: center;
+  gap: 6px 18px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: var(--app-text-muted);
+}
+
+.ficha-paciente {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ion-text-color);
+  font-weight: 600;
+}
+
+.ficha-paciente ion-icon {
+  color: var(--ion-color-primary);
+}
+
+.ficha-paciente a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ficha-paciente a[href]:hover {
+  color: var(--ion-color-primary);
+}
+
+.dia {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--app-surface-muted);
+  color: var(--ion-text-color);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.ficha-acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Pestañas ---------- */
+.pestanas {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--app-border);
+  overflow-x: auto;
+}
+
+.pestanas button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: transparent;
+  color: var(--app-text-muted);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.pestanas button:hover {
+  color: var(--ion-text-color);
+}
+
+.pestanas button.activa {
+  border-bottom-color: var(--ion-color-primary);
+  color: var(--ion-color-primary);
+  font-weight: 600;
+}
+
+.cuenta {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--app-surface-muted);
+  color: var(--app-text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* ---------- Bloques ---------- */
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: start;
+}
+
+.bloque {
+  padding: 18px 20px;
+}
+
+.bloque-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--app-border);
+}
+
+.bloque-cabecera.separado {
+  margin-top: 18px;
+}
+
+.bloque-cabecera h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.bloque-cabecera h2 ion-icon {
+  color: var(--ion-color-primary);
+  font-size: 18px;
+}
+
+.pequeno {
+  font-family: var(--ion-font-family);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.enlace {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ion-color-primary);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.texto {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.nota {
+  display: flex;
+  gap: 8px;
+  margin: 14px 0 4px;
+  padding: 10px 12px;
+  border-radius: var(--app-radius-sm);
+  background: var(--ion-color-primary-soft, rgba(var(--ion-color-primary-rgb), 0.08));
+  color: var(--ion-color-primary);
+  font-size: 0.8rem;
+}
+
+.nota ion-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.datos.filas,
+.datos.compacto {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.datos.filas div,
+.datos.compacto div {
+  padding: 8px 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--app-border);
+  background: none;
+}
+
+.datos.filas div:last-child,
+.datos.compacto div:last-child {
+  border-bottom: 0;
+}
+
+.datos.filas div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.datos.filas dt,
+.datos.compacto dt {
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.datos.filas dd {
+  margin: 0;
+  text-align: end;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.datos.compacto dd {
+  margin-top: 2px;
+  font-size: 0.85rem;
+}
+
+.control {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: var(--app-radius-sm);
+  background: rgba(var(--ion-color-primary-rgb), 0.08);
+  font-size: 0.85rem;
+}
+
+.control ion-icon {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--ion-color-primary);
+}
+
+.control strong,
+.control span {
+  display: block;
+}
+
+.control span::first-letter {
+  text-transform: uppercase;
+}
+
+.control.sin-control,
+.control.cerrado {
+  background: var(--app-surface-muted);
+}
+
+.control.sin-control ion-icon,
+.control.cerrado ion-icon {
+  color: var(--app-text-muted);
+}
+
+@media (max-width: 1100px) {
+  .resumen {
+    grid-template-columns: 1fr;
+  }
 }
 
 .alertas {
@@ -28,55 +328,6 @@ a.enlace-paciente[href]:hover {
   flex-shrink: 0;
   margin-top: 2px;
   color: var(--ion-color-danger);
-}
-
-.columnas {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 0 16px;
-}
-
-.cabecera-con-accion {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.clasificacion-actual {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.validacion {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.85rem;
-  color: var(--app-text-muted);
-}
-
-.validacion.validada {
-  color: var(--ion-color-success);
-}
-
-.sugerencia-caso {
-  padding: 12px 14px;
-  margin-bottom: 14px;
-  border-radius: var(--app-radius-sm);
-  background: var(--app-surface-muted);
-}
-
-.sugerencia-titulo {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
-  color: var(--ion-text-color);
 }
 
 .criterios {
@@ -108,7 +359,7 @@ a.enlace-paciente[href]:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin: 12px 0;
+  margin: 0 0 12px;
 }
 
 .resultados {
@@ -175,17 +426,30 @@ a.enlace-paciente[href]:hover {
 }
 
 .linea-tiempo li {
+  position: relative;
   display: flex;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--app-border);
+  gap: 14px;
+  padding: 0 0 18px;
+}
+
+/* Eje vertical que une los registros */
+.linea-tiempo li:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: 34px;
+  bottom: 0;
+  left: 16px;
+  width: 2px;
+  background: var(--app-border);
 }
 
 .linea-tiempo li:last-child {
-  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .lt-icono {
+  position: relative;
+  z-index: 1;
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -197,13 +461,24 @@ a.enlace-paciente[href]:hover {
   font-size: 18px;
 }
 
-.linea-tiempo li.dictamen .lt-icono { background: rgba(var(--ion-color-tertiary-rgb), 0.12); color: var(--ion-color-tertiary); }
-.linea-tiempo li.plan .lt-icono { background: rgba(var(--ion-color-secondary-rgb), 0.15); color: var(--ion-color-secondary-shade); }
+.linea-tiempo li.dictamen .lt-icono { background: var(--estado-sospechoso-suave); color: var(--estado-sospechoso); }
+.linea-tiempo li.plan .lt-icono { background: var(--estado-probable-suave); color: var(--estado-probable); }
+.linea-tiempo li.seguimiento .lt-icono { background: var(--estado-abierto-suave); color: var(--estado-abierto); }
 .linea-tiempo li.evento .lt-icono { background: var(--app-surface-muted); color: var(--app-text-muted); }
 
 .lt-cuerpo {
   flex: 1;
   min-width: 0;
+  padding: 12px 16px;
+  border-radius: var(--app-radius-sm);
+  background: var(--app-surface-muted);
+}
+
+.lt-fecha {
+  margin-inline-start: auto;
+  font-size: 0.78rem;
+  color: var(--app-text-muted);
+  white-space: nowrap;
 }
 
 .lt-cabecera {
@@ -226,7 +501,7 @@ a.enlace-paciente[href]:hover {
   font-size: 0.78rem;
 }
 
-.tarjeta-cierre {
-  border-color: var(--app-border);
-  background: var(--app-surface-muted);
+
+.lt-cuerpo .etiqueta {
+  background: var(--app-surface);
 }
