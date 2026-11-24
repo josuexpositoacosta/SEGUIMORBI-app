@@ -18,6 +18,7 @@ import { DesenlaceService } from 'src/app/core/services/desenlace.service';
 import { VigilanciaService } from 'src/app/core/services/vigilancia.service';
 
 type Periodo = 4 | 12 | 26 | 52;
+type Pestana = 'resumen' | 'curva' | 'clinica' | 'areas';
 
 const SERIES: { clave: Clasificacion; nombre: string; color: string }[] = [
   { clave: 'SOSPECHOSO', nombre: 'Sospechoso', color: 'var(--serie-sospechoso)' },
@@ -41,6 +42,25 @@ export class VigilanciaPage implements OnInit {
   private readonly avisos = inject(AvisosService);
 
   readonly series = SERIES;
+  /** Las tres clasificaciones activas, para las tarjetas del resumen. */
+  readonly seriesPrincipales = [
+    { clave: 'CONFIRMADO' as Clasificacion, plural: 'Confirmados', clase: 'confirmado' },
+    { clave: 'PROBABLE' as Clasificacion, plural: 'Probables', clase: 'probable' },
+    { clave: 'SOSPECHOSO' as Clasificacion, plural: 'Sospechosos', clase: 'sospechoso' },
+  ];
+  readonly periodos: { valor: Periodo; nombre: string }[] = [
+    { valor: 4, nombre: '4 sem.' },
+    { valor: 12, nombre: '12 sem.' },
+    { valor: 26, nombre: '26 sem.' },
+    { valor: 52, nombre: '1 año' },
+  ];
+  readonly pestanas: { id: Pestana; nombre: string; icono: string }[] = [
+    { id: 'resumen', nombre: 'Resumen', icono: 'grid-outline' },
+    { id: 'curva', nombre: 'Curva epidémica', icono: 'bar-chart-outline' },
+    { id: 'clinica', nombre: 'Clínica', icono: 'medkit-outline' },
+    { id: 'areas', nombre: 'Áreas', icono: 'map-outline' },
+  ];
+  readonly pestana = signal<Pestana>('resumen');
   readonly periodo = signal<Periodo>(12);
   readonly areaSaludId = signal<number | null>(null);
   readonly criterio = signal<CriterioFecha>('INICIO_SINTOMAS');
@@ -59,6 +79,21 @@ export class VigilanciaPage implements OnInit {
   readonly desenlacesResumen = computed(() => Object.entries(this.resumen()?.porDesenlace ?? {})
     .map(([codigo, total]) => ({ nombre: this.desenlaces().get(codigo)?.nombre ?? codigo, total }))
     .sort((a, b) => b.total - a.total));
+
+  readonly indicadoresClinicos = computed(() => {
+    const r = this.resumen();
+    if (!r) {
+      return [];
+    }
+    return [
+      { nombre: 'Confirmados', valor: `${new Intl.NumberFormat('es', { maximumFractionDigits: 1 }).format(r.porcentajeConfirmados)} %`, nota: 'del total de casos', icono: 'checkmark-circle-outline' },
+      { nombre: 'Hospitalizados', valor: r.hospitalizados, nota: 'con ingreso', icono: 'bed-outline' },
+      { nombre: 'Formas neuroinvasivas', valor: r.neuroinvasivos, nota: 'casos con afectación neurológica', icono: 'pulse-outline' },
+      { nombre: 'Gestantes', valor: r.gestantes, nota: 'embarazadas en el periodo', icono: 'woman-outline' },
+      { nombre: 'Recaídas', valor: r.recaidas, nota: 'casos con recaída', icono: 'refresh-outline' },
+      { nombre: 'Con laboratorio', valor: r.conLaboratorio, nota: 'con prueba de Oropouche', icono: 'flask-outline' },
+    ];
+  });
 
   private filtro(): FiltroVigilancia {
     const hasta = hoyIso();
