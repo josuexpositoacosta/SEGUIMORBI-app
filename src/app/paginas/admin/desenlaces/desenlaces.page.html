@@ -1,24 +1,9 @@
-<ion-header>
+<ion-header class="ion-hide-lg-up">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Desenlaces</ion-title>
-    <ion-buttons slot="end">
-      <ion-button fill="solid" color="primary" (click)="abrir()" aria-label="Nuevo desenlace">
-        <ion-icon slot="start" name="add"></ion-icon>
-        <span class="boton-texto">Nuevo desenlace</span>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-  <ion-toolbar class="barra-filtros">
-    <ion-searchbar placeholder="Buscar por código o nombre" [debounce]="150"
-    (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
-    <ion-segment [value]="filtro()" (ionChange)="filtro.set($any($event).detail.value)">
-      <ion-segment-button value="activos"><ion-label>Activos</ion-label></ion-segment-button>
-      <ion-segment-button value="inactivos"><ion-label>Inactivos</ion-label></ion-segment-button>
-      <ion-segment-button value="todos"><ion-label>Todos</ion-label></ion-segment-button>
-    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
@@ -28,6 +13,22 @@
   </ion-refresher>
 
   <div class="page-container">
+    <header class="cabecera">
+      <h1>Desenlaces</h1>
+      <ion-button (click)="abrir()"><ion-icon slot="start" name="add"></ion-icon>Nuevo desenlace</ion-button>
+    </header>
+    <div class="tarjeta filtros">
+      <div class="filtros-fila">
+        <ion-searchbar placeholder="Buscar por código o nombre" [debounce]="150"
+        (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
+        <div class="segmento" role="group">
+          <button type="button" [class.activo]="filtro() === 'activos'" [attr.aria-pressed]="filtro() === 'activos'" (click)="filtro.set('activos')">Activos</button>
+          <button type="button" [class.activo]="filtro() === 'inactivos'" [attr.aria-pressed]="filtro() === 'inactivos'" (click)="filtro.set('inactivos')">Inactivos</button>
+          <button type="button" [class.activo]="filtro() === 'todos'" [attr.aria-pressed]="filtro() === 'todos'" (click)="filtro.set('todos')">Todos</button>
+        </div>
+      </div>
+    </div>
+
     <p class="resumen-lista">
       Opciones que el médico elige al cerrar un caso. El código no se puede cambiar porque lo guardan los casos cerrados.
     </p>

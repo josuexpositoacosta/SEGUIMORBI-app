@@ -1,24 +1,9 @@
-<ion-header>
+<ion-header class="ion-hide-lg-up">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Áreas de salud</ion-title>
-    <ion-buttons slot="end">
-      <ion-button fill="solid" color="primary" (click)="abrir()" aria-label="Nueva área">
-        <ion-icon slot="start" name="add"></ion-icon>
-        <span class="boton-texto">Nueva área</span>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-  <ion-toolbar class="barra-filtros">
-    <ion-searchbar placeholder="Buscar por código, nombre, provincia o municipio" [debounce]="150"
-    (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
-    <ion-segment [value]="filtro()" (ionChange)="filtro.set($any($event).detail.value)">
-      <ion-segment-button value="activas"><ion-label>Activas</ion-label></ion-segment-button>
-      <ion-segment-button value="inactivas"><ion-label>Inactivas</ion-label></ion-segment-button>
-      <ion-segment-button value="todas"><ion-label>Todas</ion-label></ion-segment-button>
-    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
@@ -28,6 +13,22 @@
   </ion-refresher>
 
   <div class="page-container">
+    <header class="cabecera">
+      <h1>Áreas de salud</h1>
+      <ion-button (click)="abrir()"><ion-icon slot="start" name="add"></ion-icon>Nueva área</ion-button>
+    </header>
+    <div class="tarjeta filtros">
+      <div class="filtros-fila">
+        <ion-searchbar placeholder="Buscar por código, nombre, provincia o municipio" [debounce]="150"
+        (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
+        <div class="segmento" role="group">
+          <button type="button" [class.activo]="filtro() === 'activas'" [attr.aria-pressed]="filtro() === 'activas'" (click)="filtro.set('activas')">Activas</button>
+          <button type="button" [class.activo]="filtro() === 'inactivas'" [attr.aria-pressed]="filtro() === 'inactivas'" (click)="filtro.set('inactivas')">Inactivas</button>
+          <button type="button" [class.activo]="filtro() === 'todas'" [attr.aria-pressed]="filtro() === 'todas'" (click)="filtro.set('todas')">Todas</button>
+        </div>
+      </div>
+    </div>
+
     @if (cargando()) {
       <div class="cargando"><ion-spinner name="crescent"></ion-spinner></div>
     }

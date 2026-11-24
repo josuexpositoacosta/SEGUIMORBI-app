@@ -1,16 +1,9 @@
-<ion-header>
+<ion-header class="ion-hide-lg-up">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Agenda de controles</ion-title>
-  </ion-toolbar>
-  <ion-toolbar class="barra-filtros">
-    <ion-segment [value]="horizonte()" (ionChange)="cambiarHorizonte($any($event).detail.value)">
-      <ion-segment-button [value]="0"><ion-label>Hoy</ion-label></ion-segment-button>
-      <ion-segment-button [value]="7"><ion-label>7 días</ion-label></ion-segment-button>
-      <ion-segment-button [value]="30"><ion-label>30 días</ion-label></ion-segment-button>
-    </ion-segment>
   </ion-toolbar>
 </ion-header>
 
@@ -20,6 +13,19 @@
   </ion-refresher>
 
   <div class="page-container">
+    <header class="cabecera">
+      <h1>Agenda de controles</h1>
+    </header>
+    <div class="tarjeta filtros">
+      <div class="filtros-fila">
+        <div class="segmento" role="group">
+          <button type="button" [class.activo]="horizonte() === 0" [attr.aria-pressed]="horizonte() === 0" (click)="cambiarHorizonte(0)">Hoy</button>
+          <button type="button" [class.activo]="horizonte() === 7" [attr.aria-pressed]="horizonte() === 7" (click)="cambiarHorizonte(7)">7 días</button>
+          <button type="button" [class.activo]="horizonte() === 30" [attr.aria-pressed]="horizonte() === 30" (click)="cambiarHorizonte(30)">30 días</button>
+        </div>
+      </div>
+    </div>
+
     <p class="resumen-lista">
       Controles programados en los planes y seguimientos de los casos abiertos. Los vencidos aparecen siempre.
     </p>

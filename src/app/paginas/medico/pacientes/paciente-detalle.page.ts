@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { AvisosService } from 'src/app/compartido/avisos.service';
 import { EstadoVacioComponent } from 'src/app/compartido/estado-vacio.component';
@@ -16,7 +16,7 @@ import { abrirFormularioPaciente } from './paciente-formulario.component';
 
 @Component({
   selector: 'app-paciente-detalle',
-  imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
+  imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './paciente-detalle.page.html',
 })
