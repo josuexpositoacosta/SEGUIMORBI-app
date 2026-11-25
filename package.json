@@ -11,7 +11,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
-    "revisar:responsive": "node scripts/revisar-responsive.mjs"
+    "revisar:responsive": "node scripts/revisar-responsive.mjs",
+    "revisar:traducciones": "node scripts/revisar-traducciones.mjs"
   },
   "private": true,
   "dependencies": {
@@ -28,8 +29,7 @@
     "@capacitor/haptics": "6.0.1",
     "@capacitor/keyboard": "6.0.2",
     "@capacitor/status-bar": "6.0.1",
-    "@fontsource-variable/inter": "^5.3.0",
-    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource-variable/geist": "^5.3.0",
     "@ionic/angular": "^8.8.21",
     "ionicons": "^7.0.0",
     "rxjs": "~7.8.0",

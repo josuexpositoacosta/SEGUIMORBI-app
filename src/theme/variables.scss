@@ -1,16 +1,17 @@
 // Tema de SEGUIMORBI
-// Paleta sanitaria: verde azulado (principal), tinta (barra lateral), ámbar (acentos) y grises pizarra.
+// Paleta de la Organización Panamericana de la Salud (OPS): azul marino #00205C (menú y paneles), azul OPS #1D9ADD
+// (acentos) y azul #0072BC (botones y enlaces: el azul OPS oscurecido para cumplir el contraste AA con texto blanco).
 // Diseño de referencia: proyecto «SEGUIMORBI» en Stitch (diseno/stitch en la carpeta del proyecto).
 // Docs: https://ionicframework.com/docs/theming/
 
 :root {
   /* Tipografía */
-  --ion-font-family: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --app-font-display: 'Manrope Variable', 'Manrope', var(--ion-font-family);
+  --ion-font-family: 'Geist Variable', 'Geist', 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --app-font-display: var(--ion-font-family);
 
   /* Superficies */
-  --ion-background-color: #f4f6f8;
-  --ion-background-color-rgb: 244, 246, 248;
+  --ion-background-color: #eef1f5;
+  --ion-background-color-rgb: 238, 241, 245;
   --ion-text-color: #0f172a;
   --ion-text-color-rgb: 15, 23, 42;
   --ion-item-background: #ffffff;
@@ -26,12 +27,14 @@
   --app-radius: 12px;
   --app-radius-sm: 8px;
   --app-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06);
-  --app-gradient: linear-gradient(135deg, #0e7c74 0%, #06363b 100%);
+  --app-gradient: linear-gradient(135deg, #00205c 0%, #0a3a7a 100%);
+  --app-ops-azul: #1d9add;
+  --app-ops-marino: #00205c;
 
   /* Barra lateral (rail) */
-  --app-ink: #06363b;
-  --app-ink-hover: #0a4f55;
-  --app-ink-text: #bdc9c6;
+  --app-ink: #00205c;
+  --app-ink-hover: #0a3373;
+  --app-ink-text: #c5d3e8;
   --app-rail: 72px;
   --app-rail-abierto: 232px;
 
@@ -48,12 +51,12 @@
   --estado-abierto-suave: #e6f4ea;
 
   /* Colores Ionic */
-  --ion-color-primary: #0e7c74;
-  --ion-color-primary-rgb: 14, 124, 116;
+  --ion-color-primary: #0072bc;
+  --ion-color-primary-rgb: 0, 114, 188;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #0c6d66;
-  --ion-color-primary-tint: #268982;
+  --ion-color-primary-shade: #0064a5;
+  --ion-color-primary-tint: #1a80c3;
 
   --ion-color-secondary: #d08a1e;
   --ion-color-secondary-rgb: 208, 138, 30;
@@ -132,9 +135,9 @@
     --app-border: #1f2a3d;
     --app-text-muted: #94a3b8;
     --app-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.25);
-    --app-gradient: linear-gradient(135deg, #0f5f59 0%, #04282c 100%);
-    --app-ink: #04282c;
-    --app-ink-hover: #0a4f55;
+    --app-gradient: linear-gradient(135deg, #001a4a 0%, #00205c 100%);
+    --app-ink: #00153d;
+    --app-ink-hover: #0a3373;
 
     --estado-sospechoso: #91a7ff;
     --estado-sospechoso-suave: rgba(116, 143, 252, 0.16);
@@ -147,12 +150,12 @@
     --estado-abierto: #69db7c;
     --estado-abierto-suave: rgba(81, 207, 102, 0.16);
 
-    --ion-color-primary: #2fb5a8;
-    --ion-color-primary-rgb: 47, 181, 168;
-    --ion-color-primary-contrast: #04201d;
-    --ion-color-primary-contrast-rgb: 4, 32, 29;
-    --ion-color-primary-shade: #299f94;
-    --ion-color-primary-tint: #44bcb1;
+    --ion-color-primary: #4db3ea;
+    --ion-color-primary-rgb: 77, 179, 234;
+    --ion-color-primary-contrast: #00132f;
+    --ion-color-primary-contrast-rgb: 0, 19, 47;
+    --ion-color-primary-shade: #449ece;
+    --ion-color-primary-tint: #5fbbec;
 
     --ion-color-secondary: #f0a73a;
     --ion-color-secondary-rgb: 240, 167, 58;
