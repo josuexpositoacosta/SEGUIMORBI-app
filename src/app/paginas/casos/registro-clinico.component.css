@@ -11,13 +11,13 @@
 
 .vitales {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(170px, 100%), 1fr));
   gap: 12px;
 }
 
 .casillas {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr));
   gap: 4px 12px;
   padding: 6px 14px;
   border: 1px solid var(--app-border);
@@ -31,7 +31,7 @@
 
 .evoluciones {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(110px, 100%), 1fr));
   gap: 8px;
 }
 

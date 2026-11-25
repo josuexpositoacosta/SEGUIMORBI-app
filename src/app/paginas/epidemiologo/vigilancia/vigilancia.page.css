@@ -229,12 +229,35 @@
 
 @media (max-width: 1100px) {
   .fila-principal {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
 @media (max-width: 576px) {
   .selector {
     flex: 1 1 100%;
+  }
+}
+
+.fila-principal > *,
+.bloque {
+  min-width: 0;
+}
+
+@media (max-width: 576px) {
+  .controles {
+    width: 100%;
+  }
+
+  .segmento {
+    width: 100%;
+  }
+
+  .segmento button {
+    flex: 1;
+  }
+
+  .bloque {
+    padding: 16px;
   }
 }

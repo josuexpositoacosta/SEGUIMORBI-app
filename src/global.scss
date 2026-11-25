@@ -90,6 +90,9 @@ ion-button {
 /* Botones de opción única (p. ej. Abiertos / Cerrados / Todos) */
 .segmento {
   display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
   gap: 4px;
   padding: 4px;
   border-radius: var(--app-radius-sm);
@@ -97,6 +100,8 @@ ion-button {
 }
 
 .segmento button {
+  flex-shrink: 0;
+  white-space: nowrap;
   padding: 7px 14px;
   border: 0;
   border-radius: 6px;
@@ -223,6 +228,7 @@ ion-button {
 
 /* Tarjeta de filtros bajo la cabecera: buscador, segmento y chips */
 .filtros {
+  grid-template-columns: minmax(0, 1fr);
   display: grid;
   gap: 14px;
   margin-bottom: 20px;
@@ -303,10 +309,12 @@ ion-button {
 /* Lista de registros como tarjetas */
 .lista-registros {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
 }
 
 .registro {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -424,13 +432,14 @@ ion-button {
 /* Formularios en ventanas modales */
 .formulario {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   padding-bottom: 8px;
 }
 
 .formulario-fila {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
   gap: 16px;
 }
 
@@ -678,4 +687,76 @@ ion-modal.modal-ancho {
 
 .acciones-validacion {
   align-self: center;
+}
+
+@media (max-width: 576px) {
+  .registro.validacion .registro-cuerpo {
+    flex-basis: 100%;
+  }
+
+  .acciones-validacion {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+}
+
+/* ---------- Ajustes para pantallas pequeñas ---------- */
+@media (max-width: 576px) {
+  .page-container,
+  .page-container.ancho {
+    padding: 16px 12px 40px;
+  }
+
+  .cabecera {
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .cabecera h1 {
+    font-size: 1.4rem;
+  }
+
+  /* Las acciones de la cabecera ocupan todo el ancho para pulsarlas con el pulgar */
+  .cabecera > ion-button,
+  .cabecera .acciones {
+    width: 100%;
+  }
+
+  .cabecera .acciones ion-button {
+    flex: 1 1 auto;
+  }
+
+  .filtros {
+    padding: 12px;
+  }
+
+  .filtros ion-searchbar,
+  .buscador {
+    min-width: 0;
+    max-width: none;
+    flex-basis: 100%;
+  }
+
+  .filtros .segmento {
+    width: 100%;
+  }
+
+  .filtros .segmento button {
+    flex: 1;
+  }
+
+  /* Pestañas: sin iconos para que quepan todas */
+  .pestanas button {
+    padding: 12px 10px;
+    font-size: 0.85rem;
+  }
+
+  .pestanas button ion-icon {
+    display: none;
+  }
+
+  .datos {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
