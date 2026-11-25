@@ -3,6 +3,21 @@
 Cambios de cada versión del frontend de SEGUIMORBI. Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/);
 versiones: [SemVer](https://semver.org/lang/es/).
 
+## v1.1.1 — 2026-11-24
+
+### Arreglado
+
+- **La app se adapta al móvil y la tablet**: el panel de vigilancia, las validaciones, la gestión de usuarios, la
+  ficha del caso y la lista de casos ya no se salen de la pantalla ni quedan apretadas en anchos pequeños.
+- **Formularios en el móvil**: «Abrir caso» y los registros clínicos ya no se salen por la derecha.
+
+### Técnico
+
+- Regla del proyecto: toda pantalla y formulario nuevo debe funcionar en móvil, tablet y escritorio
+  (`AGENTS.md`, `docs/guia-responsive.md`).
+- `npm run revisar:responsive`: abre cada pantalla y formulario principal con cada rol en 360, 390, 768 y
+  1024 px y falla si algo se desborda.
+
 ## v1.1.0 — 2026-11-23
 
 Rediseño completo de la interfaz, a partir de un diseño hecho en Stitch.
