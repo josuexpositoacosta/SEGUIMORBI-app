@@ -2,11 +2,12 @@ import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { NOMBRE_SECCION, PANTALLAS, Pantalla } from 'src/app/core/navegacion/navegacion';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
 
 /** Pantalla aún no construida: explica qué hará. La sustituye la fase correspondiente. */
 @Component({
   selector: 'app-en-preparacion',
-  imports: [IonicModule, RouterLink],
+  imports: [TraducirPipe, IonicModule, RouterLink],
   templateUrl: './en-preparacion.page.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./en-preparacion.page.css'],

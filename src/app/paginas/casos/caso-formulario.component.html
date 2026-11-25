@@ -1,8 +1,8 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{ esNuevo ? 'Abrir caso' : 'Editar datos del caso' }}</ion-title>
+    <ion-title>{{ esNuevo ? ('Abrir caso' | t) : ('Editar datos del caso' | t) }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="cerrar()" aria-label="Cerrar"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+      <ion-button (click)="cerrar()" [attr.aria-label]="'Cerrar' | t"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -21,34 +21,34 @@
 
   <div class="disposicion">
     <form [formGroup]="form" (ngSubmit)="guardar()" class="formulario" id="form-caso">
-      <h3 class="bloque">Fechas</h3>
+      <h3 class="bloque">{{ 'Fechas' | t }}</h3>
       <div class="formulario-fila">
-        <ion-input formControlName="fechaInicioSintomas" type="date" label="Inicio de síntomas" labelPlacement="stacked"
-          fill="outline" [max]="hoy" errorText="Obligatoria."
+        <ion-input formControlName="fechaInicioSintomas" type="date" [label]="'Inicio de síntomas' | t" labelPlacement="stacked"
+          fill="outline" [max]="hoy" [errorText]="'Obligatoria.' | t"
           [class.ion-touched]="form.controls.fechaInicioSintomas.touched"
         [class.ion-invalid]="form.controls.fechaInicioSintomas.invalid"></ion-input>
-        <ion-input formControlName="fechaNotificacion" type="date" label="Notificación" labelPlacement="stacked"
-          fill="outline" [max]="hoy" errorText="Obligatoria."
+        <ion-input formControlName="fechaNotificacion" type="date" [label]="'Notificación' | t" labelPlacement="stacked"
+          fill="outline" [max]="hoy" [errorText]="'Obligatoria.' | t"
           [class.ion-touched]="form.controls.fechaNotificacion.touched"
         [class.ion-invalid]="form.controls.fechaNotificacion.invalid"></ion-input>
       </div>
       @if (form.hasError('futura')) {
-        <p class="formulario-nota texto-error">Las fechas no pueden ser futuras.</p>
+        <p class="formulario-nota texto-error">{{ 'Las fechas no pueden ser futuras.' | t }}</p>
       }
       @if (form.hasError('orden')) {
-        <p class="formulario-nota texto-error">El inicio de síntomas no puede ser posterior a la notificación.</p>
+        <p class="formulario-nota texto-error">{{ 'El inicio de síntomas no puede ser posterior a la notificación.' | t }}</p>
       }
 
-      <h3 class="bloque">Cuadro clínico</h3>
+      <h3 class="bloque">{{ 'Cuadro clínico' | t }}</h3>
       <div class="interruptores">
-        <ion-toggle formControlName="fiebre" justify="space-between">Fiebre (o historia de fiebre)</ion-toggle>
-        <ion-toggle formControlName="cefaleaIntensa" justify="space-between">Cefalea intensa</ion-toggle>
+        <ion-toggle formControlName="fiebre" justify="space-between">{{ 'Fiebre (o historia de fiebre)' | t }}</ion-toggle>
+        <ion-toggle formControlName="cefaleaIntensa" justify="space-between">{{ 'Cefalea intensa' | t }}</ion-toggle>
         <ion-toggle formControlName="recaida" justify="space-between">
-          Recaída <span class="ayuda">(exime del límite de 5 días)</span>
+          {{ 'Recaída' | t }} <span class="ayuda">{{ '(exime del límite de 5 días)' | t }}</span>
         </ion-toggle>
       </div>
 
-      <h3 class="bloque">Otras manifestaciones <span class="ayuda">(la OPS exige dos o más)</span></h3>
+      <h3 class="bloque">{{ 'Otras manifestaciones' | t }} <span class="ayuda">{{ '(la OPS exige dos o más)' | t }}</span></h3>
       <div class="casillas">
         @for (m of manifestaciones; track m) {
           <ion-checkbox labelPlacement="end" justify="start"
@@ -59,43 +59,43 @@
       </div>
 
       @if (puedeEstarEmbarazada) {
-        <h3 class="bloque">Embarazo</h3>
+        <h3 class="bloque">{{ 'Embarazo' | t }}</h3>
         <div class="interruptores">
-          <ion-toggle formControlName="embarazada" justify="space-between">Embarazada</ion-toggle>
+          <ion-toggle formControlName="embarazada" justify="space-between">{{ 'Embarazada' | t }}</ion-toggle>
         </div>
         @if (form.controls.embarazada.value) {
           <ion-input formControlName="semanasGestacion" type="number"
-            label="Semanas de gestación" labelPlacement="stacked" fill="outline" min="1" max="45"
-            errorText="Entre 1 y 45." [class.ion-touched]="form.controls.semanasGestacion.touched"
+            [label]="'Semanas de gestación' | t" labelPlacement="stacked" fill="outline" min="1" max="45"
+            [errorText]="'Entre 1 y 45.' | t" [class.ion-touched]="form.controls.semanasGestacion.touched"
           [class.ion-invalid]="form.controls.semanasGestacion.invalid"></ion-input>
         }
       }
 
-      <h3 class="bloque">Datos epidemiológicos</h3>
+      <h3 class="bloque">{{ 'Datos epidemiológicos' | t }}</h3>
       <div class="interruptores">
         <ion-toggle formControlName="areaTransmisionOViaje" justify="space-between">
-          Vive o viajó a un área de transmisión
+          {{ 'Vive o viajó a un área de transmisión' | t }}
         </ion-toggle>
       </div>
       @if (form.controls.areaTransmisionOViaje.value) {
         <ion-input formControlName="detalleAreaTransmision"
-        label="Lugar y fechas (opcional)" labelPlacement="stacked" fill="outline"></ion-input>
+        [label]="'Lugar y fechas (opcional)' | t" labelPlacement="stacked" fill="outline"></ion-input>
       }
       <div class="interruptores">
-        <ion-toggle formControlName="nexoCasoConfirmado" justify="space-between">Nexo con un caso confirmado</ion-toggle>
+        <ion-toggle formControlName="nexoCasoConfirmado" justify="space-between">{{ 'Nexo con un caso confirmado' | t }}</ion-toggle>
       </div>
 
       @if (necesitaMotivo) {
-        <ion-textarea formControlName="motivo" label="Motivo para registrarlo" labelPlacement="stacked"
+        <ion-textarea formControlName="motivo" [label]="'Motivo para registrarlo' | t" labelPlacement="stacked"
           fill="outline" [autoGrow]="true" rows="2"
-        helperText="No cumple la definición de caso sospechoso: explica por qué lo registras (quedará como Sospechoso)."></ion-textarea>
+        [helperText]="'No cumple la definición de caso sospechoso: explica por qué lo registras (quedará como Sospechoso).' | t"></ion-textarea>
       }
     </form>
 
     <aside class="sugerencia" aria-live="polite">
       <div class="sugerencia-cabecera">
         <ion-icon name="sparkles-outline" aria-hidden="true"></ion-icon>
-        <span>Clasificación sugerida (OPS)</span>
+        <span>{{ 'Clasificación sugerida (OPS)' | t }}</span>
         @if (calculando()) {
           <ion-spinner name="dots"></ion-spinner>
         }
@@ -109,7 +109,7 @@
             </span>
           }
           @if (!s.clasificacion) {
-            <span class="etiqueta grande">No cumple la definición</span>
+            <span class="etiqueta grande">{{ 'No cumple la definición' | t }}</span>
           }
         </div>
         <ul class="criterios">
@@ -123,14 +123,14 @@
         </ul>
         @if (!esNuevo) {
           <p class="formulario-nota">
-            Al guardar se recalcula la sugerencia, pero la clasificación del caso solo cambia si tú la cambias.
+            {{ 'Al guardar se recalcula la sugerencia, pero la clasificación del caso solo cambia si tú la cambias.' | t }}
           </p>
         }
       } @else {
-        <p class="formulario-nota">Indica las fechas y el cuadro clínico para ver la sugerencia.</p>
+        <p class="formulario-nota">{{ 'Indica las fechas y el cuadro clínico para ver la sugerencia.' | t }}</p>
       }
 
-      <p class="aviso-clinico">La sugerencia es orientativa: la clasificación la decide el profesional sanitario.</p>
+      <p class="aviso-clinico">{{ 'La sugerencia es orientativa: la clasificación la decide el profesional sanitario.' | t }}</p>
     </aside>
   </div>
 </div>
@@ -138,13 +138,13 @@
 <ion-footer>
   <ion-toolbar>
     <ion-buttons slot="end">
-      <ion-button color="medium" (click)="cerrar()">Cancelar</ion-button>
+      <ion-button color="medium" (click)="cerrar()">{{ 'Cancelar' | t }}</ion-button>
       <ion-button fill="solid" color="primary" type="submit" form="form-caso" [disabled]="guardando()">
         @if (guardando()) {
           <ion-spinner name="crescent"></ion-spinner>
         }
         @if (!guardando()) {
-          <span>{{ esNuevo ? 'Registrar caso' : 'Guardar' }}</span>
+          <span>{{ esNuevo ? ('Registrar caso' | t) : ('Guardar' | t) }}</span>
         }
       </ion-button>
     </ion-buttons>

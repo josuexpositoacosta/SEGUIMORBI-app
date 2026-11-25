@@ -1,5 +1,5 @@
 <div class="cabecera-grafico">
-  <ul class="leyenda" aria-label="Leyenda">
+  <ul class="leyenda" [attr.aria-label]="'Leyenda' | t">
     @for (s of totales(); track s) {
       <li>
         <span class="muestra" [style.background]="s.color" aria-hidden="true"></span>
@@ -9,13 +9,13 @@
   </ul>
   <ion-button fill="clear" size="small" (click)="verTabla.set(!verTabla())" [attr.aria-pressed]="verTabla()">
     <ion-icon slot="start" [name]="verTabla() ? 'bar-chart-outline' : 'grid-outline'"></ion-icon>
-    {{ verTabla() ? 'Ver gráfico' : 'Ver tabla' }}
+    {{ verTabla() ? ('Ver gráfico' | t) : ('Ver tabla' | t) }}
   </ion-button>
 </div>
 
 <div class="lienzo" #lienzo [hidden]="verTabla()">
   <svg [attr.width]="ancho()" [attr.height]="alto" role="img"
-    [attr.aria-label]="'Curva epidémica: ' + totalPeriodo() + ' casos en ' + columnas().length + ' semanas epidemiológicas'"
+    [attr.aria-label]="'Curva epidémica: {p0} casos en {p1} semanas epidemiológicas' | t: { p0: totalPeriodo(), p1: columnas().length }"
     (mouseleave)="activa.set(null)">
     <!-- Rejilla y eje Y -->
     <g class="rejilla">
@@ -49,7 +49,7 @@
     <div class="aviso" [style.left.px]="posicionAviso(c)" role="status">
       <div class="aviso-titulo">{{ c.semana.etiqueta }}</div>
       <div class="aviso-fechas">{{ c.semana.inicio | date: 'dd MMM' }} – {{ c.semana.fin | date: 'dd MMM yyyy' }}</div>
-      <div class="aviso-total">{{ c.semana.total }} caso{{ c.semana.total === 1 ? '' : 's' }}</div>
+      <div class="aviso-total">{{ c.semana.total === 1 ? ('1 caso' | t) : ('{p0} casos' | t: { p0: c.semana.total }) }}</div>
       @for (s of series; track s) {
         <div class="aviso-fila">
           <span class="muestra" [style.background]="s.color" aria-hidden="true"></span>
@@ -64,11 +64,11 @@
 @if (verTabla()) {
   <div class="tabla-envoltorio">
     <table class="tabla-datos">
-      <caption class="text-muted">Casos por semana epidemiológica y clasificación</caption>
+      <caption class="text-muted">{{ 'Casos por semana epidemiológica y clasificación' | t }}</caption>
       <thead>
-        <tr><th scope="col">Semana</th><th scope="col">Fechas</th>@for (s of series; track s) {
+        <tr><th scope="col">{{ 'Semana' | t }}</th><th scope="col">{{ 'Fechas' | t }}</th>@for (s of series; track s) {
         <th scope="col">{{ s.nombre }}</th>
-        }<th scope="col">Total</th></tr>
+        }<th scope="col">{{ 'Total' | t }}</th></tr>
       </thead>
       <tbody>
         @for (c of columnas(); track c) {

@@ -32,6 +32,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Traducciones completas (español → inglés)
+        run: npm run revisar:traducciones
+
       - name: Pruebas unitarias
         run: npm run test:ci
 

@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Pacientes</ion-title>
+    <ion-title>{{ 'Pacientes' | t }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,17 +14,17 @@
 
   <div class="page-container">
     <header class="cabecera">
-      <h1>Pacientes</h1>
-      <ion-button (click)="nuevo()"><ion-icon slot="start" name="person-add-outline"></ion-icon>Nuevo paciente</ion-button>
+      <h1>{{ 'Pacientes' | t }}</h1>
+      <ion-button (click)="nuevo()"><ion-icon slot="start" name="person-add-outline"></ion-icon>{{ 'Nuevo paciente' | t }}</ion-button>
     </header>
     <div class="tarjeta filtros">
       <div class="filtros-fila">
-        <ion-searchbar placeholder="Buscar por nombre o documento" [debounce]="150"
+        <ion-searchbar [placeholder]="'Buscar por nombre o documento' | t" [debounce]="150"
         (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
         <div class="segmento" role="group">
-          <button type="button" [class.activo]="filtro() === 'activos'" [attr.aria-pressed]="filtro() === 'activos'" (click)="filtro.set('activos')">Activos</button>
-          <button type="button" [class.activo]="filtro() === 'inactivos'" [attr.aria-pressed]="filtro() === 'inactivos'" (click)="filtro.set('inactivos')">Inactivos</button>
-          <button type="button" [class.activo]="filtro() === 'todos'" [attr.aria-pressed]="filtro() === 'todos'" (click)="filtro.set('todos')">Todos</button>
+          <button type="button" [class.activo]="filtro() === 'activos'" [attr.aria-pressed]="filtro() === 'activos'" (click)="filtro.set('activos')">{{ 'Activos' | t }}</button>
+          <button type="button" [class.activo]="filtro() === 'inactivos'" [attr.aria-pressed]="filtro() === 'inactivos'" (click)="filtro.set('inactivos')">{{ 'Inactivos' | t }}</button>
+          <button type="button" [class.activo]="filtro() === 'todos'" [attr.aria-pressed]="filtro() === 'todos'" (click)="filtro.set('todos')">{{ 'Todos' | t }}</button>
         </div>
       </div>
     </div>
@@ -35,29 +35,29 @@
 
     @if (!cargando() && errorCarga()) {
       <app-estado-vacio icono="cloud-offline-outline"
-        titulo="No se pudieron cargar los pacientes" [texto]="errorCarga()">
-        <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+        [titulo]="'No se pudieron cargar los pacientes' | t" [texto]="errorCarga()">
+        <ion-button fill="outline" (click)="cargar()">{{ 'Reintentar' | t }}</ion-button>
       </app-estado-vacio>
     }
 
     @if (!cargando() && !errorCarga()) {
       @if (!pacientes().length) {
         <app-estado-vacio icono="people-circle-outline"
-          titulo="Todavía no hay pacientes en tu área" texto="Registra el primero para poder abrirle un caso.">
-          <ion-button (click)="nuevo()"><ion-icon slot="start" name="person-add-outline"></ion-icon>Nuevo paciente</ion-button>
+          [titulo]="'Todavía no hay pacientes en tu área' | t" [texto]="'Registra el primero para poder abrirle un caso.' | t">
+          <ion-button (click)="nuevo()"><ion-icon slot="start" name="person-add-outline"></ion-icon>{{ 'Nuevo paciente' | t }}</ion-button>
         </app-estado-vacio>
       }
       @if (pacientes().length) {
-        <p class="resumen-lista">{{ filtrados().length }} de {{ pacientes().length }} pacientes</p>
+        <p class="resumen-lista">{{ '{p0} de {p1} pacientes' | t: { p0: (filtrados().length), p1: (pacientes().length) } }}</p>
         @if (!filtrados().length) {
-          <app-estado-vacio icono="search-outline" titulo="Sin resultados"
-          texto="Ningún paciente coincide con la búsqueda o el filtro."></app-estado-vacio>
+          <app-estado-vacio icono="search-outline" [titulo]="'Sin resultados' | t"
+          [texto]="'Ningún paciente coincide con la búsqueda o el filtro.' | t"></app-estado-vacio>
         }
       }
       <div class="lista-registros">
         @for (p of filtrados(); track p) {
           <button type="button" class="registro" [class.inactivo]="!p.activo"
-            (click)="abrirFicha(p)" [attr.aria-label]="'Ver ficha de ' + p.nombres + ' ' + p.apellidos">
+            (click)="abrirFicha(p)" [attr.aria-label]="'Ver ficha de {p0}' | t: { p0: p.nombres + ' ' + p.apellidos }">
             <div class="registro-avatar" aria-hidden="true">{{ iniciales(p) }}</div>
             <div class="registro-cuerpo">
               <div class="registro-titulo">{{ p.apellidos }}, {{ p.nombres }}</div>
@@ -70,7 +70,7 @@
                     <span class="etiqueta"><ion-icon name="call-outline" aria-hidden="true"></ion-icon>{{ p.telefono }}</span>
                   }
                   @if (!p.activo) {
-                    <span class="etiqueta peligro">Inactivo</span>
+                    <span class="etiqueta peligro">{{ 'Inactivo' | t }}</span>
                   }
                 </div>
               }

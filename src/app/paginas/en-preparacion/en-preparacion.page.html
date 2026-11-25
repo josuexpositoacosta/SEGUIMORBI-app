@@ -19,9 +19,9 @@
         <p class="text-muted">{{ p.descripcion }}</p>
         <ion-badge color="secondary" class="estado">
           <ion-icon name="construct-outline" aria-hidden="true"></ion-icon>
-          En preparación
+          {{ 'En preparación' | t }}
         </ion-badge>
-        <h2>Lo que podrás hacer aquí</h2>
+        <h2>{{ 'Lo que podrás hacer aquí' | t }}</h2>
         <ul>
           @for (funcion of p.proximamente; track funcion) {
             <li>
@@ -32,7 +32,7 @@
         </ul>
         <ion-button fill="outline" routerLink="/inicio">
           <ion-icon slot="start" name="arrow-back"></ion-icon>
-          Volver al inicio
+          {{ 'Volver al inicio' | t }}
         </ion-button>
       </div>
     </div>

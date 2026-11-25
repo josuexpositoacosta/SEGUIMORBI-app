@@ -3,9 +3,8 @@
  * Docs: https://ionicframework.com/docs/layout/global-stylesheets
  */
 
-/* Tipografías incluidas en la app (funcionan sin conexión): Inter para el texto, Manrope para los títulos */
-@import "@fontsource-variable/inter/index.css";
-@import "@fontsource-variable/manrope/index.css";
+/* Tipografía Geist incluida en la app (funciona sin conexión) */
+@import "@fontsource-variable/geist/index.css";
 
 /* CSS base de Ionic */
 @import "@ionic/angular/css/core.css";
@@ -32,7 +31,7 @@ body {
 
 h1, h2, h3, h4 {
   font-family: var(--app-font-display);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   font-weight: 700;
 }
 
@@ -699,6 +698,20 @@ ion-modal.modal-ancho {
     justify-content: flex-end;
     width: 100%;
   }
+}
+
+/* Etiquetas de interruptores y casillas: se parten en varias líneas en vez de desbordar
+   (en inglés algunas son bastante más largas que en español). */
+ion-toggle,
+ion-checkbox {
+  max-width: 100%;
+}
+
+ion-toggle::part(label),
+ion-checkbox::part(label) {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 /* ---------- Ajustes para pantallas pequeñas ---------- */

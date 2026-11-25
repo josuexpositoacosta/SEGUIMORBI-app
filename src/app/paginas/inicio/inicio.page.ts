@@ -13,6 +13,8 @@ import { pantallasDe } from 'src/app/core/navegacion/navegacion';
 import { CasoService } from 'src/app/core/services/caso.service';
 import { PacienteService } from 'src/app/core/services/paciente.service';
 import { abrirFormularioPaciente } from 'src/app/paginas/medico/pacientes/paciente-formulario.component';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 /** Días hacia delante que abarca «Próximos controles». */
 const DIAS_PROXIMOS = 7;
@@ -26,7 +28,7 @@ interface PanelMedico {
 
 @Component({
   selector: 'app-inicio',
-  imports: [IonicModule, RouterLink, DatePipe, NgClass],
+  imports: [TraducirPipe, IonicModule, RouterLink, DatePipe, NgClass],
   templateUrl: './inicio.page.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./inicio.page.css'],
@@ -75,26 +77,26 @@ export class InicioPage implements OnInit {
     }
     const vencidos = p.controles.filter(c => c.vencido).length;
     return [
-      { titulo: 'Casos abiertos', valor: p.abiertos.length, nota: 'En seguimiento', icono: 'folder-open-outline', ruta: '/casos' },
+      { titulo: t('Casos abiertos'), valor: p.abiertos.length, nota: t('En seguimiento'), icono: 'folder-open-outline', ruta: '/casos' },
       {
-        titulo: 'Controles hoy',
+        titulo: t('Controles hoy'),
         valor: this.controlesHoy().length,
-        nota: vencidos ? `${vencidos} vencido${vencidos > 1 ? 's' : ''}` : 'Al día',
+        nota: vencidos ? (vencidos === 1 ? t('1 vencido') : t('{p0} vencidos', { p0: vencidos })) : t('Al día'),
         icono: 'calendar-outline',
         ruta: '/agenda',
         aviso: vencidos > 0,
       },
       {
-        titulo: 'Pendientes de validar',
+        titulo: t('Pendientes de validar'),
         valor: this.pendientesValidar().length,
-        nota: 'Por el epidemiólogo',
+        nota: t('Por el epidemiólogo'),
         icono: 'shield-checkmark-outline',
         ruta: '/casos',
       },
       {
-        titulo: 'Pacientes',
+        titulo: t('Pacientes'),
         valor: [...p.pacientes.values()].filter(x => x.activo).length,
-        nota: 'Activos en tu área',
+        nota: t('Activos en tu área'),
         icono: 'people-outline',
         ruta: '/pacientes',
       },
@@ -134,7 +136,7 @@ export class InicioPage implements OnInit {
 
   nombrePaciente(pacienteId: number): string {
     const p = this.panel()?.pacientes.get(pacienteId);
-    return p ? `${p.nombres} ${p.apellidos}` : `Paciente ${pacienteId}`;
+    return p ? `${p.nombres} ${p.apellidos}` : t('Paciente {p0}', { p0: pacienteId });
   }
 
   nombreClasificacion(c: Clasificacion | null | undefined): string {
@@ -153,7 +155,7 @@ export class InicioPage implements OnInit {
   /** «Día 11» desde el inicio de síntomas. */
   diaEvolucion(caso: Caso): string {
     const d = diasDesde(caso.fechaInicioSintomas);
-    return d <= 0 ? 'Inicio hoy' : `Día ${d} desde el inicio`;
+    return d <= 0 ? t('Inicio hoy') : t('Día {p0} desde el inicio', { p0: d });
   }
 
   async nuevoPaciente(): Promise<void> {
@@ -167,7 +169,7 @@ export class InicioPage implements OnInit {
 function saludoSegunHora(): string {
   const hora = new Date().getHours();
   if (hora < 12) {
-    return 'Buenos días';
+    return t('Buenos días');
   }
-  return hora < 20 ? 'Buenas tardes' : 'Buenas noches';
+  return hora < 20 ? t('Buenas tardes') : t('Buenas noches');
 }

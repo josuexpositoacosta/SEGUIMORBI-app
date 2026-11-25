@@ -11,6 +11,7 @@ import {
 } from 'src/app/core/models/caso';
 import { Paciente } from 'src/app/core/models/paciente';
 import { CasoService } from 'src/app/core/services/caso.service';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
 
 /** Fechas no futuras y el inicio de síntomas no posterior a la notificación (reglas del backend). */
 function fechasValidas(grupo: AbstractControl): ValidationErrors | null {
@@ -33,7 +34,7 @@ function fechasValidas(grupo: AbstractControl): ValidationErrors | null {
  */
 @Component({
   selector: 'app-caso-formulario',
-  imports: [CommonModule, ReactiveFormsModule, IonicModule],
+  imports: [TraducirPipe, CommonModule, ReactiveFormsModule, IonicModule],
   templateUrl: './caso-formulario.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./caso-formulario.component.css'],

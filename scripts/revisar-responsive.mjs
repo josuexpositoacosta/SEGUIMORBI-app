@@ -18,10 +18,14 @@
  *   API_URL         API para iniciar sesión (por defecto http://localhost:8080)
  *   DEMO_PASSWORD   contraseña de los usuarios de demo (por defecto la de scripts/datos-demo.py)
  *   ADMIN_PASSWORD  si se da, también se revisan las pantallas de administración
+ *   MEDICO_USUARIO / MEDICO_PASSWORD   médico con el que entrar (por defecto medico.centro y DEMO_PASSWORD)
+ *   EPI_USUARIO / EPI_PASSWORD         epidemiólogo (por defecto epidemiologa y DEMO_PASSWORD)
+ *   Con MEDICO_USUARIO= o EPI_USUARIO= vacíos se salta ese rol (se avisa al final).
  *   CHROME_PATH     navegador Chrome/Chromium (se busca solo si no se da)
  *   CAPTURAS        carpeta donde guardar una captura de cada pantalla y ancho (opcional)
+ *   IDIOMA          es (por defecto) o en: idioma de la interfaz durante la revisión
  */
-import { existsSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import puppeteer from 'puppeteer-core';
 
@@ -30,13 +34,18 @@ const API = (process.env.API_URL ?? 'http://localhost:8080').replace(/\/$/, '');
 const DEMO = process.env.DEMO_PASSWORD ?? 'Demo.Seguimorbi2026';
 const CAPTURAS = process.env.CAPTURAS;
 
+/** Texto de un botón en el idioma de la revisión (los botones se buscan por su texto visible). */
+const EN = Object.fromEntries([...readFileSync(new URL('../src/app/core/i18n/traducciones.en.ts', import.meta.url), 'utf8')
+  .matchAll(/^\s*'((?:[^'\\]|\\.)*)':\s*'((?:[^'\\]|\\.)*)'/gm)].map(m => [m[1], m[2]]));
+const enIdioma = texto => (process.env.IDIOMA === 'en' ? EN[texto] ?? texto : texto);
+
 /** Anchos que toda pantalla debe soportar: móvil pequeño, móvil, tablet y portátil pequeño (menú fijo). */
 const ANCHOS = [360, 390, 768, 1024];
 
 /** Pantallas por rol. ':caso' y ':paciente' se sustituyen por un id real leído de la API. */
 const ROLES = [
   {
-    usuario: 'medico.centro', clave: DEMO,
+    usuario: process.env.MEDICO_USUARIO ?? 'medico.centro', clave: process.env.MEDICO_PASSWORD ?? DEMO,
     rutas: ['inicio', 'perfil', 'pacientes', 'pacientes/:paciente', 'casos', 'casos/:caso', 'agenda'],
     // Formularios (modales): ruta y texto del botón que los abre.
     modales: [
@@ -46,7 +55,10 @@ const ROLES = [
       ['casos/:caso', 'Añadir resultado'],
     ],
   },
-  { usuario: 'epidemiologa', clave: DEMO, rutas: ['inicio', 'casos', 'casos/:caso', 'validaciones', 'vigilancia'] },
+  {
+    usuario: process.env.EPI_USUARIO ?? 'epidemiologa', clave: process.env.EPI_PASSWORD ?? DEMO,
+    rutas: ['inicio', 'casos', 'casos/:caso', 'validaciones', 'vigilancia'],
+  },
   ...(process.env.ADMIN_PASSWORD
     ? [{
       usuario: 'admin', clave: process.env.ADMIN_PASSWORD,
@@ -119,6 +131,10 @@ function medir() {
 async function main() {
   const navegador = await puppeteer.launch({ executablePath: buscarChrome(), headless: true, args: ['--no-sandbox'] });
   const pagina = await navegador.newPage();
+  if (process.env.IDIOMA) {
+    // Los textos en inglés tienen otra longitud: conviene revisar los dos idiomas.
+    await pagina.evaluateOnNewDocument(i => localStorage.setItem('seguimorbi.idioma', i), process.env.IDIOMA);
+  }
   if (CAPTURAS) {
     mkdirSync(CAPTURAS, { recursive: true });
   }
@@ -136,7 +152,8 @@ async function main() {
     }
   }
 
-  for (const rol of ROLES) {
+  const omitidos = ROLES.filter(r => !r.usuario).length;
+  for (const rol of ROLES.filter(r => r.usuario)) {
     const token = await iniciarSesion(rol.usuario, rol.clave);
     const ids = { caso: await primerId(token, 'casos'), paciente: await primerId(token, 'pacientes') };
     await pagina.goto(`${APP}/login`, { waitUntil: 'networkidle0' });
@@ -170,7 +187,7 @@ async function main() {
             .find(x => x.textContent.trim().includes(texto));
           b?.click();
           return !!b;
-        }, boton);
+        }, enIdioma(boton));
         if (!abierto) {
           fallos.push({ pantalla: `${ruta} → «${boton}» (${rol.usuario})`, vista: ancho, ventana: ancho, ancho: 0, culpables: ['no se encontró el botón que abre el formulario'] });
           continue;
@@ -194,6 +211,9 @@ async function main() {
   }
   await navegador.close();
 
+  if (omitidos) {
+    console.log(`Aviso: se ha saltado ${omitidos} rol(es) sin usuario (MEDICO_USUARIO / EPI_USUARIO vacíos).`);
+  }
   if (!process.env.ADMIN_PASSWORD) {
     console.log('Aviso: sin ADMIN_PASSWORD no se revisan las pantallas de administración.');
   }

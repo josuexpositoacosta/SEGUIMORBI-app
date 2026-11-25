@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 import { mensajeDeError } from '../core/http/errores';
+import { t } from 'src/app/core/i18n/idioma';
 
 export interface OpcionesConfirmacion {
   titulo: string;
@@ -45,7 +46,7 @@ export class AvisosService {
       header: o.titulo,
       message: o.mensaje,
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
+        { text: t('Cancelar'), role: 'cancel' },
         { text: o.confirmar, role: 'confirm', cssClass: o.peligro ? 'alert-boton-peligro' : '' },
       ],
     });

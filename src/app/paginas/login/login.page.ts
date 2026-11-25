@@ -4,6 +4,9 @@ import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { mensajeDeError } from 'src/app/core/http/errores';
+import { t } from 'src/app/core/i18n/idioma';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { SelectorIdiomaComponent } from 'src/app/compartido/selector-idioma.component';
 import paquete from '../../../../package.json';
 
 /** Si el login tarda más que esto, se avisa de que el servidor puede estar arrancando (plan gratuito). */
@@ -11,7 +14,7 @@ const ESPERA_AVISO_MS = 4000;
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, IonicModule],
+  imports: [ReactiveFormsModule, IonicModule, TraducirPipe, SelectorIdiomaComponent],
   templateUrl: './login.page.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./login.page.css']
@@ -27,6 +30,8 @@ export class LoginPage implements OnInit, OnDestroy {
   isLoading = false;
   /** El servidor tarda en responder: se muestra la nota de arranque. */
   lento = false;
+  /** Ayuda visible bajo un campo: cómo conseguir el usuario o la contraseña (los gestiona el administrador). */
+  ayuda: 'usuario' | 'clave' | null = null;
   readonly version = paquete.version;
   private temporizador?: ReturnType<typeof setTimeout>;
 
@@ -46,8 +51,8 @@ export class LoginPage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const avisos: Record<string, string> = {
-      expirada: 'Tu sesión ha caducado. Vuelve a iniciar sesión.',
-      'sin-conexion': 'No se pudo contactar con el servidor. Comprueba tu conexión e inicia sesión de nuevo.',
+      expirada: t('Tu sesión ha caducado. Vuelve a iniciar sesión.'),
+      'sin-conexion': t('No se pudo contactar con el servidor. Comprueba tu conexión e inicia sesión de nuevo.'),
     };
     this.aviso = avisos[this.route.snapshot.queryParamMap.get('motivo') ?? ''] ?? '';
   }

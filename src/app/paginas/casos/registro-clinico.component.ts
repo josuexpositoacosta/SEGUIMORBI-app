@@ -12,16 +12,18 @@ import {
 } from 'src/app/core/models/caso';
 import { CasoService } from 'src/app/core/services/caso.service';
 import { DesenlaceService } from 'src/app/core/services/desenlace.service';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 export type TipoRegistro = 'evaluacion' | 'dictamen' | 'plan' | 'seguimiento' | 'cierre' | 'reapertura';
 
 const TITULOS: Record<TipoRegistro, string> = {
-  evaluacion: 'Evaluación clínica',
-  dictamen: 'Dictamen médico',
-  plan: 'Plan de atención',
-  seguimiento: 'Seguimiento',
-  cierre: 'Cerrar caso',
-  reapertura: 'Reabrir caso',
+  evaluacion: t('Evaluación clínica'),
+  dictamen: t('Dictamen médico'),
+  plan: t('Plan de atención'),
+  seguimiento: t('Seguimiento'),
+  cierre: t('Cerrar caso'),
+  reapertura: t('Reabrir caso'),
 };
 
 const MAX_TEXTO = 2000;
@@ -67,7 +69,7 @@ function noPasada(c: AbstractControl): ValidationErrors | null {
  */
 @Component({
   selector: 'app-registro-clinico',
-  imports: [NgTemplateOutlet, ReactiveFormsModule, IonicModule],
+  imports: [TraducirPipe, NgTemplateOutlet, ReactiveFormsModule, IonicModule],
   templateUrl: './registro-clinico.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./registro-clinico.component.css'],
@@ -94,9 +96,9 @@ export class RegistroClinicoComponent implements OnInit {
 
   /** Atajos para el próximo control. */
   readonly atajosControl = [
-    { texto: 'Mañana', dias: 1 },
-    { texto: 'En 3 días', dias: 3 },
-    { texto: 'En 7 días', dias: 7 },
+    { texto: t('Mañana'), dias: 1 },
+    { texto: t('En 3 días'), dias: 3 },
+    { texto: t('En 7 días'), dias: 7 },
   ];
 
   readonly evaluacion = this.fb.group({

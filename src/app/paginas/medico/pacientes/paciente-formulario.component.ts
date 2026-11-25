@@ -7,6 +7,7 @@ import { mensajeDeError } from 'src/app/core/http/errores';
 import { Paciente, SEXOS, TIPOS_DOCUMENTO } from 'src/app/core/models/paciente';
 import { AreaSaludService } from 'src/app/core/services/area-salud.service';
 import { PacienteService } from 'src/app/core/services/paciente.service';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
 
 /** La fecha de nacimiento no puede ser posterior a hoy. */
 function noFutura(control: AbstractControl): ValidationErrors | null {
@@ -19,7 +20,7 @@ function noFutura(control: AbstractControl): ValidationErrors | null {
  */
 @Component({
   selector: 'app-paciente-formulario',
-  imports: [ReactiveFormsModule, IonicModule],
+  imports: [TraducirPipe, ReactiveFormsModule, IonicModule],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './paciente-formulario.component.html',
 })

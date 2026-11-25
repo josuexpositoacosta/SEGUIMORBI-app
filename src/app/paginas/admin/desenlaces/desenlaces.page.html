@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Desenlaces</ion-title>
+    <ion-title>{{ 'Desenlaces' | t }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,23 +14,23 @@
 
   <div class="page-container">
     <header class="cabecera">
-      <h1>Desenlaces</h1>
-      <ion-button (click)="abrir()"><ion-icon slot="start" name="add"></ion-icon>Nuevo desenlace</ion-button>
+      <h1>{{ 'Desenlaces' | t }}</h1>
+      <ion-button (click)="abrir()"><ion-icon slot="start" name="add"></ion-icon>{{ 'Nuevo desenlace' | t }}</ion-button>
     </header>
     <div class="tarjeta filtros">
       <div class="filtros-fila">
-        <ion-searchbar placeholder="Buscar por código o nombre" [debounce]="150"
+        <ion-searchbar [placeholder]="'Buscar por código o nombre' | t" [debounce]="150"
         (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
         <div class="segmento" role="group">
-          <button type="button" [class.activo]="filtro() === 'activos'" [attr.aria-pressed]="filtro() === 'activos'" (click)="filtro.set('activos')">Activos</button>
-          <button type="button" [class.activo]="filtro() === 'inactivos'" [attr.aria-pressed]="filtro() === 'inactivos'" (click)="filtro.set('inactivos')">Inactivos</button>
-          <button type="button" [class.activo]="filtro() === 'todos'" [attr.aria-pressed]="filtro() === 'todos'" (click)="filtro.set('todos')">Todos</button>
+          <button type="button" [class.activo]="filtro() === 'activos'" [attr.aria-pressed]="filtro() === 'activos'" (click)="filtro.set('activos')">{{ 'Activos' | t }}</button>
+          <button type="button" [class.activo]="filtro() === 'inactivos'" [attr.aria-pressed]="filtro() === 'inactivos'" (click)="filtro.set('inactivos')">{{ 'Inactivos' | t }}</button>
+          <button type="button" [class.activo]="filtro() === 'todos'" [attr.aria-pressed]="filtro() === 'todos'" (click)="filtro.set('todos')">{{ 'Todos' | t }}</button>
         </div>
       </div>
     </div>
 
     <p class="resumen-lista">
-      Opciones que el médico elige al cerrar un caso. El código no se puede cambiar porque lo guardan los casos cerrados.
+      {{ 'Opciones que el médico elige al cerrar un caso. El código no se puede cambiar porque lo guardan los casos cerrados.' | t }}
     </p>
 
     @if (cargando()) {
@@ -39,26 +39,26 @@
 
     @if (!cargando() && errorCarga()) {
       <app-estado-vacio icono="cloud-offline-outline"
-        titulo="No se pudo cargar el catálogo" [texto]="errorCarga()">
-        <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+        [titulo]="'No se pudo cargar el catálogo' | t" [texto]="errorCarga()">
+        <ion-button fill="outline" (click)="cargar()">{{ 'Reintentar' | t }}</ion-button>
       </app-estado-vacio>
     }
 
     @if (!cargando() && !errorCarga()) {
       @if (!filtrados().length) {
-        <app-estado-vacio icono="search-outline" titulo="Sin resultados"
-        texto="Ningún desenlace coincide con la búsqueda o el filtro."></app-estado-vacio>
+        <app-estado-vacio icono="search-outline" [titulo]="'Sin resultados' | t"
+        [texto]="'Ningún desenlace coincide con la búsqueda o el filtro.' | t"></app-estado-vacio>
       }
       <div class="lista-registros">
         @for (d of filtrados(); track d) {
           <button type="button" class="registro" [class.inactivo]="!d.activo"
-            (click)="abrirAcciones(d)" [attr.aria-label]="'Acciones para ' + d.nombre">
+            (click)="abrirAcciones(d)" [attr.aria-label]="'Acciones para {p0}' | t: { p0: d.nombre }">
             <div class="registro-icono" aria-hidden="true"><ion-icon name="flag-outline"></ion-icon></div>
             <div class="registro-cuerpo">
               <div class="registro-titulo">{{ d.nombre }}</div>
               <div class="registro-etiquetas">
                 <span class="etiqueta primaria">{{ d.codigo }}</span>
-                <span class="etiqueta" [ngClass]="d.activo ? 'exito' : 'peligro'">{{ d.activo ? 'Activo' : 'Inactivo' }}</span>
+                <span class="etiqueta" [ngClass]="d.activo ? 'exito' : 'peligro'">{{ d.activo ? ('Activo' | t) : ('Inactivo' | t) }}</span>
               </div>
             </div>
             <ion-icon name="ellipsis-vertical" class="registro-acciones" aria-hidden="true"></ion-icon>
@@ -72,9 +72,9 @@
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>{{ editando() ? 'Cambiar nombre' : 'Nuevo desenlace' }}</ion-title>
+          <ion-title>{{ editando() ? ('Cambiar nombre' | t) : ('Nuevo desenlace' | t) }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="cerrar()" aria-label="Cerrar"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+            <ion-button (click)="cerrar()" [attr.aria-label]="'Cerrar' | t"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
@@ -85,15 +85,15 @@
           </div>
         }
         <form [formGroup]="form" (ngSubmit)="guardar()" class="formulario" id="form-desenlace">
-          <ion-input formControlName="codigo" label="Código" labelPlacement="stacked" fill="outline"
-            placeholder="TRASLADO_HOSPITAL"
-            [helperText]="editando() ? 'El código no se puede cambiar.' : (codigoFinal() ? 'Se guardará como ' + codigoFinal() : 'Empieza por letra; letras, números y guion bajo.')"
-            errorText="Empieza por letra; de 2 a 40 caracteres: letras, números y guion bajo."
+          <ion-input formControlName="codigo" [label]="'Código' | t" labelPlacement="stacked" fill="outline"
+            [placeholder]="'TRASLADO_HOSPITAL' | t"
+            [helperText]="editando() ? ('El código no se puede cambiar.' | t) : (codigoFinal() ? ('Se guardará como ' | t) + codigoFinal() : ('Empieza por letra; letras, números y guion bajo.' | t))"
+            [errorText]="'Empieza por letra; de 2 a 40 caracteres: letras, números y guion bajo.' | t"
             [class.ion-touched]="form.controls.codigo.touched"
           [class.ion-invalid]="form.controls.codigo.invalid"></ion-input>
-          <ion-input formControlName="nombre" label="Nombre" labelPlacement="stacked" fill="outline"
-            placeholder="Traslado a hospital" [counter]="true" [maxlength]="100"
-            errorText="Obligatorio, máximo 100 caracteres."
+          <ion-input formControlName="nombre" [label]="'Nombre' | t" labelPlacement="stacked" fill="outline"
+            [placeholder]="'Traslado a hospital' | t" [counter]="true" [maxlength]="100"
+            [errorText]="'Obligatorio, máximo 100 caracteres.' | t"
             [class.ion-touched]="form.controls.nombre.touched"
           [class.ion-invalid]="form.controls.nombre.invalid"></ion-input>
         </form>
@@ -101,13 +101,13 @@
       <ion-footer>
         <ion-toolbar>
           <ion-buttons slot="end">
-            <ion-button color="medium" (click)="cerrar()">Cancelar</ion-button>
+            <ion-button color="medium" (click)="cerrar()">{{ 'Cancelar' | t }}</ion-button>
             <ion-button fill="solid" color="primary" type="submit" form="form-desenlace" [disabled]="guardando()">
               @if (guardando()) {
                 <ion-spinner name="crescent"></ion-spinner>
               }
               @if (!guardando()) {
-                <span>Guardar</span>
+                <span>{{ 'Guardar' | t }}</span>
               }
             </ion-button>
           </ion-buttons>

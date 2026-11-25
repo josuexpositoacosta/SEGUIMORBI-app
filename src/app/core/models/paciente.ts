@@ -1,3 +1,4 @@
+import { t } from 'src/app/core/i18n/idioma';
 export interface Paciente {
   id: number;
   tipoDocumento: string;
@@ -17,14 +18,14 @@ export interface Paciente {
 export type DatosPaciente = Omit<Paciente, 'id' | 'fechaRegistro' | 'activo'>;
 
 export const TIPOS_DOCUMENTO = [
-  { valor: 'CI', nombre: 'Carné de identidad' },
-  { valor: 'PASAPORTE', nombre: 'Pasaporte' },
-  { valor: 'OTRO', nombre: 'Otro documento' },
+  { valor: 'CI', nombre: t('Carné de identidad') },
+  { valor: 'PASAPORTE', nombre: t('Pasaporte') },
+  { valor: 'OTRO', nombre: t('Otro documento') },
 ];
 
 export const SEXOS = [
-  { valor: 'F', nombre: 'Femenino' },
-  { valor: 'M', nombre: 'Masculino' },
+  { valor: 'F', nombre: t('Femenino') },
+  { valor: 'M', nombre: t('Masculino') },
 ];
 
 export function nombreSexo(valor: string): string {

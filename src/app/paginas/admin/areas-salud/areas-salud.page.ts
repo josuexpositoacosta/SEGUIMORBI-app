@@ -8,12 +8,14 @@ import { normalizar } from 'src/app/compartido/texto';
 import { mensajeDeError } from 'src/app/core/http/errores';
 import { AreaSalud } from 'src/app/core/models/area-salud';
 import { AreaSaludService } from 'src/app/core/services/area-salud.service';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 type Filtro = 'activas' | 'inactivas' | 'todas';
 
 @Component({
   selector: 'app-areas-salud',
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent, DatePipe],
+  imports: [TraducirPipe, CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent, DatePipe],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './areas-salud.page.html',
 })
@@ -77,11 +79,11 @@ export class AreasSaludPage implements OnInit {
       header: a.nombre,
       subHeader: a.codigo,
       buttons: [
-        { text: 'Editar datos', icon: 'create-outline', handler: () => this.abrir(a) },
+        { text: t('Editar datos'), icon: 'create-outline', handler: () => this.abrir(a) },
         a.activo
-          ? { text: 'Desactivar área', icon: 'ban-outline', role: 'destructive', handler: () => { this.cambiarEstado(a, false); } }
-          : { text: 'Activar área', icon: 'checkmark-circle-outline', handler: () => { this.cambiarEstado(a, true); } },
-        { text: 'Cancelar', role: 'cancel', icon: 'close' },
+          ? { text: t('Desactivar área'), icon: 'ban-outline', role: 'destructive', handler: () => { this.cambiarEstado(a, false); } }
+          : { text: t('Activar área'), icon: 'checkmark-circle-outline', handler: () => { this.cambiarEstado(a, true); } },
+        { text: t('Cancelar'), role: 'cancel', icon: 'close' },
       ],
     });
     await hoja.present();
@@ -130,7 +132,7 @@ export class AreasSaludPage implements OnInit {
         this.guardando.set(false);
         this.areas.update(lista => actual ? lista.map(x => (x.id === area.id ? area : x)) : [...lista, area]);
         this.cerrar();
-        this.avisos.exito(actual ? 'Área actualizada' : `Área ${area.codigo} creada`);
+        this.avisos.exito(actual ? t('Área actualizada') : t('Área {p0} creada', { p0: area.codigo }));
       },
       error: (e: unknown) => {
         this.guardando.set(false);
@@ -142,9 +144,9 @@ export class AreasSaludPage implements OnInit {
   private async cambiarEstado(a: AreaSalud, activa: boolean): Promise<void> {
     if (!activa) {
       const ok = await this.avisos.confirmar({
-        titulo: 'Desactivar área',
-        mensaje: `No se podrán asignar pacientes ni médicos nuevos a ${a.nombre}. Sus registros se conservan y podrás volver a activarla.`,
-        confirmar: 'Desactivar',
+        titulo: t('Desactivar área'),
+        mensaje: t('No se podrán asignar pacientes ni médicos nuevos a {p0}. Sus registros se conservan y podrás volver a activarla.', { p0: a.nombre }),
+        confirmar: t('Desactivar'),
         peligro: true,
       });
       if (!ok) {
@@ -154,7 +156,7 @@ export class AreasSaludPage implements OnInit {
     (activa ? this.api.activar(a.id) : this.api.desactivar(a.id)).subscribe({
       next: area => {
         this.areas.update(lista => lista.map(x => (x.id === area.id ? area : x)));
-        this.avisos.exito(activa ? 'Área activada' : 'Área desactivada');
+        this.avisos.exito(activa ? t('Área activada') : t('Área desactivada'));
       },
       error: e => this.avisos.error(e),
     });

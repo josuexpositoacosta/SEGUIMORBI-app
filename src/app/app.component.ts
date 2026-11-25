@@ -2,6 +2,7 @@ import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@a
 import { AuthService } from './core/auth/auth.service';
 import { NOMBRE_ROL } from './core/models/usuario';
 import { menuDe } from './core/navegacion/navegacion';
+import { IDIOMA, IDIOMAS, cambiarIdioma } from './core/i18n/idioma';
 
 /** Dónde se recuerda si el usuario dejó el menú plegado (solo es una preferencia de este navegador). */
 const CLAVE_PLEGADO = 'seguimorbi.menu-plegado';
@@ -54,6 +55,10 @@ export class AppComponent {
       // Sin almacenamiento (modo privado): la preferencia dura hasta recargar.
     }
   }
+
+  /** El idioma al que lleva el botón compacto del menú plegado. */
+  readonly otroIdioma = IDIOMAS.find(i => i.valor !== IDIOMA)!;
+  readonly cambiarIdioma = cambiarIdioma;
 
   cerrarSesion(): void {
     this.auth.logout();

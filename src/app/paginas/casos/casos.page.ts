@@ -12,12 +12,14 @@ import { CLASIFICACIONES, Caso, Clasificacion, EstadoCaso, claseClasificacion, n
 import { Paciente } from 'src/app/core/models/paciente';
 import { CasoService } from 'src/app/core/services/caso.service';
 import { PacienteService } from 'src/app/core/services/paciente.service';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 type FiltroEstado = EstadoCaso | 'TODOS';
 
 @Component({
   selector: 'app-casos',
-  imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
+  imports: [TraducirPipe, CommonModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './casos.page.html',
   styleUrls: ['./casos.page.css'],
@@ -107,7 +109,7 @@ export class CasosPage implements OnInit {
 
   nombrePaciente(caso: Caso): string {
     const p = this.pacientes().get(caso.pacienteId);
-    return p ? `${p.apellidos}, ${p.nombres}` : `Paciente ${caso.pacienteId}`;
+    return p ? `${p.apellidos}, ${p.nombres}` : t('Paciente {p0}', { p0: caso.pacienteId });
   }
 
   detallePaciente(caso: Caso): string {
@@ -124,7 +126,7 @@ export class CasosPage implements OnInit {
       return 'Cerrado';
     }
     const d = diasDesde(caso.fechaInicioSintomas);
-    return d <= 0 ? 'Inicio hoy' : `Día ${d} de evolución`;
+    return d <= 0 ? t('Inicio hoy') : t('Día {p0} de evolución', { p0: d });
   }
 
   nombreClasificacion(c: Clasificacion | null | undefined): string {
