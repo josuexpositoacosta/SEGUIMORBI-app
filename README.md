@@ -25,11 +25,20 @@ npm ci          # instalar dependencias
 npm start       # servidor de desarrollo en http://localhost:4200
 npm run build   # compilación de producción en www/
 npm run lint    # revisión de código
+npm run test:ci # pruebas unitarias
+npm run revisar:responsive  # cada pantalla en 360, 390, 768 y 1024 px (necesita la API con datos de demo)
 ```
 
 La URL del backend se configura en `src/environments/environment.ts` (desarrollo) y
 `src/environments/environment.prod.ts` (producción). El backend admite por defecto CORS desde
 `http://localhost:4200` (variable `CORS_ALLOWED_ORIGINS` del backend).
+
+## Diseño adaptable
+
+La app tiene que funcionar en móvil, tablet y escritorio. Toda pantalla o formulario nuevo sigue
+[`docs/guia-responsive.md`](docs/guia-responsive.md) y pasa `npm run revisar:responsive`, que abre cada pantalla y
+cada formulario principal con cada rol en varios anchos y falla si algo se desborda. Con `ADMIN_PASSWORD=…` revisa
+también las pantallas de administración; con `CAPTURAS=carpeta` guarda una captura de cada una.
 
 ## Autenticación
 
