@@ -13,6 +13,8 @@ import { AreaSalud } from 'src/app/core/models/area-salud';
 import { NOMBRE_ROL, Rol } from 'src/app/core/models/usuario';
 import { AdminUsuariosService } from 'src/app/core/services/admin-usuarios.service';
 import { AreaSaludService } from 'src/app/core/services/area-salud.service';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 type Modo = 'crear' | 'acceso' | 'email' | 'password';
 type FiltroRol = 'TODOS' | Rol;
@@ -34,7 +36,7 @@ function areaSiEsMedico(grupo: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-usuarios',
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent],
+  imports: [TraducirPipe, CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './usuarios.page.html',
 })
@@ -122,7 +124,7 @@ export class UsuariosPage implements OnInit {
     if (!id) {
       return '';
     }
-    return this.areas().find(a => a.id === id)?.nombre ?? `Área ${id}`;
+    return this.areas().find(a => a.id === id)?.nombre ?? t('Área {p0}', { p0: id });
   }
 
   iniciales(u: UsuarioAdmin): string {
@@ -141,16 +143,16 @@ export class UsuariosPage implements OnInit {
 
   async abrirAcciones(u: UsuarioAdmin): Promise<void> {
     const botones: ActionSheetButton[] = [
-      { text: 'Cambiar rol y área', icon: 'shield-half-outline', handler: () => this.abrir('acceso', u) },
-      { text: u.email ? 'Cambiar correo' : 'Asignar correo', icon: 'mail-outline', handler: () => this.abrir('email', u) },
-      { text: 'Restablecer contraseña', icon: 'key-outline', handler: () => this.abrir('password', u) },
+      { text: t('Cambiar rol y área'), icon: 'shield-half-outline', handler: () => this.abrir('acceso', u) },
+      { text: u.email ? t('Cambiar correo') : t('Asignar correo'), icon: 'mail-outline', handler: () => this.abrir('email', u) },
+      { text: t('Restablecer contraseña'), icon: 'key-outline', handler: () => this.abrir('password', u) },
     ];
     if (!this.esYo(u)) {
       botones.push(u.activo
-        ? { text: 'Desactivar cuenta', icon: 'ban-outline', role: 'destructive', handler: () => { this.cambiarEstado(u, false); } }
-        : { text: 'Activar cuenta', icon: 'checkmark-circle-outline', handler: () => { this.cambiarEstado(u, true); } });
+        ? { text: t('Desactivar cuenta'), icon: 'ban-outline', role: 'destructive', handler: () => { this.cambiarEstado(u, false); } }
+        : { text: t('Activar cuenta'), icon: 'checkmark-circle-outline', handler: () => { this.cambiarEstado(u, true); } });
     }
-    botones.push({ text: 'Cancelar', role: 'cancel', icon: 'close' });
+    botones.push({ text: t('Cancelar'), role: 'cancel', icon: 'close' });
 
     const hoja = await this.acciones.create({ header: `${u.firstname} ${u.lastname}`, subHeader: u.username, buttons: botones });
     await hoja.present();
@@ -193,7 +195,7 @@ export class UsuariosPage implements OnInit {
       areaSaludId: v.areaSaludId,
     }), creado => {
       this.usuarios.update(lista => [...lista, creado]);
-      return `Usuario ${creado.username} creado`;
+      return t('Usuario {p0} creado', { p0: creado.username });
     });
   }
 
@@ -206,7 +208,7 @@ export class UsuariosPage implements OnInit {
     const v = this.accesoForm.getRawValue();
     this.ejecutar(this.api.actualizarAcceso(u.id, v), actualizado => {
       this.reemplazar(actualizado);
-      return 'Acceso actualizado';
+      return t('Acceso actualizado');
     });
   }
 
@@ -219,7 +221,7 @@ export class UsuariosPage implements OnInit {
     const email = this.emailForm.getRawValue().email.trim() || null;
     this.ejecutar(this.api.cambiarEmail(u.id, email), actualizado => {
       this.reemplazar(actualizado);
-      return email ? 'Correo guardado' : 'Correo eliminado';
+      return email ? t('Correo guardado') : t('Correo eliminado');
     });
   }
 
@@ -230,15 +232,15 @@ export class UsuariosPage implements OnInit {
       return;
     }
     this.ejecutar(this.api.restablecerPassword(u.id, this.passwordForm.getRawValue().password),
-      () => `Contraseña de ${u.username} restablecida`);
+      () => t('Contraseña de {p0} restablecida', { p0: u.username }));
   }
 
   private async cambiarEstado(u: UsuarioAdmin, activo: boolean): Promise<void> {
     if (!activo) {
       const ok = await this.avisos.confirmar({
-        titulo: 'Desactivar cuenta',
-        mensaje: `${u.firstname} ${u.lastname} no podrá iniciar sesión hasta que vuelvas a activar su cuenta.`,
-        confirmar: 'Desactivar',
+        titulo: t('Desactivar cuenta'),
+        mensaje: t('{p0} no podrá iniciar sesión hasta que vuelvas a activar su cuenta.', { p0: `${u.firstname} ${u.lastname}` }),
+        confirmar: t('Desactivar'),
         peligro: true,
       });
       if (!ok) {
@@ -248,7 +250,7 @@ export class UsuariosPage implements OnInit {
     this.api.actualizarAcceso(u.id, { role: u.role, areaSaludId: u.areaSaludId ?? null, activo }).subscribe({
       next: actualizado => {
         this.reemplazar(actualizado);
-        this.avisos.exito(activo ? 'Cuenta activada' : 'Cuenta desactivada');
+        this.avisos.exito(activo ? t('Cuenta activada') : t('Cuenta desactivada'));
       },
       error: e => this.avisos.error(e),
     });

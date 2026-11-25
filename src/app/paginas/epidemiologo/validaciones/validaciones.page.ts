@@ -12,11 +12,13 @@ import { Paciente } from 'src/app/core/models/paciente';
 import { AreaSaludService } from 'src/app/core/services/area-salud.service';
 import { CasoService } from 'src/app/core/services/caso.service';
 import { PacienteService } from 'src/app/core/services/paciente.service';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 /** Bandeja del epidemiólogo: clasificaciones propuestas por los médicos pendientes de validar. */
 @Component({
   selector: 'app-validaciones',
-  imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
+  imports: [TraducirPipe, CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './validaciones.page.html',
 })
@@ -78,11 +80,11 @@ export class ValidacionesPage implements OnInit {
 
   nombrePaciente(c: Caso): string {
     const p = this.pacientes().get(c.pacienteId);
-    return p ? `${p.apellidos}, ${p.nombres}` : `Paciente ${c.pacienteId}`;
+    return p ? `${p.apellidos}, ${p.nombres}` : t('Paciente {p0}', { p0: c.pacienteId });
   }
 
   nombreArea(c: Caso): string {
-    return this.areas().get(c.areaSaludId)?.nombre ?? `Área ${c.areaSaludId}`;
+    return this.areas().get(c.areaSaludId)?.nombre ?? t('Área {p0}', { p0: c.areaSaludId });
   }
 
   nombreClasificacion(c: Clasificacion | null | undefined): string {
@@ -100,12 +102,12 @@ export class ValidacionesPage implements OnInit {
   async validar(c: Caso, evento: Event): Promise<void> {
     evento.stopPropagation();
     const alerta = await this.alertas.create({
-      header: 'Validar clasificación',
+      header: t('Validar clasificación'),
       subHeader: `${this.nombrePaciente(c)} · ${this.nombreClasificacion(c.clasificacion)}`,
-      inputs: [{ name: 'observaciones', type: 'textarea', placeholder: 'Observaciones (opcional)' }],
+      inputs: [{ name: 'observaciones', type: 'textarea', placeholder: t('Observaciones (opcional)') }],
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        { text: 'Validar', role: 'confirm' },
+        { text: t('Cancelar'), role: 'cancel' },
+        { text: t('Validar'), role: 'confirm' },
       ],
     });
     await alerta.present();
@@ -117,7 +119,7 @@ export class ValidacionesPage implements OnInit {
     this.api.validarClasificacion(c.id, observaciones).subscribe({
       next: () => {
         this.casos.update(lista => lista.filter(x => x.id !== c.id));
-        this.avisos.exito(`Clasificación de ${this.nombrePaciente(c)} validada`);
+        this.avisos.exito(t('Clasificación de {p0} validada', { p0: this.nombrePaciente(c) }));
       },
       error: e => this.avisos.error(e),
     });

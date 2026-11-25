@@ -3,6 +3,8 @@ import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild, comp
 import { IonicModule } from '@ionic/angular';
 import { Clasificacion } from 'src/app/core/models/caso';
 import { SemanaVigilancia } from 'src/app/core/models/vigilancia';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 interface Serie {
   clave: Clasificacion;
@@ -12,10 +14,10 @@ interface Serie {
 
 /** Orden fijo de las series (nunca se reordena ni se recicla el color). */
 const SERIES: Serie[] = [
-  { clave: 'SOSPECHOSO', nombre: 'Sospechoso', color: 'var(--serie-sospechoso)' },
-  { clave: 'PROBABLE', nombre: 'Probable', color: 'var(--serie-probable)' },
-  { clave: 'CONFIRMADO', nombre: 'Confirmado', color: 'var(--serie-confirmado)' },
-  { clave: 'DESCARTADO', nombre: 'Descartado', color: 'var(--serie-descartado)' },
+  { clave: 'SOSPECHOSO', nombre: t('Sospechoso'), color: 'var(--serie-sospechoso)' },
+  { clave: 'PROBABLE', nombre: t('Probable'), color: 'var(--serie-probable)' },
+  { clave: 'CONFIRMADO', nombre: t('Confirmado'), color: 'var(--serie-confirmado)' },
+  { clave: 'DESCARTADO', nombre: t('Descartado'), color: 'var(--serie-descartado)' },
 ];
 
 const ALTO = 260;
@@ -43,7 +45,7 @@ interface Columna {
 /** Curva epidémica: barras apiladas por clasificación y semana epidemiológica. */
 @Component({
   selector: 'app-curva-epidemica',
-  imports: [CommonModule, IonicModule, DatePipe],
+  imports: [TraducirPipe, CommonModule, IonicModule, DatePipe],
   templateUrl: './curva-epidemica.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./curva-epidemica.component.css'],

@@ -16,21 +16,23 @@ import {
 import { AreaSaludService } from 'src/app/core/services/area-salud.service';
 import { DesenlaceService } from 'src/app/core/services/desenlace.service';
 import { VigilanciaService } from 'src/app/core/services/vigilancia.service';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { IDIOMA, t } from 'src/app/core/i18n/idioma';
 
 type Periodo = 4 | 12 | 26 | 52;
 type Pestana = 'resumen' | 'curva' | 'clinica' | 'areas';
 
 const SERIES: { clave: Clasificacion; nombre: string; color: string }[] = [
-  { clave: 'SOSPECHOSO', nombre: 'Sospechoso', color: 'var(--serie-sospechoso)' },
-  { clave: 'PROBABLE', nombre: 'Probable', color: 'var(--serie-probable)' },
-  { clave: 'CONFIRMADO', nombre: 'Confirmado', color: 'var(--serie-confirmado)' },
-  { clave: 'DESCARTADO', nombre: 'Descartado', color: 'var(--serie-descartado)' },
+  { clave: 'SOSPECHOSO', nombre: t('Sospechoso'), color: 'var(--serie-sospechoso)' },
+  { clave: 'PROBABLE', nombre: t('Probable'), color: 'var(--serie-probable)' },
+  { clave: 'CONFIRMADO', nombre: t('Confirmado'), color: 'var(--serie-confirmado)' },
+  { clave: 'DESCARTADO', nombre: t('Descartado'), color: 'var(--serie-descartado)' },
 ];
 
 /** Panel de vigilancia epidemiológica (solo EPIDEMIOLOGO). */
 @Component({
   selector: 'app-vigilancia',
-  imports: [CommonModule, IonicModule, EstadoVacioComponent, CurvaEpidemicaComponent, DatePipe, DecimalPipe, RouterLink],
+  imports: [TraducirPipe, CommonModule, IonicModule, EstadoVacioComponent, CurvaEpidemicaComponent, DatePipe, DecimalPipe, RouterLink],
   templateUrl: './vigilancia.page.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./vigilancia.page.css'],
@@ -44,21 +46,21 @@ export class VigilanciaPage implements OnInit {
   readonly series = SERIES;
   /** Las tres clasificaciones activas, para las tarjetas del resumen. */
   readonly seriesPrincipales = [
-    { clave: 'CONFIRMADO' as Clasificacion, plural: 'Confirmados', clase: 'confirmado' },
-    { clave: 'PROBABLE' as Clasificacion, plural: 'Probables', clase: 'probable' },
-    { clave: 'SOSPECHOSO' as Clasificacion, plural: 'Sospechosos', clase: 'sospechoso' },
+    { clave: 'CONFIRMADO' as Clasificacion, plural: t('Confirmados'), clase: 'confirmado' },
+    { clave: 'PROBABLE' as Clasificacion, plural: t('Probables'), clase: 'probable' },
+    { clave: 'SOSPECHOSO' as Clasificacion, plural: t('Sospechosos'), clase: 'sospechoso' },
   ];
   readonly periodos: { valor: Periodo; nombre: string }[] = [
-    { valor: 4, nombre: '4 sem.' },
-    { valor: 12, nombre: '12 sem.' },
-    { valor: 26, nombre: '26 sem.' },
-    { valor: 52, nombre: '1 año' },
+    { valor: 4, nombre: t('4 sem.') },
+    { valor: 12, nombre: t('12 sem.') },
+    { valor: 26, nombre: t('26 sem.') },
+    { valor: 52, nombre: t('1 año') },
   ];
   readonly pestanas: { id: Pestana; nombre: string; icono: string }[] = [
-    { id: 'resumen', nombre: 'Resumen', icono: 'grid-outline' },
-    { id: 'curva', nombre: 'Curva epidémica', icono: 'bar-chart-outline' },
-    { id: 'clinica', nombre: 'Clínica', icono: 'medkit-outline' },
-    { id: 'areas', nombre: 'Áreas', icono: 'map-outline' },
+    { id: 'resumen', nombre: t('Resumen'), icono: 'grid-outline' },
+    { id: 'curva', nombre: t('Curva epidémica'), icono: 'bar-chart-outline' },
+    { id: 'clinica', nombre: t('Clínica'), icono: 'medkit-outline' },
+    { id: 'areas', nombre: t('Áreas'), icono: 'map-outline' },
   ];
   readonly pestana = signal<Pestana>('resumen');
   readonly periodo = signal<Periodo>(12);
@@ -86,12 +88,12 @@ export class VigilanciaPage implements OnInit {
       return [];
     }
     return [
-      { nombre: 'Confirmados', valor: `${new Intl.NumberFormat('es', { maximumFractionDigits: 1 }).format(r.porcentajeConfirmados)} %`, nota: 'del total de casos', icono: 'checkmark-circle-outline' },
-      { nombre: 'Hospitalizados', valor: r.hospitalizados, nota: 'con ingreso', icono: 'bed-outline' },
-      { nombre: 'Formas neuroinvasivas', valor: r.neuroinvasivos, nota: 'casos con afectación neurológica', icono: 'pulse-outline' },
-      { nombre: 'Gestantes', valor: r.gestantes, nota: 'embarazadas en el periodo', icono: 'woman-outline' },
-      { nombre: 'Recaídas', valor: r.recaidas, nota: 'casos con recaída', icono: 'refresh-outline' },
-      { nombre: 'Con laboratorio', valor: r.conLaboratorio, nota: 'con prueba de Oropouche', icono: 'flask-outline' },
+      { nombre: t('Confirmados'), valor: `${new Intl.NumberFormat(IDIOMA, { maximumFractionDigits: 1 }).format(r.porcentajeConfirmados)} %`, nota: t('del total de casos'), icono: 'checkmark-circle-outline' },
+      { nombre: t('Hospitalizados'), valor: r.hospitalizados, nota: t('con ingreso'), icono: 'bed-outline' },
+      { nombre: t('Formas neuroinvasivas'), valor: r.neuroinvasivos, nota: t('casos con afectación neurológica'), icono: 'pulse-outline' },
+      { nombre: t('Gestantes'), valor: r.gestantes, nota: t('embarazadas en el periodo'), icono: 'woman-outline' },
+      { nombre: t('Recaídas'), valor: r.recaidas, nota: t('casos con recaída'), icono: 'refresh-outline' },
+      { nombre: t('Con laboratorio'), valor: r.conLaboratorio, nota: t('con prueba de Oropouche'), icono: 'flask-outline' },
     ];
   });
 
@@ -158,7 +160,7 @@ export class VigilanciaPage implements OnInit {
         enlace.download = nombre;
         enlace.click();
         setTimeout(() => URL.revokeObjectURL(url), 1000);
-        this.avisos.exito(`Descargado ${nombre}`);
+        this.avisos.exito(t('Descargado {p0}', { p0: nombre }));
       },
       error: e => {
         this.descargando.set(false);

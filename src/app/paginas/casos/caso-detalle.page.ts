@@ -19,6 +19,8 @@ import { CasoService } from 'src/app/core/services/caso.service';
 import { PacienteService } from 'src/app/core/services/paciente.service';
 import { abrirFormularioCaso } from './caso-formulario.component';
 import { TipoRegistro, abrirRegistroClinico } from './registro-clinico.component';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 /** Entrada de la línea de tiempo de atención clínica. */
 export interface EntradaClinica {
@@ -48,7 +50,7 @@ type Pestana = 'resumen' | 'tiempo' | 'laboratorio' | 'historial';
 
 @Component({
   selector: 'app-caso-detalle',
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
+  imports: [TraducirPipe, CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
   templateUrl: './caso-detalle.page.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./caso-detalle.page.css'],
@@ -74,10 +76,10 @@ export class CasoDetallePage implements OnInit {
   readonly puedeClasificar = computed(() => this.abierto() && (this.rol() === 'MEDICO' || this.rol() === 'EPIDEMIOLOGO'));
   /** Pestañas de la ficha; el resumen cabe en una pantalla. */
   readonly pestanas: { id: Pestana; nombre: string; icono: string }[] = [
-    { id: 'resumen', nombre: 'Resumen', icono: 'grid-outline' },
-    { id: 'tiempo', nombre: 'Línea de tiempo', icono: 'git-commit-outline' },
-    { id: 'laboratorio', nombre: 'Laboratorio', icono: 'flask-outline' },
-    { id: 'historial', nombre: 'Historial', icono: 'swap-horizontal-outline' },
+    { id: 'resumen', nombre: t('Resumen'), icono: 'grid-outline' },
+    { id: 'tiempo', nombre: t('Línea de tiempo'), icono: 'git-commit-outline' },
+    { id: 'laboratorio', nombre: t('Laboratorio'), icono: 'flask-outline' },
+    { id: 'historial', nombre: t('Historial'), icono: 'swap-horizontal-outline' },
   ];
   readonly pestana = signal<Pestana>('resumen');
 
@@ -88,7 +90,7 @@ export class CasoDetallePage implements OnInit {
       return '';
     }
     const d = diasDesde(c.fechaInicioSintomas);
-    return d <= 0 ? 'Inicio hoy' : `Día ${d} de evolución`;
+    return d <= 0 ? t('Inicio hoy') : t('Día {p0} de evolución', { p0: d });
   });
 
   readonly diasEvolucion = computed(() => {
@@ -108,7 +110,7 @@ export class CasoDetallePage implements OnInit {
     }
     const nombres = <T extends string>(lista: { valor: T; nombre: string }[], valores: T[] | undefined) =>
       (valores ?? []).map(v => nombreDe(lista, v)).join(', ');
-    const control = (f?: string | null) => (f ? `Próximo control: ${f.split('-').reverse().join('/')}` : '');
+    const control = (f?: string | null) => (f ? t('Próximo control: {p0}', { p0: f.split('-').reverse().join('/') }) : '');
     const entradas: EntradaClinica[] = [
       ...(c.evaluaciones ?? []).map(e => {
         const vitales = [
@@ -119,33 +121,33 @@ export class CasoDetallePage implements OnInit {
           e.saturacionO2 != null ? `SatO₂ ${e.saturacionO2} %` : '',
         ].filter(Boolean).join(' · ');
         return {
-          fecha: e.fecha, titulo: 'Evaluación clínica', icono: 'pulse-outline', clase: 'evaluacion', usuario: e.usuario,
+          fecha: e.fecha, titulo: t('Evaluación clínica'), icono: 'pulse-outline', clase: 'evaluacion', usuario: e.usuario,
           lineas: [
             vitales,
-            e.signosClinicos?.length ? `Signos: ${nombres(SIGNOS_CLINICOS, e.signosClinicos)}` : '',
-            e.signosAlarmaDengue?.length ? `Signos de alarma de dengue: ${nombres(SIGNOS_ALARMA_DENGUE, e.signosAlarmaDengue)}` : '',
+            e.signosClinicos?.length ? t('Signos: {p0}', { p0: nombres(SIGNOS_CLINICOS, e.signosClinicos) }) : '',
+            e.signosAlarmaDengue?.length ? t('Signos de alarma de dengue: {p0}', { p0: nombres(SIGNOS_ALARMA_DENGUE, e.signosAlarmaDengue) }) : '',
             e.observaciones ?? '',
           ].filter(Boolean),
         };
       }),
       ...(c.dictamenes ?? []).map(d => ({
-        fecha: d.fecha, titulo: 'Dictamen', icono: 'document-text-outline', clase: 'dictamen', usuario: d.usuario,
+        fecha: d.fecha, titulo: t('Dictamen'), icono: 'document-text-outline', clase: 'dictamen', usuario: d.usuario,
         etiqueta: d.diagnosticoPrincipal,
-        lineas: [d.diagnosticosDiferenciales ? `Diferenciales: ${d.diagnosticosDiferenciales}` : '', d.conclusion].filter(Boolean),
+        lineas: [d.diagnosticosDiferenciales ? t('Diferenciales: {p0}', { p0: d.diagnosticosDiferenciales }) : '', d.conclusion].filter(Boolean),
       })),
       ...(c.planes ?? []).map(p => ({
-        fecha: p.fecha, titulo: 'Plan de atención', icono: 'clipboard-outline', clase: 'plan', usuario: p.usuario,
+        fecha: p.fecha, titulo: t('Plan de atención'), icono: 'clipboard-outline', clase: 'plan', usuario: p.usuario,
         etiqueta: nombreDe(MODALIDADES, p.modalidad),
         lineas: [p.indicaciones ?? '', control(p.proximoControl)].filter(Boolean),
       })),
       ...(c.seguimientos ?? []).map(s => ({
-        fecha: s.fecha, titulo: 'Seguimiento', icono: 'trending-up-outline', clase: 'seguimiento', usuario: s.usuario,
+        fecha: s.fecha, titulo: t('Seguimiento'), icono: 'trending-up-outline', clase: 'seguimiento', usuario: s.usuario,
         etiqueta: nombreDe(EVOLUCIONES, s.evolucion),
         lineas: [s.observaciones ?? '', control(s.proximoControl)].filter(Boolean),
       })),
       ...(c.eventos ?? []).map(ev => ({
         fecha: ev.fecha,
-        titulo: ({ CIERRE: 'Caso cerrado', REAPERTURA: 'Caso reabierto', VALIDACION_CLASIFICACION: 'Clasificación validada' } as Record<string, string>)[ev.tipo] ?? ev.tipo,
+        titulo: ({ CIERRE: t('Caso cerrado'), REAPERTURA: t('Caso reabierto'), VALIDACION_CLASIFICACION: t('Clasificación validada') } as Record<string, string>)[ev.tipo] ?? ev.tipo,
         icono: ev.tipo === 'CIERRE' ? 'lock-closed-outline' : ev.tipo === 'REAPERTURA' ? 'lock-open-outline' : 'shield-checkmark-outline',
         clase: 'evento', usuario: ev.usuario, lineas: [ev.detalle ?? ''].filter(Boolean),
       })),
@@ -221,9 +223,9 @@ export class CasoDetallePage implements OnInit {
       return;
     }
     const ok = await this.avisos.confirmar({
-      titulo: 'Validar clasificación',
-      mensaje: `Confirmas la clasificación ${nombreDe(CLASIFICACIONES, c.clasificacion)} propuesta para este caso.`,
-      confirmar: 'Validar',
+      titulo: t('Validar clasificación'),
+      mensaje: t('Confirmas la clasificación {p0} propuesta para este caso.', { p0: nombreDe(CLASIFICACIONES, c.clasificacion) }),
+      confirmar: t('Validar'),
     });
     if (!ok) {
       return;
@@ -231,7 +233,7 @@ export class CasoDetallePage implements OnInit {
     this.api.validarClasificacion(c.id, null).subscribe({
       next: actualizado => {
         this.caso.set(actualizado);
-        this.avisos.exito('Clasificación validada');
+        this.avisos.exito(t('Clasificación validada'));
       },
       error: e => this.avisos.error(e),
     });
@@ -268,12 +270,14 @@ export class CasoDetallePage implements OnInit {
     }
     this.caso.set(actualizado);
     const mensajes: Record<TipoRegistro, string> = {
-      evaluacion: 'Evaluación registrada', dictamen: 'Dictamen registrado', plan: 'Plan de atención registrado',
-      seguimiento: 'Seguimiento registrado', cierre: 'Caso cerrado', reapertura: 'Caso reabierto',
+      evaluacion: t('Evaluación registrada'), dictamen: t('Dictamen registrado'), plan: t('Plan de atención registrado'),
+      seguimiento: t('Seguimiento registrado'), cierre: t('Caso cerrado'), reapertura: t('Caso reabierto'),
     };
     const nuevas = (actualizado.alertas?.length ?? 0) - antes;
     if (nuevas > 0) {
-      this.avisos.advertencia(`${mensajes[tipo]}. Hay ${nuevas} alerta${nuevas > 1 ? 's' : ''} clínica${nuevas > 1 ? 's' : ''} nueva${nuevas > 1 ? 's' : ''}: revísalas arriba.`);
+      this.avisos.advertencia(nuevas === 1
+        ? t('{p0}. Hay 1 alerta clínica nueva: revísala arriba.', { p0: mensajes[tipo] })
+        : t('{p0}. Hay {p1} alertas clínicas nuevas: revísalas arriba.', { p0: mensajes[tipo], p1: nuevas }));
     } else {
       this.avisos.exito(mensajes[tipo]);
     }
@@ -313,8 +317,8 @@ export class CasoDetallePage implements OnInit {
       const antes = c.sugerencia?.clasificacion;
       const ahora = actualizado.sugerencia?.clasificacion;
       return antes !== ahora && ahora
-        ? `Resultado añadido. La OPS ahora sugiere: ${nombreDe(CLASIFICACIONES, ahora)}`
-        : 'Resultado añadido';
+        ? t('Resultado añadido. La OPS ahora sugiere: {p0}', { p0: nombreDe(CLASIFICACIONES, ahora) })
+        : t('Resultado añadido');
     });
   }
 
@@ -326,7 +330,7 @@ export class CasoDetallePage implements OnInit {
     }
     const v = this.clasificacionForm.getRawValue();
     this.ejecutar(this.api.cambiarClasificacion(c.id, v.clasificacion as Clasificacion, v.motivo.trim()),
-      actualizado => `Clasificación cambiada a ${nombreDe(CLASIFICACIONES, actualizado.clasificacion)}`);
+      actualizado => t('Clasificación cambiada a {p0}', { p0: nombreDe(CLASIFICACIONES, actualizado.clasificacion) }));
   }
 
   private ejecutar(peticion: Observable<Caso>, mensaje: (c: Caso) => string): void {

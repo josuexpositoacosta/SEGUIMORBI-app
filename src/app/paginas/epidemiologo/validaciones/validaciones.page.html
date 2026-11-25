@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Validaciones</ion-title>
+    <ion-title>{{ 'Validaciones' | t }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,11 +14,11 @@
 
   <div class="page-container">
     <header class="cabecera">
-      <h1>Validaciones</h1>
+      <h1>{{ 'Validaciones' | t }}</h1>
     </header>
 
     <p class="resumen-lista">
-      Clasificaciones propuestas por los médicos en casos abiertos. Valídalas o, si no estás de acuerdo, ábrelas y cámbialas con un motivo.
+      {{ 'Clasificaciones propuestas por los médicos en casos abiertos. Valídalas o, si no estás de acuerdo, ábrelas y cámbialas con un motivo.' | t }}
     </p>
 
     @if (cargando()) {
@@ -27,41 +27,41 @@
 
     @if (!cargando() && errorCarga()) {
       <app-estado-vacio icono="cloud-offline-outline"
-        titulo="No se pudieron cargar las validaciones" [texto]="errorCarga()">
-        <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+        [titulo]="'No se pudieron cargar las validaciones' | t" [texto]="errorCarga()">
+        <ion-button fill="outline" (click)="cargar()">{{ 'Reintentar' | t }}</ion-button>
       </app-estado-vacio>
     }
 
     @if (!cargando() && !errorCarga()) {
       @if (!casos().length) {
-        <app-estado-vacio icono="checkmark-done-circle-outline" titulo="Todo validado"
-        texto="No hay clasificaciones pendientes de validar."></app-estado-vacio>
+        <app-estado-vacio icono="checkmark-done-circle-outline" [titulo]="'Todo validado' | t"
+        [texto]="'No hay clasificaciones pendientes de validar.' | t"></app-estado-vacio>
       }
       @if (casos().length) {
         <div class="filtros-clasificacion">
           <ion-chip [outline]="soloDistintas()" [color]="soloDistintas() ? 'medium' : 'primary'" (click)="soloDistintas.set(false)">
-            <ion-label>Todas ({{ casos().length }})</ion-label>
+            <ion-label>{{ 'Todas ({p0})' | t: { p0: (casos().length) } }}</ion-label>
           </ion-chip>
           <ion-chip [outline]="!soloDistintas()" [color]="soloDistintas() ? 'primary' : 'medium'" (click)="soloDistintas.set(true)">
-            <ion-label>Distintas de la OPS ({{ distintas() }})</ion-label>
+            <ion-label>{{ 'Distintas de la OPS ({p0})' | t: { p0: (distintas()) } }}</ion-label>
           </ion-chip>
         </div>
       }
       <div class="lista-registros">
         @for (c of pendientes(); track c) {
           <div class="registro validacion" role="button" tabindex="0"
-            (click)="abrir(c)" (keydown.enter)="abrir(c)" [attr.aria-label]="'Abrir caso ' + c.id">
+            (click)="abrir(c)" (keydown.enter)="abrir(c)" [attr.aria-label]="'Abrir caso {p0}' | t: { p0: c.id }">
             <div class="registro-cuerpo">
               <div class="registro-titulo">{{ nombrePaciente(c) }}</div>
-              <div class="registro-detalle">Caso nº {{ c.id }} · {{ nombreArea(c) }} · notificado {{ c.fechaNotificacion | date: 'dd/MM/yyyy' }}</div>
+              <div class="registro-detalle">{{ 'Caso nº {p0} · {p1} · notificado {p2}' | t: { p0: (c.id), p1: (nombreArea(c)), p2: (c.fechaNotificacion | date: 'dd/MM/yyyy') } }}</div>
               <div class="registro-etiquetas">
-                <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">Propuesta: {{ nombreClasificacion(c.clasificacion) }}</span>
+                <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ 'Propuesta: {p0}' | t: { p0: (nombreClasificacion(c.clasificacion)) } }}</span>
                 <span class="etiqueta" [ngClass]="c.sugerencia.coincideConActual ? 'exito' : 'secundaria'">
                   <ion-icon [name]="c.sugerencia.coincideConActual ? 'checkmark' : 'alert-circle-outline'" aria-hidden="true"></ion-icon>
-                  OPS: {{ nombreClasificacion(c.sugerencia.clasificacion) }}
+                  {{ 'OPS: {p0}' | t: { p0: (nombreClasificacion(c.sugerencia.clasificacion)) } }}
                 </span>
                 @if (c.alertas.length) {
-                  <span class="etiqueta peligro">{{ c.alertas.length }} alerta{{ c.alertas.length > 1 ? 's' : '' }}</span>
+                  <span class="etiqueta peligro">{{ c.alertas.length === 1 ? ('1 alerta' | t) : ('{p0} alertas' | t: { p0: c.alertas.length }) }}</span>
                 }
               </div>
               @if (ultimoCambio(c); as h) {
@@ -72,7 +72,7 @@
             </div>
             <div class="acciones-validacion">
               <ion-button size="small" (click)="validar(c, $event)">
-                <ion-icon slot="start" name="shield-checkmark-outline"></ion-icon>Validar
+                <ion-icon slot="start" name="shield-checkmark-outline"></ion-icon>{{ 'Validar' | t }}
               </ion-button>
             </div>
           </div>

@@ -9,12 +9,14 @@ import { mensajeDeError } from 'src/app/core/http/errores';
 import { Paciente, nombreSexo } from 'src/app/core/models/paciente';
 import { PacienteService } from 'src/app/core/services/paciente.service';
 import { abrirFormularioPaciente } from './paciente-formulario.component';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 type Filtro = 'activos' | 'inactivos' | 'todos';
 
 @Component({
   selector: 'app-pacientes',
-  imports: [IonicModule, EstadoVacioComponent],
+  imports: [TraducirPipe, IonicModule, EstadoVacioComponent],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './pacientes.page.html',
 })
@@ -81,7 +83,7 @@ export class PacientesPage implements OnInit {
     const creado = await abrirFormularioPaciente(this.modales);
     if (creado) {
       this.pacientes.update(lista => [...lista, creado]);
-      this.avisos.exito(`Paciente ${creado.nombres} ${creado.apellidos} registrado`);
+      this.avisos.exito(t('Paciente {p0} {p1} registrado', { p0: creado.nombres, p1: creado.apellidos }));
     }
   }
 }

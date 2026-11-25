@@ -1,24 +1,26 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { t } from 'src/app/core/i18n/idioma';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
 
 const CONTENIDO = {
   404: {
     icono: 'compass-outline',
-    titulo: 'Página no encontrada',
-    texto: 'La dirección que has abierto no existe o ha cambiado.',
+    titulo: t('Página no encontrada'),
+    texto: t('La dirección que has abierto no existe o ha cambiado.'),
   },
   403: {
     icono: 'lock-closed-outline',
-    titulo: 'No tienes acceso a esta sección',
-    texto: 'Tu rol no permite entrar aquí. Si crees que es un error, habla con el administrador.',
+    titulo: t('No tienes acceso a esta sección'),
+    texto: t('Tu rol no permite entrar aquí. Si crees que es un error, habla con el administrador.'),
   },
 } as const;
 
 /** Página de error de navegación: 404 (no existe) o 403 (sin permiso por rol). */
 @Component({
   selector: 'app-error',
-  imports: [IonicModule, RouterLink],
+  imports: [TraducirPipe, IonicModule, RouterLink],
   template: `
     <ion-content>
       <div class="error">
@@ -28,7 +30,7 @@ const CONTENIDO = {
         <p class="text-muted">{{ contenido.texto }}</p>
         <ion-button routerLink="/inicio" [replaceUrl]="true">
           <ion-icon slot="start" name="home-outline"></ion-icon>
-          Ir al inicio
+          {{ 'Ir al inicio' | t }}
         </ion-button>
       </div>
     </ion-content>

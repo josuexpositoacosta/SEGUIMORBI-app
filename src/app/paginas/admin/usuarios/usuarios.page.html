@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Usuarios</ion-title>
+    <ion-title>{{ 'Usuarios' | t }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,15 +14,15 @@
 
   <div class="page-container">
     <header class="cabecera">
-      <h1>Usuarios</h1>
-      <ion-button (click)="abrir('crear')"><ion-icon slot="start" name="person-add-outline"></ion-icon>Nuevo usuario</ion-button>
+      <h1>{{ 'Usuarios' | t }}</h1>
+      <ion-button (click)="abrir('crear')"><ion-icon slot="start" name="person-add-outline"></ion-icon>{{ 'Nuevo usuario' | t }}</ion-button>
     </header>
     <div class="tarjeta filtros">
       <div class="filtros-fila">
-        <ion-searchbar placeholder="Buscar por nombre, usuario o correo" [debounce]="150"
+        <ion-searchbar [placeholder]="'Buscar por nombre, usuario o correo' | t" [debounce]="150"
           (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
         <div class="segmento" role="group">
-          <button type="button" [class.activo]="filtroRol() === 'TODOS'" [attr.aria-pressed]="filtroRol() === 'TODOS'" (click)="filtroRol.set('TODOS')">Todos</button>
+          <button type="button" [class.activo]="filtroRol() === 'TODOS'" [attr.aria-pressed]="filtroRol() === 'TODOS'" (click)="filtroRol.set('TODOS')">{{ 'Todos' | t }}</button>
           @for (r of roles; track r) {
             <button type="button" [class.activo]="filtroRol() === r" [attr.aria-pressed]="filtroRol() === r" (click)="filtroRol.set(r)">{{ nombreRol[r] }}</button>
           }
@@ -36,26 +36,26 @@
 
     @if (!cargando() && errorCarga()) {
       <app-estado-vacio icono="cloud-offline-outline"
-        titulo="No se pudieron cargar los usuarios" [texto]="errorCarga()">
-        <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+        [titulo]="'No se pudieron cargar los usuarios' | t" [texto]="errorCarga()">
+        <ion-button fill="outline" (click)="cargar()">{{ 'Reintentar' | t }}</ion-button>
       </app-estado-vacio>
     }
 
     @if (!cargando() && !errorCarga()) {
       @if (usuarios().length) {
         <p class="resumen-lista">
-          {{ filtrados().length }} de {{ usuarios().length }} usuarios
+          {{ '{p0} de {p1} usuarios' | t: { p0: (filtrados().length), p1: (usuarios().length) } }}
         </p>
       }
       @if (!filtrados().length) {
         <app-estado-vacio icono="search-outline"
-          titulo="Sin resultados" texto="Ningún usuario coincide con la búsqueda o el filtro.">
+          [titulo]="'Sin resultados' | t" [texto]="'Ningún usuario coincide con la búsqueda o el filtro.' | t">
         </app-estado-vacio>
       }
       <div class="lista-registros">
         @for (u of filtrados(); track u) {
           <button type="button" class="registro" [class.inactivo]="!u.activo"
-            (click)="abrirAcciones(u)" [attr.aria-label]="'Acciones para ' + u.firstname + ' ' + u.lastname">
+            (click)="abrirAcciones(u)" [attr.aria-label]="'Acciones para {p0}' | t: { p0: u.firstname + ' ' + u.lastname }">
             <div class="registro-avatar" aria-hidden="true">{{ iniciales(u) }}</div>
             <div class="registro-cuerpo">
               <div class="registro-titulo">{{ u.firstname }} {{ u.lastname }}</div>
@@ -69,9 +69,9 @@
                     <ion-icon name="business-outline" aria-hidden="true"></ion-icon>{{ nombreArea(u.areaSaludId) }}
                   </span>
                 }
-                <span class="etiqueta" [ngClass]="u.activo ? 'exito' : 'peligro'">{{ u.activo ? 'Activo' : 'Inactivo' }}</span>
+                <span class="etiqueta" [ngClass]="u.activo ? 'exito' : 'peligro'">{{ u.activo ? ('Activo' | t) : ('Inactivo' | t) }}</span>
                 @if (esYo(u)) {
-                  <span class="etiqueta">Tú</span>
+                  <span class="etiqueta">{{ 'Tú' | t }}</span>
                 }
               </div>
             </div>
@@ -89,21 +89,21 @@
           <ion-title>
             @switch (modo()) {
               @case ('crear') {
-                Nuevo usuario
+                {{ 'Nuevo usuario' | t }}
               }
               @case ('acceso') {
-                Rol y área
+                {{ 'Rol y área' | t }}
               }
               @case ('email') {
-                Correo electrónico
+                {{ 'Correo electrónico' | t }}
               }
               @case ('password') {
-                Restablecer contraseña
+                {{ 'Restablecer contraseña' | t }}
               }
             }
           </ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="cerrar()" aria-label="Cerrar"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+            <ion-button (click)="cerrar()" [attr.aria-label]="'Cerrar' | t"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
@@ -125,35 +125,35 @@
         @if (modo() === 'crear') {
           <form [formGroup]="crearForm" (ngSubmit)="guardarNuevo()" class="formulario" id="form-activo">
             <div class="formulario-fila">
-              <ion-input formControlName="firstname" label="Nombre" labelPlacement="stacked" fill="outline"
-                errorText="Obligatorio." [class.ion-touched]="crearForm.controls.firstname.touched"
+              <ion-input formControlName="firstname" [label]="'Nombre' | t" labelPlacement="stacked" fill="outline"
+                [errorText]="'Obligatorio.' | t" [class.ion-touched]="crearForm.controls.firstname.touched"
               [class.ion-invalid]="crearForm.controls.firstname.invalid"></ion-input>
-              <ion-input formControlName="lastname" label="Apellidos" labelPlacement="stacked" fill="outline"
-                errorText="Obligatorio." [class.ion-touched]="crearForm.controls.lastname.touched"
+              <ion-input formControlName="lastname" [label]="'Apellidos' | t" labelPlacement="stacked" fill="outline"
+                [errorText]="'Obligatorio.' | t" [class.ion-touched]="crearForm.controls.lastname.touched"
               [class.ion-invalid]="crearForm.controls.lastname.invalid"></ion-input>
             </div>
-            <ion-input formControlName="username" label="Nombre de usuario" labelPlacement="stacked" fill="outline"
-              autocomplete="off" helperText="Entre 3 y 50 caracteres: letras, números, punto, guion o guion bajo."
-              errorText="Entre 3 y 50 caracteres: letras, números, punto, guion o guion bajo."
+            <ion-input formControlName="username" [label]="'Nombre de usuario' | t" labelPlacement="stacked" fill="outline"
+              autocomplete="off" [helperText]="'Entre 3 y 50 caracteres: letras, números, punto, guion o guion bajo.' | t"
+              [errorText]="'Entre 3 y 50 caracteres: letras, números, punto, guion o guion bajo.' | t"
               [class.ion-touched]="crearForm.controls.username.touched"
             [class.ion-invalid]="crearForm.controls.username.invalid"></ion-input>
             <div class="formulario-fila">
-              <ion-input formControlName="email" type="email" label="Correo (opcional)" labelPlacement="stacked" fill="outline"
-                helperText="Permite iniciar sesión con él." errorText="Correo no válido."
+              <ion-input formControlName="email" type="email" [label]="'Correo (opcional)' | t" labelPlacement="stacked" fill="outline"
+                [helperText]="'Permite iniciar sesión con él.' | t" [errorText]="'Correo no válido.' | t"
                 [class.ion-touched]="crearForm.controls.email.touched"
               [class.ion-invalid]="crearForm.controls.email.invalid"></ion-input>
-              <ion-input formControlName="country" label="País (opcional)" labelPlacement="stacked" fill="outline"></ion-input>
+              <ion-input formControlName="country" [label]="'País (opcional)' | t" labelPlacement="stacked" fill="outline"></ion-input>
             </div>
             <div class="formulario-fila">
-              <ion-select formControlName="role" label="Rol" labelPlacement="stacked" fill="outline" interface="popover">
+              <ion-select formControlName="role" [label]="'Rol' | t" labelPlacement="stacked" fill="outline" interface="popover">
                 @for (r of roles; track r) {
                   <ion-select-option [value]="r">{{ nombreRol[r] }}</ion-select-option>
                 }
               </ion-select>
-              <ion-select formControlName="areaSaludId" label="Área de salud" labelPlacement="stacked" fill="outline"
-                interface="popover" placeholder="Selecciona un área">
+              <ion-select formControlName="areaSaludId" [label]="'Área de salud' | t" labelPlacement="stacked" fill="outline"
+                interface="popover" [placeholder]="'Selecciona un área' | t">
                 @if (crearForm.controls.role.value !== 'MEDICO') {
-                  <ion-select-option [value]="null">Sin área</ion-select-option>
+                  <ion-select-option [value]="null">{{ 'Sin área' | t }}</ion-select-option>
                 }
                 @for (a of areasActivas(); track a) {
                   <ion-select-option [value]="a.id">{{ a.nombre }} ({{ a.codigo }})</ion-select-option>
@@ -161,17 +161,17 @@
               </ion-select>
             </div>
             <p class="formulario-nota" [class.texto-error]="crearForm.hasError('areaObligatoria') && crearForm.touched">
-              El médico necesita un área de salud activa: solo verá los pacientes y casos de esa área.
+              {{ 'El médico necesita un área de salud activa: solo verá los pacientes y casos de esa área.' | t }}
             </p>
             <div class="formulario-fila">
-              <ion-input formControlName="password" type="password" label="Contraseña" labelPlacement="stacked" fill="outline"
-                autocomplete="new-password" [errorText]="'Mínimo ' + minPassword + ' caracteres.'"
+              <ion-input formControlName="password" type="password" [label]="'Contraseña' | t" labelPlacement="stacked" fill="outline"
+                autocomplete="new-password" [errorText]="'Mínimo {p0} caracteres.' | t: { p0: minPassword }"
                 [class.ion-touched]="crearForm.controls.password.touched"
                 [class.ion-invalid]="crearForm.controls.password.invalid">
                 <ion-input-password-toggle slot="end"></ion-input-password-toggle>
               </ion-input>
-              <ion-input formControlName="confirmar" type="password" label="Repite la contraseña" labelPlacement="stacked"
-                fill="outline" autocomplete="new-password" errorText="Las contraseñas no coinciden."
+              <ion-input formControlName="confirmar" type="password" [label]="'Repite la contraseña' | t" labelPlacement="stacked"
+                fill="outline" autocomplete="new-password" [errorText]="'Las contraseñas no coinciden.' | t"
                 [class.ion-touched]="crearForm.controls.confirmar.touched"
               [class.ion-invalid]="crearForm.controls.confirmar.invalid || crearForm.hasError('distintas')"></ion-input>
             </div>
@@ -181,26 +181,26 @@
         <!-- Rol, área y estado -->
         @if (modo() === 'acceso') {
           <form [formGroup]="accesoForm" (ngSubmit)="guardarAcceso()" class="formulario" id="form-activo">
-            <ion-select formControlName="role" label="Rol" labelPlacement="stacked" fill="outline" interface="popover">
+            <ion-select formControlName="role" [label]="'Rol' | t" labelPlacement="stacked" fill="outline" interface="popover">
               @for (r of roles; track r) {
                 <ion-select-option [value]="r">{{ nombreRol[r] }}</ion-select-option>
               }
             </ion-select>
-            <ion-select formControlName="areaSaludId" label="Área de salud" labelPlacement="stacked" fill="outline"
-              interface="popover" placeholder="Selecciona un área">
+            <ion-select formControlName="areaSaludId" [label]="'Área de salud' | t" labelPlacement="stacked" fill="outline"
+              interface="popover" [placeholder]="'Selecciona un área' | t">
               @if (accesoForm.controls.role.value !== 'MEDICO') {
-                <ion-select-option [value]="null">Sin área</ion-select-option>
+                <ion-select-option [value]="null">{{ 'Sin área' | t }}</ion-select-option>
               }
               @for (a of areasActivas(); track a) {
                 <ion-select-option [value]="a.id">{{ a.nombre }} ({{ a.codigo }})</ion-select-option>
               }
             </ion-select>
             <p class="formulario-nota" [class.texto-error]="accesoForm.hasError('areaObligatoria')">
-              El médico necesita un área de salud activa.
+              {{ 'El médico necesita un área de salud activa.' | t }}
             </p>
             @if (!esYo(seleccionado()!)) {
               <ion-toggle formControlName="activo" labelPlacement="start" justify="space-between">
-                Cuenta activa
+                {{ 'Cuenta activa' | t }}
               </ion-toggle>
             }
           </form>
@@ -209,28 +209,28 @@
         <!-- Correo -->
         @if (modo() === 'email') {
           <form [formGroup]="emailForm" (ngSubmit)="guardarEmail()" class="formulario" id="form-activo">
-            <ion-input formControlName="email" type="email" label="Correo electrónico" labelPlacement="stacked" fill="outline"
-              placeholder="nombre@correo.com" errorText="Correo no válido."
+            <ion-input formControlName="email" type="email" [label]="'Correo electrónico' | t" labelPlacement="stacked" fill="outline"
+              [placeholder]="'nombre@correo.com' | t" [errorText]="'Correo no válido.' | t"
               [class.ion-touched]="emailForm.controls.email.touched"
             [class.ion-invalid]="emailForm.controls.email.invalid"></ion-input>
-            <p class="formulario-nota">Déjalo vacío para quitar el correo. Debe ser único: no puede usarlo otro usuario.</p>
+            <p class="formulario-nota">{{ 'Déjalo vacío para quitar el correo. Debe ser único: no puede usarlo otro usuario.' | t }}</p>
           </form>
         }
 
         <!-- Contraseña -->
         @if (modo() === 'password') {
           <form [formGroup]="passwordForm" (ngSubmit)="guardarPassword()" class="formulario" id="form-activo">
-            <ion-input formControlName="password" type="password" label="Nueva contraseña" labelPlacement="stacked"
-              fill="outline" autocomplete="new-password" [errorText]="'Mínimo ' + minPassword + ' caracteres.'"
+            <ion-input formControlName="password" type="password" [label]="'Nueva contraseña' | t" labelPlacement="stacked"
+              fill="outline" autocomplete="new-password" [errorText]="'Mínimo {p0} caracteres.' | t: { p0: minPassword }"
               [class.ion-touched]="passwordForm.controls.password.touched"
               [class.ion-invalid]="passwordForm.controls.password.invalid">
               <ion-input-password-toggle slot="end"></ion-input-password-toggle>
             </ion-input>
-            <ion-input formControlName="confirmar" type="password" label="Repite la contraseña" labelPlacement="stacked"
-              fill="outline" autocomplete="new-password" errorText="Las contraseñas no coinciden."
+            <ion-input formControlName="confirmar" type="password" [label]="'Repite la contraseña' | t" labelPlacement="stacked"
+              fill="outline" autocomplete="new-password" [errorText]="'Las contraseñas no coinciden.' | t"
               [class.ion-touched]="passwordForm.controls.confirmar.touched"
             [class.ion-invalid]="passwordForm.controls.confirmar.invalid || passwordForm.hasError('distintas')"></ion-input>
-            <p class="formulario-nota">Comunícasela al usuario por un canal seguro.</p>
+            <p class="formulario-nota">{{ 'Comunícasela al usuario por un canal seguro.' | t }}</p>
           </form>
         }
       </div>
@@ -238,13 +238,13 @@
       <ion-footer>
         <ion-toolbar>
           <ion-buttons slot="end">
-            <ion-button color="medium" (click)="cerrar()">Cancelar</ion-button>
+            <ion-button color="medium" (click)="cerrar()">{{ 'Cancelar' | t }}</ion-button>
             <ion-button fill="solid" color="primary" type="submit" form="form-activo" [disabled]="guardando()">
               @if (guardando()) {
                 <ion-spinner name="crescent"></ion-spinner>
               }
               @if (!guardando()) {
-                <span>Guardar</span>
+                <span>{{ 'Guardar' | t }}</span>
               }
             </ion-button>
           </ion-buttons>

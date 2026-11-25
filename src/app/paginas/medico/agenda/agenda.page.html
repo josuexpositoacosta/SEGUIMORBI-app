@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Agenda de controles</ion-title>
+    <ion-title>{{ 'Agenda de controles' | t }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,20 +14,20 @@
 
   <div class="page-container">
     <header class="cabecera">
-      <h1>Agenda de controles</h1>
+      <h1>{{ 'Agenda de controles' | t }}</h1>
     </header>
     <div class="tarjeta filtros">
       <div class="filtros-fila">
         <div class="segmento" role="group">
-          <button type="button" [class.activo]="horizonte() === 0" [attr.aria-pressed]="horizonte() === 0" (click)="cambiarHorizonte(0)">Hoy</button>
-          <button type="button" [class.activo]="horizonte() === 7" [attr.aria-pressed]="horizonte() === 7" (click)="cambiarHorizonte(7)">7 días</button>
-          <button type="button" [class.activo]="horizonte() === 30" [attr.aria-pressed]="horizonte() === 30" (click)="cambiarHorizonte(30)">30 días</button>
+          <button type="button" [class.activo]="horizonte() === 0" [attr.aria-pressed]="horizonte() === 0" (click)="cambiarHorizonte(0)">{{ 'Hoy' | t }}</button>
+          <button type="button" [class.activo]="horizonte() === 7" [attr.aria-pressed]="horizonte() === 7" (click)="cambiarHorizonte(7)">{{ '7 días' | t }}</button>
+          <button type="button" [class.activo]="horizonte() === 30" [attr.aria-pressed]="horizonte() === 30" (click)="cambiarHorizonte(30)">{{ '30 días' | t }}</button>
         </div>
       </div>
     </div>
 
     <p class="resumen-lista">
-      Controles programados en los planes y seguimientos de los casos abiertos. Los vencidos aparecen siempre.
+      {{ 'Controles programados en los planes y seguimientos de los casos abiertos. Los vencidos aparecen siempre.' | t }}
     </p>
 
     @if (cargando()) {
@@ -36,14 +36,14 @@
 
     @if (!cargando() && errorCarga()) {
       <app-estado-vacio icono="cloud-offline-outline"
-        titulo="No se pudo cargar la agenda" [texto]="errorCarga()">
-        <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+        [titulo]="'No se pudo cargar la agenda' | t" [texto]="errorCarga()">
+        <ion-button fill="outline" (click)="cargar()">{{ 'Reintentar' | t }}</ion-button>
       </app-estado-vacio>
     }
 
     @if (!cargando() && !errorCarga() && !grupos().length) {
       <app-estado-vacio icono="calendar-outline"
-      titulo="Sin controles pendientes" texto="No hay controles programados en este periodo."></app-estado-vacio>
+      [titulo]="'Sin controles pendientes' | t" [texto]="'No hay controles programados en este periodo.' | t"></app-estado-vacio>
     }
 
     @for (g of grupos(); track g) {
@@ -55,7 +55,7 @@
         <div class="lista-registros">
           @for (c of g.controles; track c) {
             <button type="button" class="registro" (click)="abrir(c)"
-              [attr.aria-label]="'Abrir caso ' + c.casoId + ' de ' + nombrePaciente(c)">
+              [attr.aria-label]="'Abrir caso {p0} de {p1}' | t: { p0: c.casoId, p1: nombrePaciente(c) }">
               <div class="registro-icono fecha-control" [class.vencido]="c.vencido" aria-hidden="true">
                 <span class="dia">{{ c.fecha | date: 'dd' }}</span>
                 <span class="mes">{{ c.fecha | date: 'MMM' }}</span>
@@ -63,14 +63,14 @@
               <div class="registro-cuerpo">
                 <div class="registro-titulo">{{ nombrePaciente(c) }}</div>
                 <div class="registro-detalle">
-                  Caso nº {{ c.casoId }}@if (telefono(c)) {
+                  {{ 'Caso nº {p0}' | t: { p0: (c.casoId) } }}@if (telefono(c)) {
                   · {{ telefono(c) }}
                 }
               </div>
               <div class="registro-etiquetas">
                 <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c) }}</span>
                 @if (c.vencido) {
-                  <span class="etiqueta peligro">Vencido hace {{ diasRetraso(c) }} día{{ diasRetraso(c) === 1 ? '' : 's' }}</span>
+                  <span class="etiqueta peligro">{{ diasRetraso(c) === 1 ? ('Vencido hace 1 día' | t) : ('Vencido hace {p0} días' | t: { p0: diasRetraso(c) }) }}</span>
                 }
               </div>
             </div>

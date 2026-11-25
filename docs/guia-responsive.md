@@ -12,6 +12,8 @@ pasa `npm run revisar:responsive`.
 npm run revisar:responsive                       # médico y epidemióloga
 ADMIN_PASSWORD=… npm run revisar:responsive      # también administración
 CAPTURAS=/tmp/capturas npm run revisar:responsive  # y guarda una captura de cada pantalla y ancho
+MEDICO_USUARIO=medico.norte EPI_USUARIO= npm run revisar:responsive  # otro médico; sin epidemiólogo
+IDIOMA=en npm run revisar:responsive              # con la interfaz en inglés (los textos miden distinto)
 ```
 
 Abre cada pantalla con cada rol en 360, 390, 768 y 1024 px y falla si el contenido es más ancho que la ventana,
@@ -68,5 +70,7 @@ Usa siempre estos mismos cortes en `@media (max-width: …)`.
    clase `modal-formulario`, que ocupa todo el ancho en el móvil y desplaza su contenido si no cabe en alto.
 9. **Barras que se desplazan solas** (pestañas, segmentos) llevan `overflow-x: auto` y botones con
    `flex-shrink: 0; white-space: nowrap`.
-10. **Prueba en los tres tamaños** antes de dar la pantalla por terminada: `npm run revisar:responsive` y un
+10. **Los textos cambian de longitud con el idioma**: nada que dependa de que un texto quepa en una línea. Las
+    etiquetas de `ion-toggle` e `ion-checkbox` ya se parten solas (estilo global). Revisa también con `IDIOMA=en`.
+11. **Prueba en los tres tamaños** antes de dar la pantalla por terminada: `npm run revisar:responsive` y un
     vistazo a las capturas.
