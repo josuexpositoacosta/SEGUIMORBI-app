@@ -3,6 +3,31 @@
 Cambios de cada versión del frontend de SEGUIMORBI. Formato: [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/);
 versiones: [SemVer](https://semver.org/lang/es/).
 
+## v1.2.0 — 2026-11-25
+
+### Nuevo
+
+- **Español e inglés**: selector ES / EN en el login y en el menú lateral. Se traduce toda la interfaz (menús,
+  pantallas, formularios, avisos y nombres clínicos) y también el formato de fechas y números. Por defecto, español.
+- **Colores de la Organización Panamericana de la Salud (OPS)**: azul marino en el menú y los paneles, azul OPS en
+  los acentos. Los colores de las clasificaciones clínicas no cambian.
+- **Nuevo inicio de sesión** en una columna: tarjeta con el formulario, ayuda para recuperar el usuario o la
+  contraseña y un panel con lo que ofrece la app.
+- Tipografía Geist en toda la app.
+
+### Arreglado
+
+- Las etiquetas largas de interruptores y casillas se parten en varias líneas en lugar de salirse de la pantalla.
+
+### Técnico
+
+- `npm run revisar:traducciones` (también en la CI) falla si un texto no tiene traducción al inglés.
+- La revisión responsive admite `IDIOMA=en` y otros usuarios de demo.
+
+### Límite conocido
+
+- Los textos que genera el servidor (alertas clínicas, criterios de la OPS, errores de la API) siguen en español.
+
 ## v1.1.1 — 2026-11-24
 
 ### Arreglado
