@@ -15,69 +15,69 @@
     </div>
     <dl class="data-grid">
       <div>
-        <dt>Usuario</dt>
+        <dt>{{ 'Usuario' | t }}</dt>
         <dd>{{ u.username }}</dd>
       </div>
       <div>
-        <dt>Correo</dt>
+        <dt>{{ 'Correo' | t }}</dt>
         <dd>{{ u.email || 'Sin correo asignado' }}</dd>
       </div>
       <div>
-        <dt>País</dt>
+        <dt>{{ 'País' | t }}</dt>
         <dd>{{ u.country || '—' }}</dd>
       </div>
       @if (u.areaSaludId) {
         <div>
-          <dt>Área de salud</dt>
-          <dd>{{ area() ?? 'Cargando…' }}</dd>
+          <dt>{{ 'Área de salud' | t }}</dt>
+          <dd>{{ area() ?? ('Cargando…' | t) }}</dd>
         </div>
       }
     </dl>
     <ion-button fill="outline" (click)="editar()">
       <ion-icon slot="start" name="create-outline"></ion-icon>
-      Editar datos
+      {{ 'Editar datos' | t }}
     </ion-button>
   }
   @if (editMode) {
     <form [formGroup]="form" (ngSubmit)="guardar()" class="form">
       <ion-input
         formControlName="firstname"
-        label="Nombre"
+        [label]="'Nombre' | t"
         labelPlacement="stacked"
         fill="outline"
         autocomplete="given-name"
-        errorText="El nombre es obligatorio."
+        [errorText]="'El nombre es obligatorio.' | t"
         [class.ion-touched]="firstname.touched"
         [class.ion-invalid]="firstname.invalid">
       </ion-input>
       <ion-input
         formControlName="lastname"
-        label="Apellidos"
+        [label]="'Apellidos' | t"
         labelPlacement="stacked"
         fill="outline"
         autocomplete="family-name"
-        errorText="Los apellidos son obligatorios."
+        [errorText]="'Los apellidos son obligatorios.' | t"
         [class.ion-touched]="lastname.touched"
         [class.ion-invalid]="lastname.invalid">
       </ion-input>
       <ion-input
         formControlName="country"
-        label="País"
+        [label]="'País' | t"
         labelPlacement="stacked"
         fill="outline"
         autocomplete="country-name">
       </ion-input>
-      <p class="nota text-muted">El usuario, el correo, el rol y el área los gestiona el administrador.</p>
+      <p class="nota text-muted">{{ 'El usuario, el correo, el rol y el área los gestiona el administrador.' | t }}</p>
       <div class="actions">
         <ion-button type="submit" [disabled]="guardando">
           @if (guardando) {
             <ion-spinner name="crescent"></ion-spinner>
           }
           @if (!guardando) {
-            <span>Guardar</span>
+            <span>{{ 'Guardar' | t }}</span>
           }
         </ion-button>
-        <ion-button type="button" fill="clear" color="medium" (click)="cancelar()">Cancelar</ion-button>
+        <ion-button type="button" fill="clear" color="medium" (click)="cancelar()">{{ 'Cancelar' | t }}</ion-button>
       </div>
     </form>
   }

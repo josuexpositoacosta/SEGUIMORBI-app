@@ -1,9 +1,10 @@
+import { t } from 'src/app/core/i18n/idioma';
 export type Rol = 'ADMIN' | 'MEDICO' | 'EPIDEMIOLOGO';
 
 export const NOMBRE_ROL: Record<Rol, string> = {
-  ADMIN: 'Administrador',
-  MEDICO: 'Médico',
-  EPIDEMIOLOGO: 'Epidemiólogo',
+  ADMIN: t('Administrador'),
+  MEDICO: t('Médico'),
+  EPIDEMIOLOGO: t('Epidemiólogo'),
 };
 
 /** Perfil del usuario autenticado (GET /api/v1/user/me). */

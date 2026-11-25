@@ -1,3 +1,4 @@
+import { t } from 'src/app/core/i18n/idioma';
 /** Fecha de hoy en formato AAAA-MM-DD (hora local). */
 export function hoyIso(): string {
   const d = new Date();
@@ -25,9 +26,9 @@ export function textoEdad(fechaNacimiento: string | null | undefined): string {
     return '';
   }
   if (e < 1) {
-    return 'menos de 1 año';
+    return t('menos de 1 año');
   }
-  return e === 1 ? '1 año' : `${e} años`;
+  return e === 1 ? t('1 año') : t('{p0} años', { p0: e });
 }
 
 /** Suma días a una fecha AAAA-MM-DD (hora local). */

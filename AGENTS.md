@@ -18,10 +18,23 @@ Lo esencial:
 - Una pantalla nueva no está terminada hasta que pasa **`npm run revisar:responsive`** (con la API local y los datos
   de demo). Añade su ruta, y sus formularios si los tiene, a `ROLES` en `scripts/revisar-responsive.mjs`.
 
+## Idiomas: español e inglés (obligatorio)
+
+Todo texto visible se escribe en español y se marca para traducir: `{{ 'Texto' | t }}` en plantillas, `t('Texto')` en
+código, con huecos para los datos (`'Caso nº {p0}' | t: { p0: id }`). Su traducción va en
+`src/app/core/i18n/traducciones.en.ts`. Nada de frases pegadas con `+` ni plurales a mano. Detalle en
+**`docs/guia-i18n.md`**. `npm run revisar:traducciones` falla si falta alguna traducción.
+
+## Colores
+
+Paleta de la OPS (`src/theme/variables.scss`): azul marino `#00205C` (menú, paneles), azul OPS `#1D9ADD` (acentos)
+y azul `#0072BC` (botones y enlaces). Los colores clínicos `--estado-*` no se cambian.
+
 ## Comprobaciones antes de cada commit
 
 ```bash
 npm run lint
+npm run revisar:traducciones
 npm run test:ci
 npm run revisar:responsive   # si cambias pantallas o estilos
 ```

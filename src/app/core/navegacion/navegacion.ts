@@ -1,12 +1,13 @@
 import { Rol } from '../models/usuario';
+import { t } from 'src/app/core/i18n/idioma';
 
 export type Seccion = 'general' | 'administracion' | 'clinica' | 'vigilancia';
 
 export const NOMBRE_SECCION: Record<Seccion, string> = {
-  general: 'General',
-  administracion: 'Administración',
-  clinica: 'Atención clínica',
-  vigilancia: 'Vigilancia epidemiológica',
+  general: t('General'),
+  administracion: t('Administración'),
+  clinica: t('Atención clínica'),
+  vigilancia: t('Vigilancia epidemiológica'),
 };
 
 /** Una pantalla de la app: alimenta el menú, los accesos de Inicio y el control de acceso. */
@@ -26,16 +27,16 @@ export interface Pantalla {
 export const PANTALLAS: Pantalla[] = [
   {
     ruta: 'inicio',
-    titulo: 'Inicio',
-    descripcion: 'Resumen y accesos rápidos',
+    titulo: t('Inicio'),
+    descripcion: t('Resumen y accesos rápidos'),
     icono: 'home',
     seccion: 'general',
     roles: [],
   },
   {
     ruta: 'perfil',
-    titulo: 'Mi perfil',
-    descripcion: 'Tus datos personales y de acceso',
+    titulo: t('Mi perfil'),
+    descripcion: t('Tus datos personales y de acceso'),
     icono: 'person-circle',
     seccion: 'general',
     roles: [],
@@ -44,24 +45,24 @@ export const PANTALLAS: Pantalla[] = [
   // ADMIN: usuarios, áreas de salud y catálogos (sin datos clínicos)
   {
     ruta: 'admin/usuarios',
-    titulo: 'Usuarios',
-    descripcion: 'Altas, roles, áreas y contraseñas',
+    titulo: t('Usuarios'),
+    descripcion: t('Altas, roles, áreas y contraseñas'),
     icono: 'people',
     seccion: 'administracion',
     roles: ['ADMIN'],
   },
   {
     ruta: 'admin/areas-salud',
-    titulo: 'Áreas de salud',
-    descripcion: 'Policlínicos y áreas que atienden casos',
+    titulo: t('Áreas de salud'),
+    descripcion: t('Policlínicos y áreas que atienden casos'),
     icono: 'business',
     seccion: 'administracion',
     roles: ['ADMIN'],
   },
   {
     ruta: 'admin/desenlaces',
-    titulo: 'Desenlaces',
-    descripcion: 'Catálogo de desenlaces de los casos',
+    titulo: t('Desenlaces'),
+    descripcion: t('Catálogo de desenlaces de los casos'),
     icono: 'list',
     seccion: 'administracion',
     roles: ['ADMIN'],
@@ -70,24 +71,24 @@ export const PANTALLAS: Pantalla[] = [
   // MEDICO: pacientes, casos y atención clínica de su área
   {
     ruta: 'pacientes',
-    titulo: 'Pacientes',
-    descripcion: 'Pacientes de tu área de salud',
+    titulo: t('Pacientes'),
+    descripcion: t('Pacientes de tu área de salud'),
     icono: 'people-circle',
     seccion: 'clinica',
     roles: ['MEDICO'],
   },
   {
     ruta: 'casos',
-    titulo: 'Casos',
-    descripcion: 'Casos de fiebre de Oropouche',
+    titulo: t('Casos'),
+    descripcion: t('Casos de fiebre de Oropouche'),
     icono: 'medkit',
     seccion: 'clinica',
     roles: ['MEDICO', 'EPIDEMIOLOGO'],
   },
   {
     ruta: 'agenda',
-    titulo: 'Agenda de controles',
-    descripcion: 'Seguimientos programados',
+    titulo: t('Agenda de controles'),
+    descripcion: t('Seguimientos programados'),
     icono: 'calendar',
     seccion: 'clinica',
     roles: ['MEDICO'],
@@ -96,16 +97,16 @@ export const PANTALLAS: Pantalla[] = [
   // EPIDEMIOLOGO: todas las áreas, validación y vigilancia
   {
     ruta: 'validaciones',
-    titulo: 'Validaciones',
-    descripcion: 'Clasificaciones pendientes de validar',
+    titulo: t('Validaciones'),
+    descripcion: t('Clasificaciones pendientes de validar'),
     icono: 'checkmark-done-circle',
     seccion: 'vigilancia',
     roles: ['EPIDEMIOLOGO'],
   },
   {
     ruta: 'vigilancia',
-    titulo: 'Panel de vigilancia',
-    descripcion: 'Indicadores, curva epidémica y áreas',
+    titulo: t('Panel de vigilancia'),
+    descripcion: t('Indicadores, curva epidémica y áreas'),
     icono: 'stats-chart',
     seccion: 'vigilancia',
     roles: ['EPIDEMIOLOGO'],

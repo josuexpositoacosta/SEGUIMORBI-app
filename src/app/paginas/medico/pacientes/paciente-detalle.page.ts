@@ -13,10 +13,12 @@ import { abrirFormularioCaso } from 'src/app/paginas/casos/caso-formulario.compo
 import { AreaSaludService } from 'src/app/core/services/area-salud.service';
 import { PacienteService } from 'src/app/core/services/paciente.service';
 import { abrirFormularioPaciente } from './paciente-formulario.component';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 @Component({
   selector: 'app-paciente-detalle',
-  imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
+  imports: [TraducirPipe, CommonModule, IonicModule, EstadoVacioComponent, DatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './paciente-detalle.page.html',
 })
@@ -88,7 +90,7 @@ export class PacienteDetallePage implements OnInit {
     }
     const creado = await abrirFormularioCaso(this.modales, p);
     if (creado) {
-      this.avisos.exito(`Caso nº ${creado.id} registrado como ${this.nombreClasificacion(creado.clasificacion)}`);
+      this.avisos.exito(t('Caso nº {p0} registrado como {p1}', { p0: creado.id, p1: this.nombreClasificacion(creado.clasificacion) }));
       this.router.navigate(['/casos', creado.id]);
     }
   }
@@ -129,9 +131,9 @@ export class PacienteDetallePage implements OnInit {
       return;
     }
     const ok = await this.avisos.confirmar({
-      titulo: 'Desactivar paciente',
-      mensaje: `${p.nombres} ${p.apellidos} dejará de aparecer entre los pacientes activos. Sus datos y casos se conservan y podrás volver a activarlo.`,
-      confirmar: 'Desactivar',
+      titulo: t('Desactivar paciente'),
+      mensaje: t('{p0} dejará de aparecer entre los pacientes activos. Sus datos y casos se conservan y podrás volver a activarlo.', { p0: `${p.nombres} ${p.apellidos}` }),
+      confirmar: t('Desactivar'),
       peligro: true,
     });
     if (!ok) {

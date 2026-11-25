@@ -8,6 +8,8 @@ import { normalizar } from 'src/app/compartido/texto';
 import { mensajeDeError } from 'src/app/core/http/errores';
 import { Desenlace } from 'src/app/core/models/admin';
 import { DesenlaceService } from 'src/app/core/services/desenlace.service';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 type Filtro = 'activos' | 'inactivos' | 'todos';
 
@@ -23,7 +25,7 @@ function codigoValido(control: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-desenlaces',
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent],
+  imports: [TraducirPipe, CommonModule, ReactiveFormsModule, IonicModule, EstadoVacioComponent],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './desenlaces.page.html',
 })
@@ -86,11 +88,11 @@ export class DesenlacesPage implements OnInit {
       header: d.nombre,
       subHeader: d.codigo,
       buttons: [
-        { text: 'Cambiar nombre', icon: 'create-outline', handler: () => this.abrir(d) },
+        { text: t('Cambiar nombre'), icon: 'create-outline', handler: () => this.abrir(d) },
         d.activo
-          ? { text: 'Desactivar', icon: 'ban-outline', role: 'destructive', handler: () => { this.cambiarEstado(d, false); } }
-          : { text: 'Activar', icon: 'checkmark-circle-outline', handler: () => { this.cambiarEstado(d, true); } },
-        { text: 'Cancelar', role: 'cancel', icon: 'close' },
+          ? { text: t('Desactivar'), icon: 'ban-outline', role: 'destructive', handler: () => { this.cambiarEstado(d, false); } }
+          : { text: t('Activar'), icon: 'checkmark-circle-outline', handler: () => { this.cambiarEstado(d, true); } },
+        { text: t('Cancelar'), role: 'cancel', icon: 'close' },
       ],
     });
     await hoja.present();
@@ -131,7 +133,7 @@ export class DesenlacesPage implements OnInit {
         this.guardando.set(false);
         this.desenlaces.update(lista => actual ? lista.map(x => (x.id === d.id ? d : x)) : [...lista, d]);
         this.cerrar();
-        this.avisos.exito(actual ? 'Nombre actualizado' : `Desenlace ${d.codigo} creado`);
+        this.avisos.exito(actual ? t('Nombre actualizado') : t('Desenlace {p0} creado', { p0: d.codigo }));
       },
       error: (e: unknown) => {
         this.guardando.set(false);
@@ -143,9 +145,9 @@ export class DesenlacesPage implements OnInit {
   private async cambiarEstado(d: Desenlace, activo: boolean): Promise<void> {
     if (!activo) {
       const ok = await this.avisos.confirmar({
-        titulo: 'Desactivar desenlace',
-        mensaje: `«${d.nombre}» dejará de ofrecerse al cerrar casos. Los casos ya cerrados con él no cambian.`,
-        confirmar: 'Desactivar',
+        titulo: t('Desactivar desenlace'),
+        mensaje: t('«{p0}» dejará de ofrecerse al cerrar casos. Los casos ya cerrados con él no cambian.', { p0: d.nombre }),
+        confirmar: t('Desactivar'),
         peligro: true,
       });
       if (!ok) {
@@ -155,7 +157,7 @@ export class DesenlacesPage implements OnInit {
     this.api.cambiarEstado(d.id, activo).subscribe({
       next: actualizado => {
         this.desenlaces.update(lista => lista.map(x => (x.id === actualizado.id ? actualizado : x)));
-        this.avisos.exito(activo ? 'Desenlace activado' : 'Desenlace desactivado');
+        this.avisos.exito(activo ? t('Desenlace activado') : t('Desenlace desactivado'));
       },
       error: e => this.avisos.error(e),
     });

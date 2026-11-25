@@ -10,6 +10,8 @@ import { CLASIFICACIONES, ControlPendiente, claseClasificacion, nombreDe } from 
 import { Paciente } from 'src/app/core/models/paciente';
 import { CasoService } from 'src/app/core/services/caso.service';
 import { PacienteService } from 'src/app/core/services/paciente.service';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 type Horizonte = 0 | 7 | 30;
 
@@ -22,7 +24,7 @@ interface Grupo {
 /** Controles programados en los planes y seguimientos de los casos abiertos del área. */
 @Component({
   selector: 'app-agenda',
-  imports: [CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
+  imports: [TraducirPipe, CommonModule, IonicModule, EstadoVacioComponent, DatePipe],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './agenda.page.html',
 })
@@ -42,9 +44,9 @@ export class AgendaPage implements OnInit {
     const hoy = hoyIso();
     const lista = [...this.controles()].sort((a, b) => a.fecha.localeCompare(b.fecha));
     return [
-      { titulo: 'Vencidos', clase: 'peligro', controles: lista.filter(c => c.vencido) },
-      { titulo: 'Hoy', clase: 'primaria', controles: lista.filter(c => !c.vencido && c.fecha === hoy) },
-      { titulo: 'Próximos', clase: '', controles: lista.filter(c => !c.vencido && c.fecha > hoy) },
+      { titulo: t('Vencidos'), clase: 'peligro', controles: lista.filter(c => c.vencido) },
+      { titulo: t('Hoy'), clase: 'primaria', controles: lista.filter(c => !c.vencido && c.fecha === hoy) },
+      { titulo: t('Próximos'), clase: '', controles: lista.filter(c => !c.vencido && c.fecha > hoy) },
     ].filter(g => g.controles.length);
   });
 
@@ -85,7 +87,7 @@ export class AgendaPage implements OnInit {
 
   nombrePaciente(c: ControlPendiente): string {
     const p = this.pacientes().get(c.pacienteId);
-    return p ? `${p.apellidos}, ${p.nombres}` : `Paciente ${c.pacienteId}`;
+    return p ? `${p.apellidos}, ${p.nombres}` : t('Paciente {p0}', { p0: c.pacienteId });
   }
 
   telefono(c: ControlPendiente): string {

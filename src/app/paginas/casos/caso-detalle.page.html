@@ -3,16 +3,16 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/casos" text="Casos"></ion-back-button>
     </ion-buttons>
-    <ion-title>Caso nº {{ caso()?.id }}</ion-title>
+    <ion-title>{{ 'Caso nº {p0}' | t: { p0: (caso()?.id) } }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class="page-container ancho">
-    <nav class="migas ion-hide-lg-down" aria-label="Ruta">
-      <a routerLink="/casos"><ion-icon name="folder-open-outline" aria-hidden="true"></ion-icon>Casos</a>
+    <nav class="migas ion-hide-lg-down" [attr.aria-label]="'Ruta' | t">
+      <a routerLink="/casos"><ion-icon name="folder-open-outline" aria-hidden="true"></ion-icon>{{ 'Casos' | t }}</a>
       <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon>
-      <span>Caso nº {{ caso()?.id }}</span>
+      <span>{{ 'Caso nº {p0}' | t: { p0: (caso()?.id) } }}</span>
     </nav>
 
     @if (cargando()) {
@@ -21,8 +21,8 @@
 
     @if (!cargando() && error()) {
       <app-estado-vacio icono="alert-circle-outline"
-        titulo="No se pudo abrir el caso" [texto]="error()">
-        <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+        [titulo]="'No se pudo abrir el caso' | t" [texto]="error()">
+        <ion-button fill="outline" (click)="cargar()">{{ 'Reintentar' | t }}</ion-button>
       </app-estado-vacio>
     }
 
@@ -31,9 +31,9 @@
       <section class="tarjeta ficha-cabecera">
         <div class="ficha-identidad">
           <div class="ficha-titulo">
-            <h1>Caso nº {{ c.id }}</h1>
+            <h1>{{ 'Caso nº {p0}' | t: { p0: (c.id) } }}</h1>
             <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombre(clasificaciones, c.clasificacion) }}</span>
-            <span class="etiqueta" [ngClass]="c.estado === 'ABIERTO' ? 'abierto' : ''">{{ c.estado === 'ABIERTO' ? 'Abierto' : 'Cerrado' }}</span>
+            <span class="etiqueta" [ngClass]="c.estado === 'ABIERTO' ? 'abierto' : ''">{{ c.estado === 'ABIERTO' ? ('Abierto' | t) : ('Cerrado' | t) }}</span>
           </div>
           <div class="ficha-datos">
             <span class="ficha-paciente">
@@ -41,10 +41,10 @@
               @if (paciente(); as p) {
                 <span><a [routerLink]="rol() === 'MEDICO' ? ['/pacientes', p.id] : null">{{ p.nombres }} {{ p.apellidos }}</a>{{ textoEdad(p.fechaNacimiento) ? ', ' + textoEdad(p.fechaNacimiento) : '' }}</span>
               } @else {
-                Paciente {{ c.pacienteId }}
+                {{ 'Paciente {p0}' | t: { p0: (c.pacienteId) } }}
               }
             </span>
-            <span>Inicio de síntomas: {{ c.fechaInicioSintomas | date: 'd MMM y' }}</span>
+            <span>{{ 'Inicio de síntomas: {p0}' | t: { p0: (c.fechaInicioSintomas | date: 'd MMM y') } }}</span>
             @if (c.estado === 'ABIERTO') {
               <span class="dia">{{ diaActual() }}</span>
             }
@@ -53,23 +53,23 @@
         <div class="ficha-acciones">
           @if (puedeEditar()) {
             <ion-button (click)="registrar('evaluacion')">
-              <ion-icon slot="start" name="pulse-outline" aria-hidden="true"></ion-icon>Añadir evaluación
+              <ion-icon slot="start" name="pulse-outline" aria-hidden="true"></ion-icon>{{ 'Añadir evaluación' | t }}
             </ion-button>
             <ion-button fill="outline" color="medium" (click)="abrir('resultado')">
-              <ion-icon slot="start" name="flask-outline" aria-hidden="true"></ion-icon>Añadir resultado
+              <ion-icon slot="start" name="flask-outline" aria-hidden="true"></ion-icon>{{ 'Añadir resultado' | t }}
             </ion-button>
             <ion-button fill="outline" color="medium" (click)="registrar('cierre')">
-              <ion-icon slot="start" name="lock-closed-outline" aria-hidden="true"></ion-icon>Cerrar caso
+              <ion-icon slot="start" name="lock-closed-outline" aria-hidden="true"></ion-icon>{{ 'Cerrar caso' | t }}
             </ion-button>
           }
           @if (c.estado === 'CERRADO' && rol() === 'MEDICO') {
             <ion-button fill="outline" (click)="registrar('reapertura')">
-              <ion-icon slot="start" name="lock-open-outline" aria-hidden="true"></ion-icon>Reabrir
+              <ion-icon slot="start" name="lock-open-outline" aria-hidden="true"></ion-icon>{{ 'Reabrir' | t }}
             </ion-button>
           }
           @if (puedeValidar()) {
             <ion-button (click)="validar()">
-              <ion-icon slot="start" name="shield-checkmark-outline" aria-hidden="true"></ion-icon>Validar clasificación
+              <ion-icon slot="start" name="shield-checkmark-outline" aria-hidden="true"></ion-icon>{{ 'Validar clasificación' | t }}
             </ion-button>
           }
         </div>
@@ -88,7 +88,7 @@
       }
 
       <!-- Pestañas -->
-      <div class="pestanas" role="tablist" aria-label="Secciones del caso">
+      <div class="pestanas" role="tablist" [attr.aria-label]="'Secciones del caso' | t">
         @for (t of pestanas; track t.id) {
           <button type="button" role="tab" [class.activa]="pestana() === t.id" [attr.aria-selected]="pestana() === t.id"
             (click)="pestana.set(t.id)">
@@ -109,9 +109,9 @@
             <!-- Clasificación OPS -->
             <section class="tarjeta bloque">
               <div class="bloque-cabecera">
-                <h2><ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon>Clasificación OPS</h2>
+                <h2><ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon>{{ 'Clasificación OPS' | t }}</h2>
                 <span class="etiqueta" [ngClass]="claseClasificacion(c.sugerencia.clasificacion)">
-                  {{ c.sugerencia.clasificacion ? nombre(clasificaciones, c.sugerencia.clasificacion) : 'No cumple' }}
+                  {{ c.sugerencia.clasificacion ? nombre(clasificaciones, c.sugerencia.clasificacion) : ('No cumple' | t) }}
                 </span>
               </div>
               <ul class="criterios">
@@ -125,14 +125,14 @@
               <p class="nota">
                 <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
                 @if (c.sugerencia.coincideConActual) {
-                  Sugerencia automática; coincide con la clasificación actual.
+                  {{ 'Sugerencia automática; coincide con la clasificación actual.' | t }}
                 } @else {
-                  Sugerencia automática, distinta de la actual ({{ nombre(clasificaciones, c.clasificacion) }}).
+                  {{ 'Sugerencia automática, distinta de la actual ({p0}).' | t: { p0: (nombre(clasificaciones, c.clasificacion)) } }}
                 }
               </p>
               @if (puedeClasificar()) {
                 <ion-button fill="clear" size="small" (click)="abrir('clasificacion')">
-                  <ion-icon slot="start" name="swap-horizontal-outline" aria-hidden="true"></ion-icon>Cambiar clasificación
+                  <ion-icon slot="start" name="swap-horizontal-outline" aria-hidden="true"></ion-icon>{{ 'Cambiar clasificación' | t }}
                 </ion-button>
               }
             </section>
@@ -140,38 +140,38 @@
             <!-- Validación y datos clínicos -->
             <section class="tarjeta bloque">
               <div class="bloque-cabecera">
-                <h2><ion-icon name="checkmark-done-outline" aria-hidden="true"></ion-icon>Validación</h2>
+                <h2><ion-icon name="checkmark-done-outline" aria-hidden="true"></ion-icon>{{ 'Validación' | t }}</h2>
                 <span class="etiqueta" [ngClass]="c.clasificacionValidada ? 'abierto' : 'probable'">
-                  {{ c.clasificacionValidada ? 'Validada' : 'Pendiente' }}
+                  {{ c.clasificacionValidada ? ('Validada' | t) : ('Pendiente' | t) }}
                 </span>
               </div>
               <p class="text-muted texto">
                 {{ c.clasificacionValidada
-                  ? 'Epidemiología ha validado la clasificación actual.'
-                  : 'La clasificación espera la revisión del epidemiólogo.' }}
+                  ? ('Epidemiología ha validado la clasificación actual.' | t)
+                  : ('La clasificación espera la revisión del epidemiólogo.' | t) }}
               </p>
               <div class="bloque-cabecera separado">
-                <h2><ion-icon name="medkit-outline" aria-hidden="true"></ion-icon>Datos clínicos</h2>
+                <h2><ion-icon name="medkit-outline" aria-hidden="true"></ion-icon>{{ 'Datos clínicos' | t }}</h2>
                 @if (puedeEditar()) {
                   <ion-button fill="clear" size="small" (click)="editarDatos()">
-                    <ion-icon slot="start" name="create-outline" aria-hidden="true"></ion-icon>Editar
+                    <ion-icon slot="start" name="create-outline" aria-hidden="true"></ion-icon>{{ 'Editar' | t }}
                   </ion-button>
                 }
               </div>
               <div class="marcas">
-                @if (c.fiebre) { <span class="etiqueta primaria">Fiebre</span> }
-                @if (c.cefaleaIntensa) { <span class="etiqueta primaria">Cefalea intensa</span> }
-                @if (c.recaida) { <span class="etiqueta primaria">Recaída</span> }
+                @if (c.fiebre) { <span class="etiqueta primaria">{{ 'Fiebre' | t }}</span> }
+                @if (c.cefaleaIntensa) { <span class="etiqueta primaria">{{ 'Cefalea intensa' | t }}</span> }
+                @if (c.recaida) { <span class="etiqueta primaria">{{ 'Recaída' | t }}</span> }
                 @for (m of c.manifestaciones; track m) {
                   <span class="etiqueta primaria">{{ manifestacion(m) }}</span>
                 }
               </div>
               <dl class="datos compacto">
-                <div><dt>Notificación</dt><dd>{{ c.fechaNotificacion | date: 'dd/MM/yyyy' }} · {{ diasEvolucion() }} {{ diasEvolucion() === 1 ? 'día' : 'días' }} tras el inicio</dd></div>
-                <div><dt>Área de transmisión o viaje</dt><dd>{{ c.areaTransmisionOViaje ? 'Sí' + (c.detalleAreaTransmision ? ': ' + c.detalleAreaTransmision : '') : 'No' }}</dd></div>
-                <div><dt>Nexo con caso confirmado</dt><dd>{{ c.nexoCasoConfirmado ? 'Sí' : 'No' }}</dd></div>
+                <div><dt>{{ 'Notificación' | t }}</dt><dd>{{ '{p0} · {p1} {p2} tras el inicio' | t: { p0: (c.fechaNotificacion | date: 'dd/MM/yyyy'), p1: (diasEvolucion()), p2: (diasEvolucion() === 1 ? ('día' | t) : ('días' | t)) } }}</dd></div>
+                <div><dt>{{ 'Área de transmisión o viaje' | t }}</dt><dd>{{ c.areaTransmisionOViaje ? ('Sí' | t) + (c.detalleAreaTransmision ? ': ' + c.detalleAreaTransmision : '') : ('No' | t) }}</dd></div>
+                <div><dt>{{ 'Nexo con caso confirmado' | t }}</dt><dd>{{ c.nexoCasoConfirmado ? ('Sí' | t) : ('No' | t) }}</dd></div>
                 @if (c.embarazada) {
-                  <div><dt>Embarazo</dt><dd>Sí{{ c.semanasGestacion ? ' · ' + c.semanasGestacion + ' semanas' : '' }}</dd></div>
+                  <div><dt>{{ 'Embarazo' | t }}</dt><dd>{{ 'Sí' | t }}{{ c.semanasGestacion ? ' · ' + ('{p0} semanas' | t: { p0: c.semanasGestacion }) : '' }}</dd></div>
                 }
               </dl>
             </section>
@@ -179,38 +179,38 @@
             <!-- Paciente y control -->
             <section class="tarjeta bloque">
               <div class="bloque-cabecera">
-                <h2><ion-icon name="person-circle-outline" aria-hidden="true"></ion-icon>Paciente</h2>
+                <h2><ion-icon name="person-circle-outline" aria-hidden="true"></ion-icon>{{ 'Paciente' | t }}</h2>
                 @if (paciente(); as p) {
                   @if (rol() === 'MEDICO') {
-                    <a class="enlace" [routerLink]="['/pacientes', p.id]">Ver ficha</a>
+                    <a class="enlace" [routerLink]="['/pacientes', p.id]">{{ 'Ver ficha' | t }}</a>
                   }
                 }
               </div>
               @if (paciente(); as p) {
                 <dl class="datos filas">
-                  <div><dt>Documento</dt><dd>{{ p.tipoDocumento }} {{ p.numeroDocumento }}</dd></div>
-                  <div><dt>Edad</dt><dd>{{ textoEdad(p.fechaNacimiento) || '—' }}</dd></div>
-                  @if (p.telefono) { <div><dt>Teléfono</dt><dd>{{ p.telefono }}</dd></div> }
-                  @if (p.direccion) { <div><dt>Dirección</dt><dd>{{ p.direccion }}</dd></div> }
+                  <div><dt>{{ 'Documento' | t }}</dt><dd>{{ p.tipoDocumento }} {{ p.numeroDocumento }}</dd></div>
+                  <div><dt>{{ 'Edad' | t }}</dt><dd>{{ textoEdad(p.fechaNacimiento) || '—' }}</dd></div>
+                  @if (p.telefono) { <div><dt>{{ 'Teléfono' | t }}</dt><dd>{{ p.telefono }}</dd></div> }
+                  @if (p.direccion) { <div><dt>{{ 'Dirección' | t }}</dt><dd>{{ p.direccion }}</dd></div> }
                 </dl>
               } @else {
-                <p class="text-muted texto">Paciente {{ c.pacienteId }}</p>
+                <p class="text-muted texto">{{ 'Paciente {p0}' | t: { p0: (c.pacienteId) } }}</p>
               }
               @if (c.estado === 'ABIERTO') {
                 <div class="control" [class.sin-control]="!c.proximoControl">
                   <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
                   @if (c.proximoControl) {
-                    <div><strong>Próximo control</strong><span>{{ c.proximoControl | date: 'EEEE d \'de\' MMMM' }}</span></div>
+                    <div><strong>{{ 'Próximo control' | t }}</strong><span>{{ c.proximoControl | date: ('EEEE d \'de\' MMMM' | t) }}</span></div>
                   } @else {
-                    <div><strong>Sin control programado</strong><span>Se programa desde un plan o un seguimiento.</span></div>
+                    <div><strong>{{ 'Sin control programado' | t }}</strong><span>{{ 'Se programa desde un plan o un seguimiento.' | t }}</span></div>
                   }
                 </div>
               } @else {
                 <div class="control cerrado">
                   <ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon>
                   <div>
-                    <strong>Cerrado el {{ c.fechaCierre | date: 'dd/MM/yyyy' }}</strong>
-                    <span>{{ c.desenlace?.nombre ?? 'Sin desenlace' }}{{ c.observacionesCierre ? ' · ' + c.observacionesCierre : '' }}</span>
+                    <strong>{{ 'Cerrado el {p0}' | t: { p0: (c.fechaCierre | date: 'dd/MM/yyyy') } }}</strong>
+                    <span>{{ c.desenlace?.nombre ?? ('Sin desenlace' | t) }}{{ c.observacionesCierre ? ' · ' + c.observacionesCierre : '' }}</span>
                   </div>
                 </div>
               }
@@ -220,15 +220,15 @@
           <!-- Últimos registros -->
           <section class="tarjeta bloque">
             <div class="bloque-cabecera">
-              <h2><ion-icon name="git-commit-outline" aria-hidden="true"></ion-icon>Línea de tiempo clínica
-                @if (lineaTiempo().length > 3) { <span class="text-muted pequeno">últimos 3</span> }
+              <h2><ion-icon name="git-commit-outline" aria-hidden="true"></ion-icon>{{ 'Línea de tiempo clínica' | t }}
+                @if (lineaTiempo().length > 3) { <span class="text-muted pequeno">{{ 'últimos 3' | t }}</span> }
               </h2>
               @if (lineaTiempo().length > 3) {
-                <button type="button" class="enlace" (click)="pestana.set('tiempo')">Ver completa →</button>
+                <button type="button" class="enlace" (click)="pestana.set('tiempo')">{{ 'Ver completa →' | t }}</button>
               }
             </div>
             @if (!lineaTiempo().length) {
-              <p class="text-muted texto">Todavía no hay registros de atención clínica.</p>
+              <p class="text-muted texto">{{ 'Todavía no hay registros de atención clínica.' | t }}</p>
             }
             <ng-container *ngTemplateOutlet="registros; context: { $implicit: lineaTiempo().slice(0, 3) }"></ng-container>
           </section>
@@ -238,19 +238,19 @@
           <section class="tarjeta bloque">
             @if (puedeEditar()) {
               <div class="acciones-clinicas">
-                <ion-button fill="outline" size="small" (click)="registrar('evaluacion')"><ion-icon slot="start" name="pulse-outline"></ion-icon>Evaluación</ion-button>
-                <ion-button fill="outline" size="small" (click)="registrar('dictamen')"><ion-icon slot="start" name="document-text-outline"></ion-icon>Dictamen</ion-button>
-                <ion-button fill="outline" size="small" (click)="registrar('plan')"><ion-icon slot="start" name="clipboard-outline"></ion-icon>Plan</ion-button>
-                <ion-button fill="outline" size="small" (click)="registrar('seguimiento')"><ion-icon slot="start" name="trending-up-outline"></ion-icon>Seguimiento</ion-button>
+                <ion-button fill="outline" size="small" (click)="registrar('evaluacion')"><ion-icon slot="start" name="pulse-outline"></ion-icon>{{ 'Evaluación' | t }}</ion-button>
+                <ion-button fill="outline" size="small" (click)="registrar('dictamen')"><ion-icon slot="start" name="document-text-outline"></ion-icon>{{ 'Dictamen' | t }}</ion-button>
+                <ion-button fill="outline" size="small" (click)="registrar('plan')"><ion-icon slot="start" name="clipboard-outline"></ion-icon>{{ 'Plan' | t }}</ion-button>
+                <ion-button fill="outline" size="small" (click)="registrar('seguimiento')"><ion-icon slot="start" name="trending-up-outline"></ion-icon>{{ 'Seguimiento' | t }}</ion-button>
               </div>
             }
             @if (!lineaTiempo().length) {
-              <p class="text-muted texto">Todavía no hay registros de atención clínica.</p>
+              <p class="text-muted texto">{{ 'Todavía no hay registros de atención clínica.' | t }}</p>
             }
             <ng-container *ngTemplateOutlet="registros; context: { $implicit: lineaTiempo() }"></ng-container>
             @if (lineaTiempo().length) {
               <p class="formulario-nota">
-                Los registros clínicos no se editan ni se borran: un error se corrige con un registro nuevo.
+                {{ 'Los registros clínicos no se editan ni se borran: un error se corrige con un registro nuevo.' | t }}
               </p>
             }
           </section>
@@ -259,15 +259,15 @@
         @case ('laboratorio') {
           <section class="tarjeta bloque">
             <div class="bloque-cabecera">
-              <h2><ion-icon name="flask-outline" aria-hidden="true"></ion-icon>Resultados de laboratorio</h2>
+              <h2><ion-icon name="flask-outline" aria-hidden="true"></ion-icon>{{ 'Resultados de laboratorio' | t }}</h2>
               @if (puedeEditar()) {
                 <ion-button fill="clear" size="small" (click)="abrir('resultado')">
-                  <ion-icon slot="start" name="add" aria-hidden="true"></ion-icon>Añadir resultado
+                  <ion-icon slot="start" name="add" aria-hidden="true"></ion-icon>{{ 'Añadir resultado' | t }}
                 </ion-button>
               }
             </div>
             @if (!c.resultados.length) {
-              <p class="text-muted texto">Sin resultados de laboratorio.</p>
+              <p class="text-muted texto">{{ 'Sin resultados de laboratorio.' | t }}</p>
             }
             <div class="resultados">
               @for (r of c.resultados; track r) {
@@ -277,9 +277,9 @@
                     <span class="etiqueta" [ngClass]="claseResultado(r.resultado)">{{ nombre(resultados, r.resultado) }}</span>
                   </div>
                   <div class="text-muted resultado-detalle">
-                    {{ nombre(tiposMuestra, r.tipoMuestra) }} · toma {{ r.fechaToma | date: 'dd/MM/yyyy' }}
+                    {{ '{p0} · toma {p1}' | t: { p0: (nombre(tiposMuestra, r.tipoMuestra)), p1: (r.fechaToma | date: 'dd/MM/yyyy') } }}
                     @if (r.fechaResultado) {
-                      · resultado {{ r.fechaResultado | date: 'dd/MM/yyyy' }}
+                      {{ '· resultado {p0}' | t: { p0: (r.fechaResultado | date: 'dd/MM/yyyy') } }}
                     }
                   </div>
                 </div>
@@ -291,7 +291,7 @@
         @case ('historial') {
           <section class="tarjeta bloque">
             <div class="bloque-cabecera">
-              <h2><ion-icon name="swap-horizontal-outline" aria-hidden="true"></ion-icon>Historial de clasificación</h2>
+              <h2><ion-icon name="swap-horizontal-outline" aria-hidden="true"></ion-icon>{{ 'Historial de clasificación' | t }}</h2>
             </div>
             <ol class="historial">
               @for (h of c.historial; track h) {
@@ -299,7 +299,7 @@
                   <div class="historial-cabecera">
                     <span class="etiqueta" [ngClass]="claseClasificacion(h.nueva)">{{ nombre(clasificaciones, h.nueva) }}</span>
                     @if (h.anterior) {
-                      <span class="text-muted">antes {{ nombre(clasificaciones, h.anterior) }}</span>
+                      <span class="text-muted">{{ 'antes {p0}' | t: { p0: (nombre(clasificaciones, h.anterior)) } }}</span>
                     }
                   </div>
                   <div class="historial-motivo">{{ h.motivo }}</div>
@@ -340,9 +340,9 @@
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>{{ modo() === 'resultado' ? 'Añadir resultado' : 'Cambiar clasificación' }}</ion-title>
+          <ion-title>{{ modo() === 'resultado' ? ('Añadir resultado' | t) : ('Cambiar clasificación' | t) }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="cerrar()" aria-label="Cerrar"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+            <ion-button (click)="cerrar()" [attr.aria-label]="'Cerrar' | t"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
@@ -356,25 +356,25 @@
         @if (modo() === 'resultado') {
           <form [formGroup]="resultadoForm" (ngSubmit)="guardarResultado()" class="formulario" id="form-caso-detalle">
             <div class="formulario-fila">
-              <ion-select formControlName="agente" label="Agente" labelPlacement="stacked" fill="outline" interface="popover">
+              <ion-select formControlName="agente" [label]="'Agente' | t" labelPlacement="stacked" fill="outline" interface="popover">
                 @for (a of agentes; track a) {
                   <ion-select-option [value]="a.valor">{{ a.nombre }}</ion-select-option>
                 }
               </ion-select>
-              <ion-select formControlName="tipoPrueba" label="Prueba" labelPlacement="stacked" fill="outline" interface="popover">
+              <ion-select formControlName="tipoPrueba" [label]="'Prueba' | t" labelPlacement="stacked" fill="outline" interface="popover">
                 @for (t of tiposPrueba; track t) {
                   <ion-select-option [value]="t.valor">{{ t.nombre }}</ion-select-option>
                 }
               </ion-select>
             </div>
             <div class="formulario-fila">
-              <ion-select formControlName="tipoMuestra" label="Muestra" labelPlacement="stacked" fill="outline" interface="popover">
+              <ion-select formControlName="tipoMuestra" [label]="'Muestra' | t" labelPlacement="stacked" fill="outline" interface="popover">
                 @for (t of tiposMuestra; track t) {
                   <ion-select-option [value]="t.valor">{{ t.nombre }}</ion-select-option>
                 }
               </ion-select>
-              <ion-select formControlName="resultado" label="Resultado" labelPlacement="stacked" fill="outline" interface="popover"
-                placeholder="Selecciona" errorText="Obligatorio."
+              <ion-select formControlName="resultado" [label]="'Resultado' | t" labelPlacement="stacked" fill="outline" interface="popover"
+                [placeholder]="'Selecciona' | t" [errorText]="'Obligatorio.' | t"
                 [class.ion-touched]="resultadoForm.controls.resultado.touched" [class.ion-invalid]="resultadoForm.controls.resultado.invalid">
                 @for (r of resultados; track r) {
                   <ion-select-option [value]="r.valor">{{ r.nombre }}</ion-select-option>
@@ -382,46 +382,46 @@
               </ion-select>
             </div>
             <div class="formulario-fila">
-              <ion-input formControlName="fechaToma" type="date" label="Toma de muestra" labelPlacement="stacked" fill="outline"
-                [max]="hoy" errorText="Obligatoria." [class.ion-touched]="resultadoForm.controls.fechaToma.touched"
+              <ion-input formControlName="fechaToma" type="date" [label]="'Toma de muestra' | t" labelPlacement="stacked" fill="outline"
+                [max]="hoy" [errorText]="'Obligatoria.' | t" [class.ion-touched]="resultadoForm.controls.fechaToma.touched"
               [class.ion-invalid]="resultadoForm.controls.fechaToma.invalid"></ion-input>
-              <ion-input formControlName="fechaResultado" type="date" label="Fecha del resultado (opcional)" labelPlacement="stacked"
+              <ion-input formControlName="fechaResultado" type="date" [label]="'Fecha del resultado (opcional)' | t" labelPlacement="stacked"
               fill="outline" [max]="hoy"></ion-input>
             </div>
             @if (resultadoForm.hasError('futura')) {
-              <p class="formulario-nota texto-error">Las fechas no pueden ser futuras.</p>
+              <p class="formulario-nota texto-error">{{ 'Las fechas no pueden ser futuras.' | t }}</p>
             }
             @if (resultadoForm.hasError('orden')) {
-              <p class="formulario-nota texto-error">El resultado no puede ser anterior a la toma.</p>
+              <p class="formulario-nota texto-error">{{ 'El resultado no puede ser anterior a la toma.' | t }}</p>
             }
-            <p class="formulario-nota">Al guardar se recalcula la sugerencia de la OPS. La clasificación no cambia sola.</p>
+            <p class="formulario-nota">{{ 'Al guardar se recalcula la sugerencia de la OPS. La clasificación no cambia sola.' | t }}</p>
           </form>
         }
 
         @if (modo() === 'clasificacion') {
           <form [formGroup]="clasificacionForm" (ngSubmit)="guardarClasificacion()" class="formulario" id="form-caso-detalle">
-            <ion-select formControlName="clasificacion" label="Nueva clasificación" labelPlacement="stacked" fill="outline"
-              interface="popover" placeholder="Selecciona" errorText="Obligatoria."
+            <ion-select formControlName="clasificacion" [label]="'Nueva clasificación' | t" labelPlacement="stacked" fill="outline"
+              interface="popover" [placeholder]="'Selecciona' | t" [errorText]="'Obligatoria.' | t"
               [class.ion-touched]="clasificacionForm.controls.clasificacion.touched"
               [class.ion-invalid]="clasificacionForm.controls.clasificacion.invalid">
               @for (cl of clasificaciones; track cl) {
                 @if (cl.valor !== caso()?.clasificacion) {
                   <ion-select-option [value]="cl.valor"
                     [disabled]="cl.valor === 'CONFIRMADO' && confirmadoBloqueado()">
-                    {{ cl.nombre }}{{ cl.valor === 'CONFIRMADO' && confirmadoBloqueado() ? ' (requiere laboratorio confirmatorio)' : '' }}
+                    {{ cl.nombre }}{{ cl.valor === 'CONFIRMADO' && confirmadoBloqueado() ? (' (requiere laboratorio confirmatorio)' | t) : '' }}
                   </ion-select-option>
                 }
               }
             </ion-select>
-            <ion-textarea formControlName="motivo" label="Motivo" labelPlacement="stacked" fill="outline" [autoGrow]="true" rows="3"
-              [counter]="true" [maxlength]="500" errorText="El motivo es obligatorio."
-              placeholder="Ej.: RT-PCR de Oropouche negativa y dengue confirmado"
+            <ion-textarea formControlName="motivo" [label]="'Motivo' | t" labelPlacement="stacked" fill="outline" [autoGrow]="true" rows="3"
+              [counter]="true" [maxlength]="500" [errorText]="'El motivo es obligatorio.' | t"
+              [placeholder]="'Ej.: RT-PCR de Oropouche negativa y dengue confirmado' | t"
               [class.ion-touched]="clasificacionForm.controls.motivo.touched"
             [class.ion-invalid]="clasificacionForm.controls.motivo.invalid"></ion-textarea>
             <p class="formulario-nota">
-              Queda registrado en el historial con tu usuario.
+              {{ 'Queda registrado en el historial con tu usuario.' | t }}
               @if (rol() === 'MEDICO') {
-                Quedará pendiente de validación por epidemiología.
+                {{ 'Quedará pendiente de validación por epidemiología.' | t }}
               }
             </p>
           </form>
@@ -430,13 +430,13 @@
       <ion-footer>
         <ion-toolbar>
           <ion-buttons slot="end">
-            <ion-button color="medium" (click)="cerrar()">Cancelar</ion-button>
+            <ion-button color="medium" (click)="cerrar()">{{ 'Cancelar' | t }}</ion-button>
             <ion-button fill="solid" color="primary" type="submit" form="form-caso-detalle" [disabled]="guardando()">
               @if (guardando()) {
                 <ion-spinner name="crescent"></ion-spinner>
               }
               @if (!guardando()) {
-                <span>Guardar</span>
+                <span>{{ 'Guardar' | t }}</span>
               }
             </ion-button>
           </ion-buttons>

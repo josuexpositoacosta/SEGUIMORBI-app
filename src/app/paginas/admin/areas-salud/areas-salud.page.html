@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Áreas de salud</ion-title>
+    <ion-title>{{ 'Áreas de salud' | t }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,17 +14,17 @@
 
   <div class="page-container">
     <header class="cabecera">
-      <h1>Áreas de salud</h1>
-      <ion-button (click)="abrir()"><ion-icon slot="start" name="add"></ion-icon>Nueva área</ion-button>
+      <h1>{{ 'Áreas de salud' | t }}</h1>
+      <ion-button (click)="abrir()"><ion-icon slot="start" name="add"></ion-icon>{{ 'Nueva área' | t }}</ion-button>
     </header>
     <div class="tarjeta filtros">
       <div class="filtros-fila">
-        <ion-searchbar placeholder="Buscar por código, nombre, provincia o municipio" [debounce]="150"
+        <ion-searchbar [placeholder]="'Buscar por código, nombre, provincia o municipio' | t" [debounce]="150"
         (ionInput)="busqueda.set($any($event).detail.value ?? '')"></ion-searchbar>
         <div class="segmento" role="group">
-          <button type="button" [class.activo]="filtro() === 'activas'" [attr.aria-pressed]="filtro() === 'activas'" (click)="filtro.set('activas')">Activas</button>
-          <button type="button" [class.activo]="filtro() === 'inactivas'" [attr.aria-pressed]="filtro() === 'inactivas'" (click)="filtro.set('inactivas')">Inactivas</button>
-          <button type="button" [class.activo]="filtro() === 'todas'" [attr.aria-pressed]="filtro() === 'todas'" (click)="filtro.set('todas')">Todas</button>
+          <button type="button" [class.activo]="filtro() === 'activas'" [attr.aria-pressed]="filtro() === 'activas'" (click)="filtro.set('activas')">{{ 'Activas' | t }}</button>
+          <button type="button" [class.activo]="filtro() === 'inactivas'" [attr.aria-pressed]="filtro() === 'inactivas'" (click)="filtro.set('inactivas')">{{ 'Inactivas' | t }}</button>
+          <button type="button" [class.activo]="filtro() === 'todas'" [attr.aria-pressed]="filtro() === 'todas'" (click)="filtro.set('todas')">{{ 'Todas' | t }}</button>
         </div>
       </div>
     </div>
@@ -35,29 +35,29 @@
 
     @if (!cargando() && errorCarga()) {
       <app-estado-vacio icono="cloud-offline-outline"
-        titulo="No se pudieron cargar las áreas" [texto]="errorCarga()">
-        <ion-button fill="outline" (click)="cargar()">Reintentar</ion-button>
+        [titulo]="'No se pudieron cargar las áreas' | t" [texto]="errorCarga()">
+        <ion-button fill="outline" (click)="cargar()">{{ 'Reintentar' | t }}</ion-button>
       </app-estado-vacio>
     }
 
     @if (!cargando() && !errorCarga()) {
       @if (!areas().length) {
-        <app-estado-vacio icono="business-outline" titulo="Todavía no hay áreas de salud"
-          texto="Crea la primera para poder asignar médicos y pacientes.">
-          <ion-button (click)="abrir()"><ion-icon slot="start" name="add"></ion-icon>Nueva área</ion-button>
+        <app-estado-vacio icono="business-outline" [titulo]="'Todavía no hay áreas de salud' | t"
+          [texto]="'Crea la primera para poder asignar médicos y pacientes.' | t">
+          <ion-button (click)="abrir()"><ion-icon slot="start" name="add"></ion-icon>{{ 'Nueva área' | t }}</ion-button>
         </app-estado-vacio>
       }
       @if (areas().length) {
-        <p class="resumen-lista">{{ filtradas().length }} de {{ areas().length }} áreas</p>
+        <p class="resumen-lista">{{ '{p0} de {p1} áreas' | t: { p0: (filtradas().length), p1: (areas().length) } }}</p>
         @if (!filtradas().length) {
-          <app-estado-vacio icono="search-outline" titulo="Sin resultados"
-          texto="Ningún área coincide con la búsqueda o el filtro."></app-estado-vacio>
+          <app-estado-vacio icono="search-outline" [titulo]="'Sin resultados' | t"
+          [texto]="'Ningún área coincide con la búsqueda o el filtro.' | t"></app-estado-vacio>
         }
       }
       <div class="lista-registros">
         @for (a of filtradas(); track a) {
           <button type="button" class="registro" [class.inactivo]="!a.activo"
-            (click)="abrirAcciones(a)" [attr.aria-label]="'Acciones para ' + a.nombre">
+            (click)="abrirAcciones(a)" [attr.aria-label]="'Acciones para {p0}' | t: { p0: a.nombre }">
             <div class="registro-icono" aria-hidden="true"><ion-icon name="business-outline"></ion-icon></div>
             <div class="registro-cuerpo">
               <div class="registro-titulo">{{ a.nombre }}</div>
@@ -66,9 +66,9 @@
               }</div>
               <div class="registro-etiquetas">
                 <span class="etiqueta primaria">{{ a.codigo }}</span>
-                <span class="etiqueta" [ngClass]="a.activo ? 'exito' : 'peligro'">{{ a.activo ? 'Activa' : 'Inactiva' }}</span>
+                <span class="etiqueta" [ngClass]="a.activo ? 'exito' : 'peligro'">{{ a.activo ? ('Activa' | t) : ('Inactiva' | t) }}</span>
                 @if (a.fechaRegistro) {
-                  <span class="etiqueta">Alta {{ a.fechaRegistro | date: 'dd/MM/yyyy' }}</span>
+                  <span class="etiqueta">{{ 'Alta {p0}' | t: { p0: (a.fechaRegistro | date: 'dd/MM/yyyy') } }}</span>
                 }
               </div>
             </div>
@@ -83,9 +83,9 @@
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>{{ editando() ? 'Editar área' : 'Nueva área de salud' }}</ion-title>
+          <ion-title>{{ editando() ? ('Editar área' | t) : ('Nueva área de salud' | t) }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="cerrar()" aria-label="Cerrar"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
+            <ion-button (click)="cerrar()" [attr.aria-label]="'Cerrar' | t"><ion-icon slot="icon-only" name="close"></ion-icon></ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
@@ -97,36 +97,36 @@
         }
         <form [formGroup]="form" (ngSubmit)="guardar()" class="formulario" id="form-area">
           <div class="formulario-fila">
-            <ion-input formControlName="codigo" label="Código" labelPlacement="stacked" fill="outline"
-              placeholder="AS-01" errorText="Obligatorio." [class.ion-touched]="form.controls.codigo.touched"
+            <ion-input formControlName="codigo" [label]="'Código' | t" labelPlacement="stacked" fill="outline"
+              [placeholder]="'AS-01' | t" [errorText]="'Obligatorio.' | t" [class.ion-touched]="form.controls.codigo.touched"
             [class.ion-invalid]="form.controls.codigo.invalid"></ion-input>
-            <ion-input formControlName="nombre" label="Nombre" labelPlacement="stacked" fill="outline"
-              placeholder="Policlínico Norte" errorText="Obligatorio." [class.ion-touched]="form.controls.nombre.touched"
+            <ion-input formControlName="nombre" [label]="'Nombre' | t" labelPlacement="stacked" fill="outline"
+              [placeholder]="'Policlínico Norte' | t" [errorText]="'Obligatorio.' | t" [class.ion-touched]="form.controls.nombre.touched"
             [class.ion-invalid]="form.controls.nombre.invalid"></ion-input>
           </div>
           <div class="formulario-fila">
-            <ion-input formControlName="provincia" label="Provincia" labelPlacement="stacked" fill="outline"
-              errorText="Obligatorio." [class.ion-touched]="form.controls.provincia.touched"
+            <ion-input formControlName="provincia" [label]="'Provincia' | t" labelPlacement="stacked" fill="outline"
+              [errorText]="'Obligatorio.' | t" [class.ion-touched]="form.controls.provincia.touched"
             [class.ion-invalid]="form.controls.provincia.invalid"></ion-input>
-            <ion-input formControlName="municipio" label="Municipio" labelPlacement="stacked" fill="outline"
-              errorText="Obligatorio." [class.ion-touched]="form.controls.municipio.touched"
+            <ion-input formControlName="municipio" [label]="'Municipio' | t" labelPlacement="stacked" fill="outline"
+              [errorText]="'Obligatorio.' | t" [class.ion-touched]="form.controls.municipio.touched"
             [class.ion-invalid]="form.controls.municipio.invalid"></ion-input>
           </div>
-          <ion-input formControlName="direccion" label="Dirección (opcional)" labelPlacement="stacked" fill="outline"></ion-input>
-          <ion-input formControlName="telefono" type="tel" label="Teléfono (opcional)" labelPlacement="stacked" fill="outline"></ion-input>
-          <p class="formulario-nota">El código y el nombre no pueden repetirse en otra área.</p>
+          <ion-input formControlName="direccion" [label]="'Dirección (opcional)' | t" labelPlacement="stacked" fill="outline"></ion-input>
+          <ion-input formControlName="telefono" type="tel" [label]="'Teléfono (opcional)' | t" labelPlacement="stacked" fill="outline"></ion-input>
+          <p class="formulario-nota">{{ 'El código y el nombre no pueden repetirse en otra área.' | t }}</p>
         </form>
       </div>
       <ion-footer>
         <ion-toolbar>
           <ion-buttons slot="end">
-            <ion-button color="medium" (click)="cerrar()">Cancelar</ion-button>
+            <ion-button color="medium" (click)="cerrar()">{{ 'Cancelar' | t }}</ion-button>
             <ion-button fill="solid" color="primary" type="submit" form="form-area" [disabled]="guardando()">
               @if (guardando()) {
                 <ion-spinner name="crescent"></ion-spinner>
               }
               @if (!guardando()) {
-                <span>Guardar</span>
+                <span>{{ 'Guardar' | t }}</span>
               }
             </ion-button>
           </ion-buttons>

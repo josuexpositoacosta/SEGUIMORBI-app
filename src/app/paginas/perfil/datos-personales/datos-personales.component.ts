@@ -6,10 +6,12 @@ import { mensajeDeError } from 'src/app/core/http/errores';
 import { NOMBRE_ROL } from 'src/app/core/models/usuario';
 import { AreaSaludService } from 'src/app/core/services/area-salud.service';
 import { UsuarioService } from 'src/app/core/services/usuario.service';
+import { TraducirPipe } from 'src/app/core/i18n/traducir.pipe';
+import { t } from 'src/app/core/i18n/idioma';
 
 @Component({
   selector: 'app-datos-personales',
-  imports: [ReactiveFormsModule, IonicModule],
+  imports: [TraducirPipe, ReactiveFormsModule, IonicModule],
   templateUrl: './datos-personales.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./datos-personales.component.css']
@@ -96,7 +98,7 @@ export class DatosPersonalesComponent implements OnInit {
         this.guardando = false;
         this.editMode = false;
         const aviso = await this.toast.create({
-          message: 'Datos guardados', duration: 2000, color: 'success', icon: 'checkmark-circle-outline',
+          message: t('Datos guardados'), duration: 2000, color: 'success', icon: 'checkmark-circle-outline',
         });
         await aviso.present();
       },

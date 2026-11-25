@@ -67,7 +67,7 @@ ion-menu ion-content {
 
 .brand-tagline {
   font-size: 0.75rem;
-  color: #7cd6cc;
+  color: var(--app-ops-azul);
 }
 
 /* ---------- Navegación ---------- */
@@ -145,6 +145,27 @@ ion-menu ion-content {
   font-size: 20px;
 }
 
+/* ---------- Idioma ---------- */
+.idioma {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.idioma .rail-toggle {
+  flex-direction: column;
+  gap: 0;
+  height: auto;
+  padding: 6px 0;
+  margin: 0;
+}
+
+.codigo-idioma {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
 /* ---------- Usuario ---------- */
 .user-card {
   display: flex;
@@ -162,7 +183,7 @@ ion-menu ion-content {
   height: 38px;
   border-radius: 50%;
   background: var(--app-ink-hover);
-  color: #98f2e8;
+  color: #8fd0f2;
   font-weight: 700;
   font-size: 0.85rem;
 }

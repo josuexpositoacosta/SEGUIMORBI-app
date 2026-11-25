@@ -1,3 +1,4 @@
+import { t } from 'src/app/core/i18n/idioma';
 export type Clasificacion = 'SOSPECHOSO' | 'PROBABLE' | 'CONFIRMADO' | 'DESCARTADO';
 export type EstadoCaso = 'ABIERTO' | 'CERRADO';
 export type Manifestacion =
@@ -16,87 +17,87 @@ export type ModalidadAtencion = 'AMBULATORIO' | 'INGRESO_HOSPITALARIO' | 'INGRES
 export type EvolucionCaso = 'MEJORIA' | 'ESTABLE' | 'EMPEORAMIENTO' | 'RECAIDA';
 
 export const CLASIFICACIONES: { valor: Clasificacion; nombre: string; clase: string }[] = [
-  { valor: 'SOSPECHOSO', nombre: 'Sospechoso', clase: 'sospechoso' },
-  { valor: 'PROBABLE', nombre: 'Probable', clase: 'probable' },
-  { valor: 'CONFIRMADO', nombre: 'Confirmado', clase: 'confirmado' },
-  { valor: 'DESCARTADO', nombre: 'Descartado', clase: 'descartado' },
+  { valor: 'SOSPECHOSO', nombre: t('Sospechoso'), clase: 'sospechoso' },
+  { valor: 'PROBABLE', nombre: t('Probable'), clase: 'probable' },
+  { valor: 'CONFIRMADO', nombre: t('Confirmado'), clase: 'confirmado' },
+  { valor: 'DESCARTADO', nombre: t('Descartado'), clase: 'descartado' },
 ];
 
 /** Manifestaciones de la definición de caso sospechoso de la OPS. */
 export const MANIFESTACIONES: { valor: Manifestacion; nombre: string }[] = [
-  { valor: 'MIALGIA_ARTRALGIA', nombre: 'Mialgia o artralgia' },
-  { valor: 'ESCALOFRIOS', nombre: 'Escalofríos' },
-  { valor: 'FOTOFOBIA', nombre: 'Fotofobia' },
-  { valor: 'MAREOS', nombre: 'Mareos' },
-  { valor: 'DOLOR_RETROOCULAR', nombre: 'Dolor retroocular' },
-  { valor: 'GASTROINTESTINAL', nombre: 'Náusea, vómitos o diarrea' },
-  { valor: 'NEUROLOGICA', nombre: 'Manifestación neurológica' },
+  { valor: 'MIALGIA_ARTRALGIA', nombre: t('Mialgia o artralgia') },
+  { valor: 'ESCALOFRIOS', nombre: t('Escalofríos') },
+  { valor: 'FOTOFOBIA', nombre: t('Fotofobia') },
+  { valor: 'MAREOS', nombre: t('Mareos') },
+  { valor: 'DOLOR_RETROOCULAR', nombre: t('Dolor retroocular') },
+  { valor: 'GASTROINTESTINAL', nombre: t('Náusea, vómitos o diarrea') },
+  { valor: 'NEUROLOGICA', nombre: t('Manifestación neurológica') },
 ];
 
 export const AGENTES: { valor: AgenteEtiologico; nombre: string }[] = [
-  { valor: 'OROPOUCHE', nombre: 'Oropouche' },
-  { valor: 'DENGUE', nombre: 'Dengue' },
+  { valor: 'OROPOUCHE', nombre: t('Oropouche') },
+  { valor: 'DENGUE', nombre: t('Dengue') },
 ];
 
 export const TIPOS_PRUEBA: { valor: TipoPrueba; nombre: string }[] = [
-  { valor: 'RT_PCR', nombre: 'RT-PCR' },
-  { valor: 'ANTIGENO', nombre: 'Antígeno' },
-  { valor: 'ELISA_IGM', nombre: 'ELISA IgM' },
-  { valor: 'IGM_LCR', nombre: 'IgM en LCR' },
-  { valor: 'SEROCONVERSION_PAREADA', nombre: 'Seroconversión (muestras pareadas)' },
-  { valor: 'POST_MORTEM', nombre: 'Post mortem' },
+  { valor: 'RT_PCR', nombre: t('RT-PCR') },
+  { valor: 'ANTIGENO', nombre: t('Antígeno') },
+  { valor: 'ELISA_IGM', nombre: t('ELISA IgM') },
+  { valor: 'IGM_LCR', nombre: t('IgM en LCR') },
+  { valor: 'SEROCONVERSION_PAREADA', nombre: t('Seroconversión (muestras pareadas)') },
+  { valor: 'POST_MORTEM', nombre: t('Post mortem') },
 ];
 
 export const TIPOS_MUESTRA: { valor: TipoMuestra; nombre: string }[] = [
-  { valor: 'SUERO', nombre: 'Suero' },
-  { valor: 'SANGRE', nombre: 'Sangre' },
-  { valor: 'LCR', nombre: 'Líquido cefalorraquídeo' },
-  { valor: 'TEJIDO', nombre: 'Tejido' },
-  { valor: 'OTRA', nombre: 'Otra' },
+  { valor: 'SUERO', nombre: t('Suero') },
+  { valor: 'SANGRE', nombre: t('Sangre') },
+  { valor: 'LCR', nombre: t('Líquido cefalorraquídeo') },
+  { valor: 'TEJIDO', nombre: t('Tejido') },
+  { valor: 'OTRA', nombre: t('Otra') },
 ];
 
 export const RESULTADOS: { valor: ResultadoPrueba; nombre: string; clase: string }[] = [
-  { valor: 'POSITIVO', nombre: 'Positivo', clase: 'peligro' },
-  { valor: 'NEGATIVO', nombre: 'Negativo', clase: 'exito' },
-  { valor: 'INDETERMINADO', nombre: 'Indeterminado', clase: 'secundaria' },
+  { valor: 'POSITIVO', nombre: t('Positivo'), clase: 'peligro' },
+  { valor: 'NEGATIVO', nombre: t('Negativo'), clase: 'exito' },
+  { valor: 'INDETERMINADO', nombre: t('Indeterminado'), clase: 'secundaria' },
 ];
 
 export const SIGNOS_CLINICOS: { valor: SignoClinico; nombre: string }[] = [
-  { valor: 'POSTRACION', nombre: 'Postración' },
-  { valor: 'LUMBALGIA', nombre: 'Lumbalgia' },
-  { valor: 'VOMITOS_PERSISTENTES', nombre: 'Vómitos persistentes' },
-  { valor: 'PETEQUIAS', nombre: 'Petequias' },
-  { valor: 'EPISTAXIS', nombre: 'Epistaxis' },
-  { valor: 'SANGRADO_GINGIVAL', nombre: 'Sangrado gingival' },
-  { valor: 'VERTIGO', nombre: 'Vértigo' },
-  { valor: 'LETARGIA', nombre: 'Letargia' },
-  { valor: 'NISTAGMO', nombre: 'Nistagmo' },
-  { valor: 'RIGIDEZ_NUCA', nombre: 'Rigidez de nuca' },
+  { valor: 'POSTRACION', nombre: t('Postración') },
+  { valor: 'LUMBALGIA', nombre: t('Lumbalgia') },
+  { valor: 'VOMITOS_PERSISTENTES', nombre: t('Vómitos persistentes') },
+  { valor: 'PETEQUIAS', nombre: t('Petequias') },
+  { valor: 'EPISTAXIS', nombre: t('Epistaxis') },
+  { valor: 'SANGRADO_GINGIVAL', nombre: t('Sangrado gingival') },
+  { valor: 'VERTIGO', nombre: t('Vértigo') },
+  { valor: 'LETARGIA', nombre: t('Letargia') },
+  { valor: 'NISTAGMO', nombre: t('Nistagmo') },
+  { valor: 'RIGIDEZ_NUCA', nombre: t('Rigidez de nuca') },
 ];
 
 /** Signos de alarma de dengue (OPS, algoritmos de manejo clínico 2024). */
 export const SIGNOS_ALARMA_DENGUE: { valor: SignoAlarmaDengue; nombre: string }[] = [
-  { valor: 'DOLOR_ABDOMINAL_INTENSO', nombre: 'Dolor abdominal intenso o a la palpación' },
-  { valor: 'VOMITOS_PERSISTENTES', nombre: 'Vómitos persistentes' },
-  { valor: 'ACUMULACION_LIQUIDOS', nombre: 'Acumulación de líquidos' },
-  { valor: 'SANGRADO_MUCOSAS', nombre: 'Sangrado de mucosas' },
-  { valor: 'LETARGO_IRRITABILIDAD', nombre: 'Letargo o irritabilidad' },
-  { valor: 'HIPOTENSION_POSTURAL', nombre: 'Hipotensión postural (lipotimia)' },
-  { valor: 'HEPATOMEGALIA', nombre: 'Hepatomegalia > 2 cm' },
-  { valor: 'AUMENTO_PROGRESIVO_HEMATOCRITO', nombre: 'Aumento progresivo del hematocrito' },
+  { valor: 'DOLOR_ABDOMINAL_INTENSO', nombre: t('Dolor abdominal intenso o a la palpación') },
+  { valor: 'VOMITOS_PERSISTENTES', nombre: t('Vómitos persistentes') },
+  { valor: 'ACUMULACION_LIQUIDOS', nombre: t('Acumulación de líquidos') },
+  { valor: 'SANGRADO_MUCOSAS', nombre: t('Sangrado de mucosas') },
+  { valor: 'LETARGO_IRRITABILIDAD', nombre: t('Letargo o irritabilidad') },
+  { valor: 'HIPOTENSION_POSTURAL', nombre: t('Hipotensión postural (lipotimia)') },
+  { valor: 'HEPATOMEGALIA', nombre: t('Hepatomegalia > 2 cm') },
+  { valor: 'AUMENTO_PROGRESIVO_HEMATOCRITO', nombre: t('Aumento progresivo del hematocrito') },
 ];
 
 export const MODALIDADES: { valor: ModalidadAtencion; nombre: string }[] = [
-  { valor: 'AMBULATORIO', nombre: 'Ambulatorio' },
-  { valor: 'INGRESO_HOSPITALARIO', nombre: 'Ingreso hospitalario' },
-  { valor: 'INGRESO_UNIDAD_ESPECIALIZADA', nombre: 'Ingreso en unidad especializada' },
+  { valor: 'AMBULATORIO', nombre: t('Ambulatorio') },
+  { valor: 'INGRESO_HOSPITALARIO', nombre: t('Ingreso hospitalario') },
+  { valor: 'INGRESO_UNIDAD_ESPECIALIZADA', nombre: t('Ingreso en unidad especializada') },
 ];
 
 export const EVOLUCIONES: { valor: EvolucionCaso; nombre: string; clase: string }[] = [
-  { valor: 'MEJORIA', nombre: 'Mejoría', clase: 'exito' },
-  { valor: 'ESTABLE', nombre: 'Estable', clase: '' },
-  { valor: 'EMPEORAMIENTO', nombre: 'Empeoramiento', clase: 'peligro' },
-  { valor: 'RECAIDA', nombre: 'Recaída', clase: 'secundaria' },
+  { valor: 'MEJORIA', nombre: t('Mejoría'), clase: 'exito' },
+  { valor: 'ESTABLE', nombre: t('Estable'), clase: '' },
+  { valor: 'EMPEORAMIENTO', nombre: t('Empeoramiento'), clase: 'peligro' },
+  { valor: 'RECAIDA', nombre: t('Recaída'), clase: 'secundaria' },
 ];
 
 /** Busca el nombre visible de un valor en una de las listas anteriores. */

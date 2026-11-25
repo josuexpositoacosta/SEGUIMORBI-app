@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
 import { AuthService } from './core/auth/auth.service';
 import { Usuario } from './core/models/usuario';
+import { TraducirPipe } from './core/i18n/traducir.pipe';
 
 describe('AppComponent', () => {
   const usuario = signal<Usuario | null>(null);
@@ -14,6 +15,7 @@ describe('AppComponent', () => {
     auth = { usuario, autenticado: computed(() => usuario() !== null), logout: jasmine.createSpy('logout') };
     await TestBed.configureTestingModule({
       declarations: [AppComponent],
+      imports: [TraducirPipe],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [provideRouter([]), { provide: AuthService, useValue: auth }],
     }).compileComponents();

@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Inicio</ion-title>
+    <ion-title>{{ 'Inicio' | t }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,18 +14,18 @@
         <h1>{{ saludo }}{{ nombre() ? ', ' + nombre() : '' }}</h1>
         <p class="fecha">
           <ion-icon name="calendar-clear-outline" aria-hidden="true"></ion-icon>
-          {{ hoy | date: 'EEEE, d \'de\' MMMM \'de\' y' }} · {{ rol() }}
+          {{ hoy | date: 'fullDate' }} · {{ rol() }}
         </p>
       </div>
       @if (esMedico()) {
         <div class="acciones">
           <ion-button fill="outline" color="medium" (click)="nuevoPaciente()">
             <ion-icon slot="start" name="person-add-outline" aria-hidden="true"></ion-icon>
-            Nuevo paciente
+            {{ 'Nuevo paciente' | t }}
           </ion-button>
-          <ion-button routerLink="/pacientes" title="Los casos se registran desde la ficha del paciente">
+          <ion-button routerLink="/pacientes" [title]="'Los casos se registran desde la ficha del paciente' | t">
             <ion-icon slot="start" name="add" aria-hidden="true"></ion-icon>
-            Registrar caso
+            {{ 'Registrar caso' | t }}
           </ion-button>
         </div>
       }
@@ -39,13 +39,13 @@
       @if (errorCarga()) {
         <div class="tarjeta aviso-error" role="alert">
           <ion-icon name="cloud-offline-outline" aria-hidden="true"></ion-icon>
-          <span>No se pudo cargar el resumen: {{ errorCarga() }}</span>
-          <ion-button fill="clear" size="small" (click)="cargar()">Reintentar</ion-button>
+          <span>{{ 'No se pudo cargar el resumen: {p0}' | t: { p0: (errorCarga()) } }}</span>
+          <ion-button fill="clear" size="small" (click)="cargar()">{{ 'Reintentar' | t }}</ion-button>
         </div>
       }
 
       @if (panel()) {
-        <section class="indicadores" aria-label="Resumen">
+        <section class="indicadores" [attr.aria-label]="'Resumen' | t">
           @for (i of indicadores(); track i.titulo) {
             <a class="tarjeta indicador" [routerLink]="i.ruta">
               <div class="indicador-cabecera">
@@ -61,14 +61,14 @@
         <div class="columnas">
           <section class="columna-principal">
             <div class="seccion-cabecera">
-              <h2>Próximos controles <span class="contador">{{ panel()!.controles.length }}</span></h2>
-              <a routerLink="/agenda" class="enlace">Ver agenda <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></a>
+              <h2>{{ 'Próximos controles' | t }} <span class="contador">{{ panel()!.controles.length }}</span></h2>
+              <a routerLink="/agenda" class="enlace">{{ 'Ver agenda' | t }} <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></a>
             </div>
 
             @if (!proximos().length) {
               <div class="tarjeta vacio">
                 <ion-icon name="checkmark-circle-outline" aria-hidden="true"></ion-icon>
-                No tienes controles en los próximos 7 días.
+                {{ 'No tienes controles en los próximos 7 días.' | t }}
               </div>
             }
 
@@ -77,23 +77,23 @@
                 <div class="control-fecha" [class.vencido]="c.vencido">
                   @if (c.vencido) {
                     <span class="dia">{{ c.fecha | date: 'dd/MM' }}</span>
-                    <span class="tipo">Vencido</span>
+                    <span class="tipo">{{ 'Vencido' | t }}</span>
                   } @else if (esHoy(c.fecha)) {
-                    <span class="dia">Hoy</span>
-                    <span class="tipo">Control</span>
+                    <span class="dia">{{ 'Hoy' | t }}</span>
+                    <span class="tipo">{{ 'Control' | t }}</span>
                   } @else {
                     <span class="dia">{{ c.fecha | date: 'dd/MM' }}</span>
-                    <span class="tipo">{{ esManana(c.fecha) ? 'Mañana' : (c.fecha | date: 'EEE') }}</span>
+                    <span class="tipo">{{ esManana(c.fecha) ? ('Mañana' | t) : (c.fecha | date: 'EEE') }}</span>
                   }
                 </div>
                 <div class="control-cuerpo">
                   <div class="control-titulo">
                     <strong>{{ nombrePaciente(c.pacienteId) }}</strong>
-                    <span class="codigo">Caso nº {{ c.casoId }}</span>
+                    <span class="codigo">{{ 'Caso nº {p0}' | t: { p0: (c.casoId) } }}</span>
                   </div>
                   <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c.clasificacion) }}</span>
                 </div>
-                <span class="boton-ver">Atender <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></span>
+                <span class="boton-ver">{{ 'Atender' | t }} <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></span>
               </a>
             }
           </section>
@@ -104,14 +104,13 @@
                 <div class="aviso-icono"><ion-icon name="notifications-outline" aria-hidden="true"></ion-icon></div>
                 <div>
                   <strong>
-                    {{ pendientesValidar().length }}
-                    {{ pendientesValidar().length === 1 ? 'caso espera' : 'casos esperan' }} validación del epidemiólogo
+                    {{ '{p0} {p1} validación del epidemiólogo' | t: { p0: (pendientesValidar().length), p1: (pendientesValidar().length === 1 ? ('caso espera' | t) : ('casos esperan' | t)) } }}
                   </strong>
                   <p>
                     @for (c of pendientesValidar().slice(0, 3); track c.id; let ultimo = $last) {
-                      <a [routerLink]="['/casos', c.id]">nº {{ c.id }}</a>{{ ultimo ? '' : ', ' }}
+                      <a [routerLink]="['/casos', c.id]">{{ 'nº {p0}' | t: { p0: (c.id) } }}</a>{{ ultimo ? '' : ', ' }}
                     }
-                    @if (pendientesValidar().length > 3) { y {{ pendientesValidar().length - 3 }} más }
+                    @if (pendientesValidar().length > 3) { {{ 'y {p0} más' | t: { p0: (pendientesValidar().length - 3) } }} }
                   </p>
                 </div>
               </div>
@@ -119,16 +118,16 @@
 
             <div class="tarjeta recientes">
               <div class="seccion-cabecera">
-                <h2>Casos recientes</h2>
-                <a routerLink="/casos" class="enlace">Ver todos <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></a>
+                <h2>{{ 'Casos recientes' | t }}</h2>
+                <a routerLink="/casos" class="enlace">{{ 'Ver todos' | t }} <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></a>
               </div>
               @if (!recientes().length) {
-                <p class="text-muted">No hay casos abiertos.</p>
+                <p class="text-muted">{{ 'No hay casos abiertos.' | t }}</p>
               }
               @for (c of recientes(); track c.id) {
                 <a class="reciente" [routerLink]="['/casos', c.id]">
                   <div class="reciente-fila">
-                    <span class="codigo">Caso nº {{ c.id }}</span>
+                    <span class="codigo">{{ 'Caso nº {p0}' | t: { p0: (c.id) } }}</span>
                     <span class="etiqueta" [ngClass]="claseClasificacion(c.clasificacion)">{{ nombreClasificacion(c.clasificacion) }}</span>
                   </div>
                   <div class="reciente-fila">
@@ -142,7 +141,7 @@
         </div>
       }
     } @else {
-      <h2 class="titulo-seccion">Accesos rápidos</h2>
+      <h2 class="titulo-seccion">{{ 'Accesos rápidos' | t }}</h2>
       <div class="accesos">
         @for (p of accesos(); track p) {
           <a class="acceso" [routerLink]="'/' + p.ruta">
@@ -153,7 +152,7 @@
               <span class="acceso-titulo">
                 {{ p.titulo }}
                 @if (p.proximamente) {
-                  <ion-badge color="light" class="pronto">Pronto</ion-badge>
+                  <ion-badge color="light" class="pronto">{{ 'Pronto' | t }}</ion-badge>
                 }
               </span>
               <span class="acceso-desc">{{ p.descripcion }}</span>
@@ -166,7 +165,7 @@
 
     <p class="disclaimer">
       <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
-      Herramienta de apoyo a la decisión clínica. No sustituye el criterio del profesional sanitario.
+      {{ 'Herramienta de apoyo a la decisión clínica. No sustituye el criterio del profesional sanitario.' | t }}
     </p>
   </div>
 </ion-content>
