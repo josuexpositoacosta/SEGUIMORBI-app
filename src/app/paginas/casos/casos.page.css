@@ -153,14 +153,13 @@ tr:hover .accion a {
 
   td[data-titulo] {
     grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    display: block;
   }
 
   td[data-titulo]::before {
     content: attr(data-titulo);
+    display: inline-block;
+    width: 130px;
     font-size: 0.75rem;
     color: var(--app-text-muted);
   }
@@ -171,7 +170,7 @@ tr:hover .accion a {
 
   td[data-titulo] .sub {
     display: inline;
-    margin-inline-start: 6px;
+    margin-inline-start: 8px;
   }
 
   .accion {
